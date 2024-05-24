@@ -1,42 +1,73 @@
 package beans;
 
-import enums.ChocolateKind;
 import enums.ChocolateStatus;
-import enums.ChocolateType;
 
 public class Chocolate {
+	private int id;
+	private int factoryId;
 	private  String name;
 	private double price;
-	private ChocolateType type;
-	private ChocolateKind kind;
+	private String type;
+	private String kind;
 	private ChocolateStatus status;
-	private ChocolateFactory factory;
 	private double grams; 
 	private String description;
 	private String image;
 	private int quantity;
-	
 
 	public Chocolate() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Chocolate(String name, double price, ChocolateType type, ChocolateKind kind, ChocolateStatus status,
-			ChocolateFactory factory,	double grams, String description, String image, int quantity) {
+	public Chocolate(int id, String name, double price, String type, String kind, ChocolateStatus status,
+			int factoryId,	double grams, String description, String image, int quantity) {
 		super();
+		this.id = id;
+		this.factoryId = factoryId;
 		this.name = name;
 		this.price = price;
 		this.type = type;
 		this.kind = kind;
 		this.status = status;
-		this.factory = factory;
 		this.grams = grams;
 		this.description = description;
 		this.image = image;
 		this.quantity = quantity;
 	}	
 	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getFactoryId() {
+		return factoryId;
+	}
+
+	public void setFactoryId(int factoryId) {
+		this.factoryId = factoryId;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getKind() {
+		return kind;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -48,18 +79,6 @@ public class Chocolate {
 	}
 	public void setPrice(double price) {
 		this.price = price;
-	}
-	public ChocolateType getType() {
-		return type;
-	}
-	public void setType(ChocolateType type) {
-		this.type = type;
-	}
-	public ChocolateKind getKind() {
-		return kind;
-	}
-	public void setKind(ChocolateKind kind) {
-		this.kind = kind;
 	}
 	public ChocolateStatus getStatus() {
 		return status;
@@ -91,21 +110,4 @@ public class Chocolate {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
-	
-
-	public ChocolateFactory getFactory() {
-		return factory;
-	}
-
-	public void setFactory(ChocolateFactory factory) {
-		this.factory = factory;
-	}
-
-	@Override
-	public String toString() {
-		return "Chocolate [name=" + name + ", price=" + price + ", type=" + type + ", kind=" + kind + ", status="
-				+ status + ", factory=" + factory + ", grams=" + grams + ", description=" + description + ", image="
-				+ image + ", quantity=" + quantity + "]";
-	}
-
 }

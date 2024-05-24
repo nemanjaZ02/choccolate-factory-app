@@ -14,7 +14,7 @@
                     <label>Password: </label>
                 </td>
                 <td>
-                    <input type="password" v-model="newUser.password" v-on:change="checkPasswords()" required>
+                    <input type="password" v-model="newUser.password" required>
                 </td> 
             </tr>
             <tr>
@@ -22,7 +22,7 @@
                     <label>Re-Type Password: </label> 
                 </td>
                 <td>
-                    <input type="password" v-model="confirmedPassword" v-on:change="checkPasswords()" required>
+                    <input type="password" v-model="confirmedPassword" required>
                 </td> 
                 <td>
                     <label v-bind:hidden="confirmedPassword == newUser.password">Password are not matching!</label>
@@ -86,8 +86,9 @@ function registerNewUser(event) {
 	event.preventDefault();
     axios.post("http://localhost:8080/ChoccolateAppREST/rest/register", this.newUser).then(response => {
         router.push('/');
-
-    })
+    }).catch(error => {
+        console.log(error);
+    });
 }
 
 

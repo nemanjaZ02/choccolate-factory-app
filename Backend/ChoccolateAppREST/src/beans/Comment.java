@@ -1,9 +1,9 @@
 package beans;
 
 public class Comment {
-	
-	private Customer customer;
-	private ChocolateFactory factory;
+	private int id;
+	private int customerId;
+	private int factoryId;
 	private String text;
 	private double rating;
 	
@@ -11,12 +11,12 @@ public class Comment {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	
 
-	public Comment(Customer customer, ChocolateFactory factory, String text, double rating) {
+	public Comment(int id, int customerId, int factoryId, String text, double rating) {
 		super();
-		this.customer = customer;
-		this.factory = factory;
+		this.id = id;
+		this.customerId = customerId;
+		this.factoryId = factoryId;
 		this.text = text;
 		this.rating = rating;
 	}
@@ -28,39 +28,36 @@ public class Comment {
 	public void setText(String text) {
 		this.text = text;
 	}
-
+	
 	public double getRating() {
 		return rating;
 	}
-
+	
 	public void setRating(double rating) {
 		this.rating = rating;
 	}
 
-
-	public Customer getCustomer() {
-		return customer;
+	public int getId() {
+		return id;
 	}
 
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-
-	public ChocolateFactory getFactory() {
-		return factory;
+	public int getCustomerId() {
+		return customerId;
 	}
 
-
-	public void setFactory(ChocolateFactory factory) {
-		this.factory = factory;
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
 	}
 
-
-	@Override
-	public String toString() {
-		return "Comment [customer=" + customer + ", factory=" + factory + ", text=" + text + ", rating=" + rating + "]";
+	public int getFactoryId() {
+		return factoryId;
 	}
 
+	public void setFactoryId(int factoryId) {
+		this.factoryId = factoryId;
+	}
 }

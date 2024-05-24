@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 
 import beans.User;
 import dao.UserDAO;
+import enums.Role;
 
 @Path("")
 public class LoginService {
@@ -45,11 +46,11 @@ public class LoginService {
 	@Path("/login")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response login(User user, @Context HttpServletRequest request) {
+	public Response login(User user) {
 		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
 		User loggedUser = userDao.find(user.getUsername(), user.getPassword());
 		if (loggedUser == null) {
-			return Response.status(400).entity("Invalid username and/or password").build();
+			return Response.status(205).entity("Invalid username and/or password").build();
 		}
 		ctx.setAttribute("loggedUser", loggedUser);
 		return Response.status(200).build();
@@ -65,17 +66,35 @@ public class LoginService {
 	@Path("/register")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public User registerNewUser(User newUser) {
+	public Response registerNewUser(User newUser) {
 		String contextPath = ctx.getRealPath("");
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
-		return dao.registerNewUser(newUser, contextPath);
+		
+		if(newUser.getName() == "" || newUser.getSurname() == "" || newUser.getBirthday() == null || newUser.getUsername() == "" || newUser.getPassword() == "" || newUser.getRole() != Role.CUSTOMER || newUser.getGender() == null)
+		{
+			return Response.status(205).entity("Not all fields are filled/or trying to bypass ranking").build();
+		}
+		else
+		{
+			dao.registerNewUser(newUser, contextPath);
+			ctx.setAttribute("loggedUser", newUser);
+			return Response.status(200).build();
+		}	
 	}
 	
 	@GET
 	@Path("/logOut")
 	@Produces(MediaType.APPLICATION_JSON)
-	public void logOut() {
-		ctx.setAttribute("loggedUser", null);
+	public Response logOut() {
+		if(ctx.getAttribute("loggedUser") != null)
+		{
+			ctx.setAttribute("loggedUser", null);
+			return Response.status(200).entity("User succesfully logged out").build();
+		}
+		else
+		{
+			return Response.status(205).entity("Nobody was logged in").build();
+		}		
 	}
 	
 	@GET

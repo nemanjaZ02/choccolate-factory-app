@@ -7,7 +7,7 @@ import enums.Gender;
 import enums.Role;
 
 public class Customer extends User {
-	private List<Shopping> shoppings;
+	private List<Purchase> purchases;
 	private Cart cart;
 	private int points;
 	private CustomerType type;
@@ -22,9 +22,9 @@ public class Customer extends User {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Customer(List<Shopping> shoppings, Cart cart, int points, CustomerType type) {
+	public Customer(List<Purchase> purchases, Cart cart, int points, CustomerType type) {
 		super();
-		this.shoppings = shoppings;
+		this.purchases = purchases;
 		this.cart = cart;
 		this.points = points;
 		this.type = type;
@@ -35,11 +35,11 @@ public class Customer extends User {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public List<Shopping> getShoppings() {
-		return shoppings;
+	public List<Purchase> getShoppings() {
+		return purchases;
 	}
-	public void setShoppings(List<Shopping> shoppings) {
-		this.shoppings = shoppings;
+	public void setShoppings(List<Purchase> shoppings) {
+		this.purchases = shoppings;
 	}
 	public Cart getCart() {
 		return cart;

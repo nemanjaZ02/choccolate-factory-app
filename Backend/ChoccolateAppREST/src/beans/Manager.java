@@ -6,7 +6,7 @@ import enums.Gender;
 import enums.Role;
 
 public class Manager extends User {
-	private ChocolateFactory chocolateFactory;
+	private int factoryId;
 
 	public Manager() {
 		super();
@@ -19,16 +19,16 @@ public class Manager extends User {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Manager(ChocolateFactory chocolateFactory) {
+	public Manager(int factoryId) {
 		super();
-		this.chocolateFactory = chocolateFactory;
+		this.factoryId = factoryId;
 	}
 
-	public ChocolateFactory getChocolateFactory() {
-		return chocolateFactory;
+	public int getChocolateFactory() {
+		return factoryId;
 	}
 
-	public void setChocolateFactory(ChocolateFactory chocolateFactory) {
-		this.chocolateFactory = chocolateFactory;
+	public void setChocolateFactory(int factoryId) {
+		this.factoryId = factoryId;
 	}	
 }

@@ -1,12 +1,13 @@
 package beans;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import enums.WorkingStatus;
 
 public class ChocolateFactory {
+	private int id;
 	private String name;
-	private List<Chocolate> chocolates;
+	private ArrayList<Chocolate> chocolates;
 	private WorkTime workTime;
 	private WorkingStatus status;
 	private Location location;
@@ -15,12 +16,13 @@ public class ChocolateFactory {
 	
 	public ChocolateFactory() {
 		super();
-		// TODO Auto-generated constructor stub
+		chocolates = new ArrayList<Chocolate>();
 	}
 
-	public ChocolateFactory(String name, List<Chocolate> chocolates, WorkTime workTime, WorkingStatus status,
+	public ChocolateFactory(int id, String name, ArrayList<Chocolate> chocolates, WorkTime workTime, WorkingStatus status,
 			Location location, String logo, double rating) {
 		super();
+		this.id = id;
 		this.name = name;
 		this.chocolates = chocolates;
 		this.workTime = workTime;
@@ -28,6 +30,15 @@ public class ChocolateFactory {
 		this.location = location;
 		this.logo = logo;
 		this.rating = rating;
+	}
+	
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -38,11 +49,11 @@ public class ChocolateFactory {
 		this.name = name;
 	}
 
-	public List<Chocolate> getChocolates() {
+	public ArrayList<Chocolate> getChocolates() {
 		return chocolates;
 	}
 
-	public void setChocolates(List<Chocolate> chocolates) {
+	public void setChocolates(ArrayList<Chocolate> chocolates) {
 		this.chocolates = chocolates;
 	}
 

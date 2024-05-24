@@ -6,7 +6,6 @@ import enums.Gender;
 import enums.Role;
 
 public class Employee extends User {
-
 	public Employee() {
 		super();
 		// TODO Auto-generated constructor stub

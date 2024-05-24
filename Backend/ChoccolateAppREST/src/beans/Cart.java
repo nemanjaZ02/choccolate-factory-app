@@ -4,20 +4,17 @@ package beans;
 import java.util.ArrayList;
 
 public class Cart {
-
-	private ArrayList <Chocolate> chocolates = new ArrayList<Chocolate>();
-	Customer customer;
+	private ArrayList<Chocolate> chocolates;
 	private double price;
 	
 	public Cart() {
 		super();
-		// TODO Auto-generated constructor stub
+		chocolates = new ArrayList<Chocolate>();
 	}
 
 	public Cart(ArrayList<Chocolate> chocolates, Customer customer, double price) {
 		super();
 		this.chocolates = chocolates;
-		this.customer = customer;
 		this.price = price;
 	}
 
@@ -35,15 +32,6 @@ public class Cart {
 
 	public void setPrice(double price) {
 		this.price = price;
-	}
-	
-
-	public Customer getCustomer() {
-		return customer;
-	}
-
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
 	}
 
 	@Override

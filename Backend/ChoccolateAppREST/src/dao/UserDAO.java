@@ -127,71 +127,29 @@ public class UserDAO {
 			Gson gson = new Gson();  
 			Path filePath;
 			String updatedJsonData;
-			
-			if(newUser.getRole() == Role.CUSTOMER)
-			{
-				int maxId = -1;
-				for(Customer customer : customers)
-				{
-					if(customer.getId() > maxId)
-					{
-						maxId = customer.getId();
-					}
-				}
-				
-				if(maxId == -1)
-				{
-					maxId = 0;
-				}
-				
-				newUser.setId(maxId + 1);
-				User customerUser = new Customer(newUser);
-				customers.add((Customer)customerUser);
-				
-				filePath = Paths.get(contextPath, "/customers.json");
-				Customer[] updatedUserArray = customers.toArray(new Customer[0]);
-				updatedJsonData = gson.toJson(updatedUserArray);
-			}
-			else if(newUser.getRole() == Role.MANAGER)
-			{
-				int maxId = -1;
-				for(Manager manager : managers)
-				{
-					if(manager.getId() > maxId)
-					{
-						maxId = manager.getId() + 1;
-					}
-				}
-				
-				if(maxId == -1)
-				{
-					maxId = 0;
-				}
-				
-				newUser.setId(maxId);
-				managers.add((Manager)newUser);
-				filePath = Paths.get(contextPath, "/managers.json");
-				Manager[] updatedUserArray = managers.toArray(new Manager[0]);
-				updatedJsonData = gson.toJson(updatedUserArray);
-			}
-			else
-			{
-				int maxId = -1;
-				for(Employee employee : employees)
-				{
-					if(employee.getId() > maxId)
-					{
-						maxId = employee.getId() + 1;
-					}
-				}
-				
-				newUser.setId(maxId);
-				employees.add((Employee)newUser);
-				filePath = Paths.get(contextPath, "/employees.json");
-				Employee[] updatedUserArray = employees.toArray(new Employee[0]);
-				updatedJsonData = gson.toJson(updatedUserArray);
-			}
 
+			int maxId = -1;
+			for(Customer customer : customers)
+			{
+				if(customer.getId() > maxId)
+				{
+					maxId = customer.getId();
+				}
+			}
+				
+			if(maxId == -1)
+			{
+				maxId = 0;
+			}
+				
+			newUser.setId(maxId + 1);
+			User customerUser = new Customer(newUser);
+			customers.add((Customer)customerUser);
+				
+			filePath = Paths.get(contextPath, "/customers.json");
+			Customer[] updatedUserArray = customers.toArray(new Customer[0]);
+			updatedJsonData = gson.toJson(updatedUserArray);
+			
             Files.write(filePath, updatedJsonData.getBytes());
 
         } catch (IOException e) {

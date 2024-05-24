@@ -29,7 +29,7 @@
                 loggedInUser.value=response.data;
                 isLoggedIn.value = true;
             }   
-        });
+        })
     }
 
     function logOut()
@@ -37,7 +37,9 @@
         axios.get("http://localhost:8080/ChoccolateAppREST/rest/logOut").then(response=>{
             loggedInUser.value = { id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: "", role: ""};
             isLoggedIn.value = false;
-        });
+        }).catch(error=>{
+            console.error(error);
+        })
     }
 </script>
 
