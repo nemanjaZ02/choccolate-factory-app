@@ -20,8 +20,10 @@ public class Chocolate {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Chocolate(int id, String name, double price, String type, String kind, ChocolateStatus status,
-			int factoryId,	double weight, String description, String image, int quantity) {
+
+	public Chocolate(int id, int factoryId, String name, double price, String type, String kind, ChocolateStatus status,
+				double weight, String description, String image, int quantity) {
+
 		super();
 		this.id = id;
 		this.factoryId = factoryId;
@@ -86,11 +88,13 @@ public class Chocolate {
 	public void setStatus(ChocolateStatus status) {
 		this.status = status;
 	}
+
 	public double getWeight() {
 		return weight;
 	}
 	public void setWeight(double weight) {
 		this.weight = weight;
+
 	}
 	public String getDescription() {
 		return description;
