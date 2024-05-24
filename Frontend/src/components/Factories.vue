@@ -16,7 +16,7 @@
         </div>
         <div>
             <table id="Factories">
-                    <tr v-for="f in factories">
+                    <tr v-for="f in factories" v-on:click="showDetails(f)">
                         <td>
                             <img :src="f.logo" alt="Logo" width="250" height="250">
                         </td>
@@ -30,7 +30,9 @@
 <script setup>
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const factories = ref([]);
 
 onMounted(() => {
@@ -41,6 +43,10 @@ function loadProducts() {
     axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAll').then(response => {
             factories.value = response.data
         });
+}
+
+function showDetails(factory) {
+    router.push({name: 'factoryDetails', params: { factoryId: factory.id }});
 }
 </script>
 

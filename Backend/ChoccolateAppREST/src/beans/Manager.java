@@ -24,11 +24,11 @@ public class Manager extends User {
 		this.factoryId = factoryId;
 	}
 
-	public int getChocolateFactory() {
+	public int getFactoryId() {
 		return factoryId;
 	}
 
-	public void setChocolateFactory(int factoryId) {
+	public void setFactoryId(int factoryId) {
 		this.factoryId = factoryId;
 	}	
 }

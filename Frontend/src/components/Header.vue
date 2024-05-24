@@ -2,7 +2,12 @@
     <div class="div_style">
         <label v-if="isLoggedIn">{{loggedInUser.username}}</label>
         <router-link v-else to="/login">Login</router-link> 
+
         <label> | </label>
+
+        <a v-on:click="showMyFactory()" v-if="isLoggedIn && loggedInUser.role == 'MANAGER'">My Factory</a> 
+        <label v-if="isLoggedIn && loggedInUser.role == 'MANAGER'"> | </label>
+
         <a v-on:click="logOut()" v-if="isLoggedIn">Log out</a>
         <router-link v-else to="/register">Register</router-link>    
     </div>
@@ -11,8 +16,10 @@
 <script setup>
     import axios from 'axios';
     import { onMounted, ref } from 'vue';
+    import { useRouter } from 'vue-router';
 
-    const loggedInUser = ref({ id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: "", role: ""});
+    const router = useRouter();
+    const loggedInUser = ref(null);
     const isLoggedIn = ref(false);
 
     onMounted(()=>{
@@ -35,11 +42,16 @@
     function logOut()
     {
         axios.get("http://localhost:8080/ChoccolateAppREST/rest/logOut").then(response=>{
-            loggedInUser.value = { id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: "", role: ""};
+            loggedInUser.value = null;
             isLoggedIn.value = false;
         }).catch(error=>{
             console.error(error);
         })
+    }
+
+    function showMyFactory()
+    {
+        router.push({name: 'factoryDetails', params: { factoryId: loggedInUser.value.factoryId }})
     }
 </script>
 

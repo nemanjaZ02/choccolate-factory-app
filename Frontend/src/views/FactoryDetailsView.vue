@@ -1,11 +1,13 @@
 <script setup>
 import Header from '../components/Header.vue'
-import Register from '../components/Register.vue'
+import FactoryDetails from '../components/FactoryDetails.vue'
+
+
 </script>
 
 <template>
   <main>
     <Header />
-    <Register />
+    <FactoryDetails />
   </main>
 </template>

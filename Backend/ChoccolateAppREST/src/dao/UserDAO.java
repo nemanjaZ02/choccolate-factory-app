@@ -47,6 +47,13 @@ public class UserDAO {
                 return customer;
             }
         }
+		
+		for (User manager : managers) {
+            if (manager.getUsername().equals(username) && manager.getPassword().equals(password)) {
+                return manager;
+            }
+        }
+		
         return null;
     }
 	
