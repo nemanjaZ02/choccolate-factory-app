@@ -53,7 +53,7 @@ public class LoginService {
 		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
 		User loggedUser = userDao.find(user.getUsername(), user.getPassword());
 		if (loggedUser == null) {
-			return Response.status(205).entity("Invalid username and/or password").build();
+			return Response.status(405).entity("Invalid username and/or password").build();
 		}
 		ctx.setAttribute("loggedUser", loggedUser);
 		return Response.status(200).build();
