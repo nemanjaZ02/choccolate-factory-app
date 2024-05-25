@@ -1,28 +1,31 @@
 <template>
-    <div>
-        <div id="divSearchAndHeader">
-            <h1 id="FactoriesHeader">FACTORIES</h1>
-            <form id="searchForm">
-                <label for="search">Naziv Fabrike: </label>
-                <input id="search" type="search" pattern=".*\S.*" required>
-                <label for="search">Naizv Cokolade: </label>
-                <input id="search" type="search" pattern=".*\S.*" required>
-                <label for="search">Lokacija: </label>
-                <input id="search" type="search" pattern=".*\S.*" required>
-                <label for="search">Prosecna Ocena: </label>
-                <input id="search" type="search" pattern=".*\S.*" required>
-                <span class="caret"></span>
+    <div class="container">
+        <h1>FACTORIES</h1>
+        <div class="header">
+            <form class="search-form">
+                <div class="form-group">
+                    <label for="search">Naziv Fabrike: </label>
+                    <input type="search" pattern=".*\S.*" required>
+                </div>
+                <div class="form-group">
+                    <label for="search">Naizv Cokolade: </label>
+                    <input type="search" pattern=".*\S.*" required>
+                </div>
+                <div class="form-group">
+                    <label for="search">Lokacija: </label>
+                    <input type="search" pattern=".*\S.*" required>
+                </div>
+                <div class="form-group">
+                    <label for="search">Prosecna Ocena: </label>
+                    <input type="search" pattern=".*\S.*" required>
+                </div>
             </form>
         </div>
-        <div>
-            <table id="Factories">
-                    <tr v-for="f in factories" v-on:click="showDetails(f)">
-                        <td>
-                            <img :src="f.logo" alt="Logo" width="250" height="250">
-                        </td>
-                        <td id="FactoryName">{{ f.name }}</td>
-                    </tr>
-            </table>
+        <div class="factories">
+            <div class="factory" v-for="f in factories" v-on:click="showDetails(f)">
+                <img :src="f.logo" alt="Logo" class="factory-logo">
+                <div class="factory-name">{{ f.name }}</div>
+            </div>
         </div>
     </div>
 </template>
@@ -50,35 +53,75 @@ function showDetails(factory) {
 }
 </script>
 
-<style>
-#FactoriesHeader {
+<style scoped>
+.container {
+    max-width: 960px;
+    padding: 25px;
+    font-family: Arial, sans-serif;
+    background-color: #dfd1c2;
+    border-radius: 8px;
+    margin-top: 100px;
+}
+
+.header {
     text-align: center;
-    font-size: 100px;
-    font-family: fantasy;
+    margin-bottom: 40px;
 }
 
-#Factories { 
-    margin: auto;
-    border-collapse: collapse;
+.header h1 {
+    font-size: 2.5em;
+    color: #333;
+    margin-bottom: 20px;
 }
 
-#Factories tr:hover{
-    background-color: brown;
+.search-form {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
-#FactoryName {
-    font-size: 42px;
-    font-family: fantasy;
-    vertical-align: text-top;
-    padding-left: 30px;
+.form-group {
+    flex: 0 0 calc(50% - 10px);
+    margin-bottom: 20px;
 }
 
-#searchForm {
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.factories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.factory {
+    width: calc(50% - 10px);
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.factory:hover {
+    background-color: #f9f9f9;
+}
+
+.factory-logo {
+    width: 100%;
+    height: auto;
+}
+
+.factory-name {
+    font-size: 1.5em;
+    padding: 10px 0;
     text-align: center;
-    margin: 20px;
-}
-
-input[type="search"] {
-  background-color: #dfd1c2;
 }
 </style>

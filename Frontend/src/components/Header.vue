@@ -1,16 +1,18 @@
 <template>
+
     <div class="div_style">
         <label v-if="isLoggedIn">{{loggedInUser.username}}</label>
         <router-link v-else to="/login">Login</router-link> 
 
         <label> | </label>
 
-        <a v-on:click="showMyFactory()" v-if="isLoggedIn && loggedInUser.role == 'MANAGER'">My Factory</a> 
+        <router-link :to="{name: 'factoryDetails', params: { factoryId: loggedInUser.factoryId }}" v-if="isLoggedIn && loggedInUser.role == 'MANAGER'">My Factory</router-link> 
         <label v-if="isLoggedIn && loggedInUser.role == 'MANAGER'"> | </label>
 
         <a v-on:click="logOut()" v-if="isLoggedIn">Log out</a>
         <router-link v-else to="/register">Register</router-link>    
     </div>
+
 </template>
 
 <script setup>
@@ -44,21 +46,17 @@
         axios.get("http://localhost:8080/ChoccolateAppREST/rest/logOut").then(response=>{
             loggedInUser.value = null;
             isLoggedIn.value = false;
+            router.push('/');
         }).catch(error=>{
             console.error(error);
         })
     }
-
-    function showMyFactory()
-    {
-        router.push({name: 'factoryDetails', params: { factoryId: loggedInUser.value.factoryId }})
-    }
 </script>
 
-<style>
+<style scoped>
     .div_style {
         width: 100%;
-        padding: 2%;
+        padding: 32px 2%;
         background-color: #333;
         color: white;
         text-align: right;
@@ -66,5 +64,10 @@
         position: fixed;
         top: 0;
         left: 0;
+        z-index: 1000;
+    }
+
+    a:hover {
+        cursor: pointer;
     }
 </style>
