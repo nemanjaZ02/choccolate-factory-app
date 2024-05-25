@@ -15,6 +15,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import beans.Admin;
+import beans.Employee;
+import beans.Manager;
 import beans.User;
 import dao.UserDAO;
 import enums.Role;
@@ -101,6 +104,21 @@ public class LoginService {
 	@Path("/getLoggedInUser")
 	@Produces(MediaType.APPLICATION_JSON)
 	public User getLoggedInUser(@Context HttpServletRequest request) {
-		return (User) ctx.getAttribute("loggedUser");
+		User user = (User) ctx.getAttribute("loggedUser");
+        
+        if (user != null) {
+            switch (user.getRole()) {
+                case MANAGER:
+                    return (Manager) user;
+                case EMPLOYEE:
+                    return (Employee) user;
+                case ADMIN:
+                    return (Admin) user;
+                default:
+                    return user;
+            }
+        } else {
+            return null;
+        }
 	}
 }
