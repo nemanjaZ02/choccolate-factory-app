@@ -55,15 +55,20 @@ function addChocolate()
 {
    
     
-    axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/addChocolate/'+route.params.loggedInUserId, this.chocolate).then(response=>{
-        
-       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate/'+route.params.loggedInUserId, this.chocolate).then(respone=>{
-
-        router.push({name: 'factoryDetails', params: { factoryId: chocolate.factoryId }})
-
+    axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/addChocolate', this.chocolate, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+      }
+    })
+    .then(response=>{
+       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate', this.chocolate, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+          }
        })
-
-
+       .then(respone=>{
+          router.push({name: 'factoryDetails', params: { factoryId: chocolate.factoryId }})
+        })
     });
 }
 

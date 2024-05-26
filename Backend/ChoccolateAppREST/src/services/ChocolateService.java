@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -17,9 +18,13 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.shaded.json.parser.ParseException;
+
 import beans.Chocolate;
 import dao.ChocolateDAO;
 import dao.UserDAO;
+import jwt.JwtUtils;
 
 @Path("/chocolates")
 public class ChocolateService {
@@ -42,10 +47,6 @@ public class ChocolateService {
 			ctx.setAttribute("chocolateDAO", new ChocolateDAO(contextPath));
 			
 		}
-		if (ctx.getAttribute("userDAO") == null) {
-	        String contextPath = ctx.getRealPath("");
-	        ctx.setAttribute("userDAO", new UserDAO(contextPath));
-	    }
 	}
 	
 	@GET
@@ -67,24 +68,22 @@ public class ChocolateService {
 	}
 	
 	@OPTIONS
-	@Path("/addChocolate/{loggedInUserId}")
+	@Path("/addChocolate")
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean corsAddChocolate() {
 		return true;
 	}
 	
 	@POST
-	@Path("/addChocolate/{loggedInUserId}")
+	@Path("/addChocolate")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response addChocolate(@PathParam("loggedInUserId") int userId, Chocolate newChocolate)
+	public Response addChocolate(Chocolate newChocolate, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
 	{
-		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
-		if(!userDAO.isUserManager(userId))
-		{
-			return Response.status(405).entity("trying to bypass ranking").build(); 
-		}
-		
+        if (!JwtUtils.isManager(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only managers can add chocolates").build();
+        }
+
 		if(newChocolate.getName()=="" || newChocolate.getKind()=="" || newChocolate.getDescription()=="" || newChocolate.getPrice()<=0 || newChocolate.getImage() == "" || newChocolate.getWeight()<=0 || newChocolate.getType()=="")
 		{
 			return Response.status(405).entity("invalid input").build();

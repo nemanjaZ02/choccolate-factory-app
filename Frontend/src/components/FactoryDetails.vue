@@ -66,7 +66,7 @@ const factory = ref({});
 const dataLoaded = ref(false);
 const router = useRouter();
 
-const loggedInUser = ref({ id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: "", role: ""});
+const loggedInUser = ref({});
 const isLoggedIn = ref(false);
 
 onMounted(() => {
@@ -76,15 +76,17 @@ onMounted(() => {
       return;
     }
     factory.value = response.data;
-
-    axios.get("http://localhost:8080/ChoccolateAppREST/rest/getLoggedInUser").then(response=>{
-            loggedInUser.value=response.data;  
-            dataLoaded.value = true;
-        })
+    
+    if(JSON.parse(localStorage.getItem('loggedUser')))
+    {
+      loggedInUser.value= JSON.parse(localStorage.getItem('loggedUser'));  
+    }
+    
+    dataLoaded.value = true;  
   });
 });
 function showAddForm(factoryId) {
-     router.push({name: 'addChocolateForm', params: {factoryId: factoryId, loggedInUserId: this.loggedInUser.id}});
+     router.push({name: 'addChocolateForm', params: {factoryId: factoryId}});
 }
 </script>
 

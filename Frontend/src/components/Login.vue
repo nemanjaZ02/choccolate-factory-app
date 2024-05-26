@@ -39,7 +39,8 @@ const success = ref('');
 const login = () => {
     axios.post('http://localhost:8080/ChoccolateAppREST/rest/login', { username: username.value, password: password.value })
         .then(response => {
-            localStorage.setItem('loggedUser', JSON.stringify(response.data));
+            localStorage.setItem('loggedUser', JSON.stringify(response.data.user));
+            localStorage.setItem('jsonWebToken', JSON.stringify(response.data.jwt));
             success.value = 'Korisnik je uspesno prijavljen.';
             errorMessage.value = '';
             router.push('/');

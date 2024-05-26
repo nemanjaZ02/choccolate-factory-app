@@ -25,31 +25,23 @@
     const isLoggedIn = ref(false);
 
     onMounted(()=>{
-        getLoggedInUser();
+        loggedInUser.value = JSON.parse(localStorage.getItem('loggedUser'));
+
+        if(loggedInUser.value != null) {
+            isLoggedIn.value = true;
+        }
+        else {
+            isLoggedIn.value = false;
+        }  
     })
     
-    function getLoggedInUser()
-    {
-        axios.get("http://localhost:8080/ChoccolateAppREST/rest/getLoggedInUser").then(response=>{
-            if(!response.data) {
-                isLoggedIn.value = false;
-            }
-            else {
-                loggedInUser.value=response.data;
-                isLoggedIn.value = true;
-            }   
-        })
-    }
-
     function logOut()
     {
-        axios.get("http://localhost:8080/ChoccolateAppREST/rest/logOut").then(response=>{
-            loggedInUser.value = null;
-            isLoggedIn.value = false;
-            router.push('/');
-        }).catch(error=>{
-            console.error(error);
-        })
+        localStorage.removeItem('loggedUser');
+        localStorage.removeItem('jsonWebToken');
+        loggedInUser.value = null;
+        isLoggedIn.value = false;
+        router.push('/');
     }
 </script>
 

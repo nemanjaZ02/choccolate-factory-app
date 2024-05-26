@@ -30,7 +30,7 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/addChocolateForm/:factoryId/:loggedInUserId',
+      path: '/addChocolateForm/:factoryId',
       name: 'addChocolateForm',
       component: AddChocolateView,
     }

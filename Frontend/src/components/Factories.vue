@@ -39,10 +39,10 @@ const router = useRouter();
 const factories = ref([]);
 
 onMounted(() => {
-    loadProducts();
+    loadFactories();
 })
 
-function loadProducts() {
+function loadFactories() {
     axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAll').then(response => {
             factories.value = response.data
         });
