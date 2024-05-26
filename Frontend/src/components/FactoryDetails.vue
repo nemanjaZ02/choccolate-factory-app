@@ -1,11 +1,10 @@
 <template>
   <div class="container">
     <div v-if="!factory">
-      <h1>FACTORY WITH THIS ID DOES NOT EXIST!</h1>
+      <h1>PAGE FOR THIS FACTORY DOES NOT EXIST!</h1>
     </div>
-    <div v-else-if="dataLoaded && loggedInUser.role == 'MANAGER' && loggedInUser.factoryId == factory.id">
+    <div v-else-if="dataLoaded">
       <div class="manager-info">
-        <label>YOU ARE MANAGER OF THIS FACTORY</label>
         <table class="factory-table">
           <thead>
             <tr>
@@ -34,53 +33,24 @@
               <td>Average rate:</td>
               <td>{{ factory.rating }}</td>
             </tr>
-            <tr v-for="c in factory.chocolates" :key="c.name">
-              <td>
-                <img :src="c.image" alt="Chocolate" class="chocolate-image">
-              </td>
-              <td>{{ c.name }}</td>
-            </tr>
           </tbody>
         </table>
-      </div>
-    </div>
-    <div v-else-if="dataLoaded">
-      <table class="factory-table">
-        <thead>
-          <tr>
-            <th colspan="2" class="factory-name">{{ factory.name }}</th>
-          </tr>
-          <tr>
-            <th colspan="2">
-              <img :src="factory.logo" alt="Logo" class="factory-logo">
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Working Status:</td>
-            <td>{{ factory.status }}</td>
-          </tr>
-          <tr>
-            <td>City:</td>
-            <td>{{ factory.location.adress.city }}</td>
-          </tr>
-          <tr>
-            <td>Address:</td>
-            <td>{{ factory.location.adress.street + " " + factory.location.adress.streetNum + ", " + factory.location.adress.city }}</td>
-          </tr>
-          <tr>
-            <td>Average rate:</td>
-            <td>{{ factory.rating }}</td>
-          </tr>
-          <tr v-for="c in factory.chocolates" :key="c.name">
-            <td>
+        <div class="chocolate-div-container-container">
+          <h1>CHOCOLATES</h1>
+     
+        
+         
+          <label style="margin-top: 50px; margin-left: 110px;" v-if="loggedInUser.factoryId == factory.id"><button v-on:click="showAddForm(factory.id)" class="button-with-image">
+  <img src="../../public/Images/add.png" style="width: 30px;"  alt="Image">
+</button></label>
+          <div class="chocolate-div-container">
+            <div v-for="c in factory.chocolates" class="chocolate-div">
               <img :src="c.image" alt="Chocolate" class="chocolate-image">
-            </td>
-            <td>{{ c.name }}</td>
-          </tr>
-        </tbody>
-      </table>
+              <label>{{ c.name }}</label>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -89,10 +59,12 @@
 import axios from 'axios';
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { useRouter} from 'vue-router';
 
 const route = useRoute();
 const factory = ref({});
 const dataLoaded = ref(false);
+const router = useRouter();
 
 const loggedInUser = ref({ id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: "", role: ""});
 const isLoggedIn = ref(false);
@@ -111,6 +83,9 @@ onMounted(() => {
         })
   });
 });
+function showAddForm(factoryId) {
+     router.push({name: 'addChocolateForm', params: {factoryId: factoryId, loggedInUserId: this.loggedInUser.id}});
+}
 </script>
 
 <style scoped>
@@ -118,23 +93,24 @@ onMounted(() => {
   max-width: 960px;
   margin: 0 auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f7f7f7;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #dfd1c2;
   border-radius: 8px;
   margin-top: 100px; 
 }
 
 h1 {
-  color: #ff4b5c;
   text-align: center;
 }
 
 .manager-info label {
   display: block;
   font-size: 1.2rem;
-  color: #ff4b5c;
   margin-bottom: 10px;
   text-align: center;
+}
+
+.manager-info {
+  display: flex;
 }
 
 .factory-table {
@@ -143,11 +119,37 @@ h1 {
   margin-top: 20px;
 }
 
+.chocolate-div-container-container {
+  display: flex;
+  width: 690px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  border-right: 50px solid #dfd1c2; 
+  border-top-right-radius: 8px;
+}
+
+.chocolate-div-container {
+  background-color: #f7f7f7;
+  display: flex;
+  width: 690px;
+  flex-wrap: wrap;
+  height: 650px;
+  overflow-y: scroll;
+  
+  border-bottom: 50px solid #dfd1c2;
+}
+
+.chocolate-div {
+  justify-content: center;
+  align-items: center;
+  margin: 25px;
+}
+
 .factory-table th,
 .factory-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px;
 }
 
 .factory-name {
@@ -171,10 +173,19 @@ h1 {
 }
 
 tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: #d6cdc4;
 }
-
-tbody tr:hover {
-  background-color: #f1f1f1;
-}
+.button-with-image {
+    display: inline-block;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  .button-with-image:hover {
+    background-color: #ddd;
+  
+  }
+ 
 </style>

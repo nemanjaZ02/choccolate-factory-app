@@ -61,7 +61,7 @@
         color: white;
         text-align: right;
         box-sizing: border-box;
-        position: fixed;
+        position: absolute;
         top: 0;
         left: 0;
         z-index: 1000;

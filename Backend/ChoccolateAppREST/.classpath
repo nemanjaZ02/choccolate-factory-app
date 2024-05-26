@@ -43,7 +43,7 @@
 			<attribute name="owner.project.facets" value="jst.web"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/gson-2.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Desktop/choccolateFactory/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/gson-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/HP/Desktop/choccolateFactory/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/servlet-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

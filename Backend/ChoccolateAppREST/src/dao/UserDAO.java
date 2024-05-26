@@ -165,4 +165,15 @@ public class UserDAO {
 		
 		return newUser;	
 	}
+	
+	public boolean isUserManager(int userId)
+	{
+		for(Manager manager: managers )
+		{
+			if(manager.getId()==userId)
+				return true;
+		}
+		return false;
+	}
+	
 }

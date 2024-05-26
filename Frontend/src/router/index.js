@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import LoginView from '@/views/LoginView.vue'
 import RegisterView from '@/views/RegisterView.vue'
 import FactoryDetailsView from '@/views/FactoryDetailsView.vue'
+import AddChocolateView from '@/views/AddChocolateView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +28,11 @@ const router = createRouter({
       name: 'factoryDetails',
       component: FactoryDetailsView,
       props: true
+    },
+    {
+      path: '/addChocolateForm/:factoryId/:loggedInUserId',
+      name: 'addChocolateForm',
+      component: AddChocolateView,
     }
   ]
 })

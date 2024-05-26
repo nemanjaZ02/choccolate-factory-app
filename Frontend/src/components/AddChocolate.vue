@@ -28,7 +28,7 @@
   </tr>
   <tr>
     <th>Image:</th>
-    <th><input v-model="chocolate.image" type="text"></th>
+    <th><input v-model="chocolate.image" type="text" ></th>
   </tr>
   <tr>
     <th><input type="submit" value="Add"></th>
@@ -43,17 +43,30 @@
 import axios from 'axios';
 import {onMounted, ref} from 'vue';
 import {useRouter} from 'vue-router';
-
-
-const chocolate = ref({id:0, factoryId:0, name:"", price:0, type:"", kind:"", status:"NotInStock", weight:0, description:"", image:"", quantity:0});
-
+import {useRoute} from 'vue-router';
+const router = useRouter();
+const route = useRoute();
+const chocolate = ref({id:0, factoryId:route.params.factoryId, name:"", price:0, type:"", kind:"", status:"NotInStock", weight:0, description:"", image:"", quantity:0});
+function addImage()
+{
+  chocolate.value.image = target.files[0]; 
+}
 function addChocolate()
 {
    
-    const a = chocolate
-    axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/addChocolate', this.chocolate).then(response=>{
+    
+    axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/addChocolate/'+route.params.loggedInUserId, this.chocolate).then(response=>{
         
-    })
+       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate/'+route.params.loggedInUserId, this.chocolate).then(respone=>{
+
+        router.push({name: 'factoryDetails', params: { factoryId: chocolate.factoryId }})
+
+       })
+
+
+    });
 }
+
+
 
 </script>

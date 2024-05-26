@@ -103,7 +103,7 @@ public class LoginService {
 	@GET
 	@Path("/getLoggedInUser")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getLoggedInUser(@Context HttpServletRequest request) {
+	public User getLoggedInUser() {
 		User user = (User) ctx.getAttribute("loggedUser");
         
         if (user != null) {
@@ -121,4 +121,6 @@ public class LoginService {
             return null;
         }
 	}
+	
+	
 }
