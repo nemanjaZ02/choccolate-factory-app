@@ -1,5 +1,6 @@
 package services;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
@@ -15,12 +16,17 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.nimbusds.jose.JOSEException;
+
 import beans.Admin;
 import beans.Employee;
 import beans.Manager;
 import beans.User;
 import dao.UserDAO;
 import enums.Role;
+import jwt.JwtConstants;
+import jwt.JwtUtils;
+import jwt.LoginResponse;
 
 @Path("")
 public class LoginService {
@@ -53,11 +59,27 @@ public class LoginService {
 		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
 		User loggedUser = userDao.find(user.getUsername(), user.getPassword());
 		if (loggedUser == null) {
-			return Response.status(405).entity("Invalid username and/or password").build();
-		}
-		ctx.setAttribute("loggedUser", loggedUser);
-		return Response.status(200).build();
-	}
+            return Response.status(Response.Status.UNAUTHORIZED)
+                           .entity("Invalid username and/or password")
+                           .build();
+        }
+        
+        try {
+            String token = JwtUtils.generateToken(loggedUser, JwtConstants.SECRET_KEY);
+
+            ctx.setAttribute("loggedUser", loggedUser);
+            
+            return Response.status(Response.Status.OK)
+                           .entity(new LoginResponse(loggedUser, token))
+                           .build();
+        } catch (JOSEException e) {
+            e.printStackTrace();
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                           .entity("Failed to generate JWT token")
+                           .build();
+        }
+    }
+	
 	
 	@OPTIONS
 	@Path("/register")
@@ -103,7 +125,7 @@ public class LoginService {
 	@GET
 	@Path("/getLoggedInUser")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getLoggedInUser(@Context HttpServletRequest request) {
+	public User getLoggedInUser() {
 		User user = (User) ctx.getAttribute("loggedUser");
         
         if (user != null) {
@@ -121,4 +143,6 @@ public class LoginService {
             return null;
         }
 	}
+	
+	
 }
