@@ -59,9 +59,11 @@ function addChocolate()
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
       }
+      
     })
     .then(response=>{
-       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate', this.chocolate, {
+      let responseData = response.data;
+       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate', responseData, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
           }

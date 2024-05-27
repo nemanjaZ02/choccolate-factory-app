@@ -44,10 +44,16 @@
   <img src="../../public/Images/add.png" style="width: 30px;"  alt="Image">
 </button></label>
           <div class="chocolate-div-container">
-            <div v-for="c in factory.chocolates" class="chocolate-div">
-              <img :src="c.image" alt="Chocolate" class="chocolate-image">
-              <label>{{ c.name }}</label>
-            </div>
+              
+              <div style="height: 200px;" v-for="c in factory.chocolates" class="chocolate-div">
+                <table>
+                <tr><img :src="c.image" alt="Chocolate" class="chocolate-image"></tr>
+                <tr> <label>{{ c.name }}</label></tr>
+                <tr><button v-on:click="showUpdateForm(c)" class="btn">Edit</button></tr>
+              </table>
+              </div>
+           
+          
           </div>
         </div>
       </div>
@@ -87,6 +93,9 @@ onMounted(() => {
 });
 function showAddForm(factoryId) {
      router.push({name: 'addChocolateForm', params: {factoryId: factoryId}});
+}
+function showUpdateForm(chocolate){
+     router.push({ name: 'updateChocolateForm', params: { chocolateId: chocolate.id } });
 }
 </script>
 
@@ -189,5 +198,19 @@ tbody tr:nth-child(even) {
     background-color: #ddd;
   
   }
- 
+
+  .item {
+    position: relative;
+    padding: 10px;
+}
+
+.btn {
+    display: none;
+    position:relative;
+   
+}
+
+.chocolate-div:hover .btn {
+    display: block;
+}
 </style>

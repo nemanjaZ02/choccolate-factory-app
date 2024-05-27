@@ -22,6 +22,7 @@ public class ChocolateFactoryDAO {
 	
 	public ChocolateFactoryDAO() {
 		
+		
 	}
 	
 	public ChocolateFactoryDAO(String contextPath) {
@@ -104,6 +105,50 @@ public class ChocolateFactoryDAO {
 				chocolates = factory.getChocolates();
 				chocolates.add(newChocolate);
 				factory.setChocolates(chocolates);
+			
+				factories.remove(factory.getId());
+				factories.add(factory);
+				
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/chocolateFactories.json");
+				ChocolateFactory[] updateChocolateFactoryArray = factories.toArray(new ChocolateFactory[0]);
+				updatedJsonData = gson.toJson(updateChocolateFactoryArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				return;
+			}
+		}
+	}
+	public void updateChocolateInFactory(Chocolate updatedChocolate, String contextPath)
+	{
+		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
+		
+		for(ChocolateFactory factory: factories)
+		{
+			if(factory.getId()==updatedChocolate.getFactoryId())
+			{
+				chocolates = factory.getChocolates();
+				
+				for(Chocolate chocolate:chocolates)
+				{
+					if(chocolate.getId()==updatedChocolate.getId())
+					{
+						chocolates.remove(chocolate);
+						break;
+					}
+				}
+				
+				
+				chocolates.add(updatedChocolate);
+				factory.setChocolates(chocolates);
+			
 				factories.remove(factory.getId());
 				factories.add(factory);
 				
