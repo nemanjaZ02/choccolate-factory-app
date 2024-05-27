@@ -77,7 +77,7 @@ public class ChocolateFactoryDAO {
 				factory.setChocolates(chocolates);
 			
 				factories.remove(id);
-				factories.add(factory);
+				factories.add(id, factory);
 				
 				Gson gson = new Gson();  
 				String updatedJsonData;
@@ -96,6 +96,7 @@ public class ChocolateFactoryDAO {
 			}
 		}
 	}
+	
 	public void updateChocolateInFactory(Chocolate updatedChocolate, String contextPath)
 	{
 		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
@@ -106,17 +107,18 @@ public class ChocolateFactoryDAO {
 			{
 				chocolates = factory.getChocolates();
 				
+				int i = -1;
 				for(Chocolate chocolate:chocolates)
 				{
+					i++;
 					if(chocolate.getId()==updatedChocolate.getId())
 					{
 						chocolates.remove(chocolate);
+						chocolates.add(i, updatedChocolate);
 						break;
 					}
 				}
 				
-				
-				chocolates.add(updatedChocolate);
 				factory.setChocolates(chocolates);
 			
 				factories.remove(factory.getId()-1);
@@ -138,5 +140,50 @@ public class ChocolateFactoryDAO {
 				return;
 			}
 		}
+	}
+	
+	public ChocolateFactory deleteChocolateFromFactory(Chocolate chocolate, String contextPath) {
+		ChocolateFactory factory = new ChocolateFactory();
+		
+		for(ChocolateFactory cf : factories)
+		{
+			if(cf.getId() == chocolate.getFactoryId())
+			{
+				factory = cf;
+			}
+		}
+		
+		if(factory == null)
+			return null;
+		
+		ArrayList<Chocolate> chocolates = factory.getChocolates();
+		
+		int i = -1;
+		for(Chocolate c : chocolates)
+		{
+			i++;
+			if(c.getId() == chocolate.getId())
+			{
+				c.setDeleted(true);
+				chocolates.set(i, c);	
+			}
+		}
+		
+		factory.setChocolates(chocolates);
+		
+		Gson gson = new Gson();  
+		String updatedJsonData;
+		
+		Path filePath = Paths.get(contextPath, "/chocolateFactories.json");
+		ChocolateFactory[] updateChocolateFactoryArray = factories.toArray(new ChocolateFactory[0]);
+		updatedJsonData = gson.toJson(updateChocolateFactoryArray);
+		
+        try {
+			Files.write(filePath, updatedJsonData.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        return factory;	
 	}
 }

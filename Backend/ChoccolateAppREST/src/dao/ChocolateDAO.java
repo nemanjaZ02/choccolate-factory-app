@@ -102,6 +102,7 @@ public class ChocolateDAO {
 					chocolate.setStatus(updatedChocolate.getStatus());
 					chocolate.setWeight(updatedChocolate.getWeight());
 					chocolate.setImage(updatedChocolate.getImage());
+					chocolate.setDeleted(updatedChocolate.getIsDeleted());
 							
 					Gson gson = new Gson();  
 					String updatedJsonData;
@@ -124,6 +125,36 @@ public class ChocolateDAO {
 			return null;	
 	}
 	
+	public Chocolate deleteChocolate(Chocolate chocolate, String contextPath) {
+		int id = chocolate.getId();
+		
+		Chocolate chocolateForDeletion = getChocolateById(id);
+		if(chocolateForDeletion == null)
+			return null;
+		
+		chocolateForDeletion.setDeleted(true);
+		
+		int i = -1;
+		for(Chocolate c : chocolates)
+		{
+			i++;
+			if(c.getId() == chocolateForDeletion.getId())
+			{
+				chocolates.set(i, chocolateForDeletion);
+			}
+		}
+		
+		Gson gson = new Gson();  
+		String updatedJsonData;
+		
+		Path filePath = Paths.get(contextPath, "/chocolates.json");
+		Chocolate[] updateChocolateArray = chocolates.toArray(new Chocolate[0]);
+		updatedJsonData = gson.toJson(updateChocolateArray);
+		
+		return chocolateForDeletion;
+	}
+	
+	
 	public Chocolate getChocolateById(int id)
 	{
 		for(Chocolate chocolate:chocolates)
@@ -136,6 +167,4 @@ public class ChocolateDAO {
 		}
 		return null;
 	}
-	
-	
 }
