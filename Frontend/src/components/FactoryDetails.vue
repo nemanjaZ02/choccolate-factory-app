@@ -36,12 +36,27 @@
           </tbody>
         </table>
         <div class="chocolate-div-container-container">
-          <h1>CHOCOLATES</h1>
-          <label style="margin-top: 50px; margin-left: 110px;" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
-            <button v-on:click="showAddForm(factory.id)" class="button-with-image">
-              <img src="../../public/Images/add.png" style="width: 30px;"  alt="Image">
+          <table>
+            <tr>
+         <td> <h1>CHOCOLATES</h1></td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td>&nbsp;</td>
+         <td><label  v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
+            <button v-on:click="showAddForm(factory.id)" style="margin-top: 15px;" class="button-with-image">
+              <img src="../../public/Images/addButton.png"  style="width: 30px;">
             </button>
           </label>
+        </td> 
+        </tr>
+        </table>
           <div class="chocolate-div-container">
             <div style="height: 200px;" v-for="c in factory.chocolates" class="chocolate-div">
               <table class="chocolate-table">
@@ -213,23 +228,22 @@ tbody tr:nth-child(even) {
   background-color: #d6cdc4;
 }
 .button-with-image {
-    display: inline-block;
-    background-color: transparent;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  outline: none;
+ 
+}
+.image-container {
+  position: relative;
+  display: inline-block; /* Ensures the container wraps around the images */
+}
 
-  .button-with-image:hover {
-    background-color: #ddd;
-  
-  }
 
-  .item {
+.item {
     position: relative;
     padding: 10px;
-  }
+}
 
 .btn {
     opacity: 0;
