@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.google.gson.Gson;
 import beans.Chocolate;
+import beans.ChocolateFactory;
 import enums.ChocolateStatus;
 
 
@@ -86,8 +87,84 @@ public class ChocolateDAO {
 
 	}
 	
+	public Chocolate updateChocolate(Chocolate updatedChocolate, String contextPath) {
+		
+			for(Chocolate chocolate: chocolates)
+			{
+			    if(chocolate.getId()==updatedChocolate.getId())
+			    {
+			    	chocolate.setName(updatedChocolate.getName());
+					chocolate.setPrice(updatedChocolate.getPrice());
+					chocolate.setDescription(updatedChocolate.getDescription());
+					chocolate.setKind(updatedChocolate.getKind());
+					chocolate.setQuantity(updatedChocolate.getQuantity());
+					chocolate.setType(updatedChocolate.getType());
+					chocolate.setStatus(updatedChocolate.getStatus());
+					chocolate.setWeight(updatedChocolate.getWeight());
+					chocolate.setImage(updatedChocolate.getImage());
+					chocolate.setDeleted(updatedChocolate.getIsDeleted());
+							
+					Gson gson = new Gson();  
+					String updatedJsonData;
+					
+					Path filePath = Paths.get(contextPath, "/chocolates.json");
+					Chocolate[] updateChocolateArray = chocolates.toArray(new Chocolate[0]);
+					updatedJsonData = gson.toJson(updateChocolateArray);
+					
+		            try {
+						Files.write(filePath, updatedJsonData.getBytes());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+		            
+		            return chocolate;
+			    }
+
+			}
+			
+			return null;	
+	}
+	
+	public Chocolate deleteChocolate(Chocolate chocolate, String contextPath) {
+		int id = chocolate.getId();
+		
+		Chocolate chocolateForDeletion = getChocolateById(id);
+		if(chocolateForDeletion == null)
+			return null;
+		
+		chocolateForDeletion.setDeleted(true);
+		
+		int i = -1;
+		for(Chocolate c : chocolates)
+		{
+			i++;
+			if(c.getId() == chocolateForDeletion.getId())
+			{
+				chocolates.set(i, chocolateForDeletion);
+			}
+		}
+		
+		Gson gson = new Gson();  
+		String updatedJsonData;
+		
+		Path filePath = Paths.get(contextPath, "/chocolates.json");
+		Chocolate[] updateChocolateArray = chocolates.toArray(new Chocolate[0]);
+		updatedJsonData = gson.toJson(updateChocolateArray);
+		
+		return chocolateForDeletion;
+	}
 	
 	
-	
-	
+	public Chocolate getChocolateById(int id)
+	{
+		for(Chocolate chocolate:chocolates)
+		{
+			if(chocolate.getId()==id)
+			{
+				return chocolate;
+			}
+				
+		}
+		return null;
+	}
 }

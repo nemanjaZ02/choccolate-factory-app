@@ -46,22 +46,22 @@ import {useRouter} from 'vue-router';
 import {useRoute} from 'vue-router';
 const router = useRouter();
 const route = useRoute();
-const chocolate = ref({id:0, factoryId:route.params.factoryId, name:"", price:0, type:"", kind:"", status:"NotInStock", weight:0, description:"", image:"", quantity:0});
+const chocolate = ref({id:0, factoryId:route.params.factoryId, name:"", price:0, type:"", kind:"", status:"NotInStock", weight:0, description:"", image:"", quantity:0, isDeleted: false});
 function addImage()
 {
   chocolate.value.image = target.files[0]; 
 }
 function addChocolate()
-{
-   
-    
+{ 
     axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/addChocolate', this.chocolate, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
       }
+      
     })
     .then(response=>{
-       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate', this.chocolate, {
+      let responseData = response.data;
+       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate', responseData, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
           }

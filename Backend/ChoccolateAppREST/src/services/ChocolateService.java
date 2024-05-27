@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
@@ -23,6 +24,7 @@ import com.nimbusds.jose.shaded.json.parser.ParseException;
 
 import beans.Chocolate;
 import dao.ChocolateDAO;
+import dao.ChocolateFactoryDAO;
 import dao.UserDAO;
 import jwt.JwtUtils;
 
@@ -40,13 +42,18 @@ public class ChocolateService {
 	@PostConstruct
 	public void init()
 	{
+		String contextPath = ctx.getRealPath("");
+		System.out.println(contextPath);
+		
 		if(ctx.getAttribute("chocolateDAO")==null)
 		{
-			String contextPath = ctx.getRealPath("");
-			System.out.println(contextPath);
 			ctx.setAttribute("chocolateDAO", new ChocolateDAO(contextPath));
-			
 		}
+		
+		if(ctx.getAttribute("chocolateFactoryDAO")==null)
+		{
+			ctx.setAttribute("chocolateFactoryDAO", new ChocolateFactoryDAO(contextPath));
+		}	
 	}
 	
 	@GET
@@ -92,12 +99,86 @@ public class ChocolateService {
 		{
 			ChocolateDAO chocolateDAO = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
 			String contextPath = ctx.getRealPath("");
-			chocolateDAO.saveChocolate(newChocolate, contextPath);
-			return Response.status(200).build();
+			Chocolate choco = chocolateDAO.saveChocolate(newChocolate, contextPath);
+			return Response.status(200).entity(choco).build();
 		}
 		
 	}
 	
+	@OPTIONS
+	@Path("/updateChocolate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean corsUpdateChocolate() {
+		return true;
+	}
 	
+	@PUT
+	@Path("/updateChocolate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateChocolate(Chocolate updatedChocolate, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
+	{
+		if (!JwtUtils.isManager(authorizationHeader) && !JwtUtils.isEmployee(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only managers or emplyees can update chocolates").build();
+        }
+		
+		if(updatedChocolate.getName()=="" || updatedChocolate.getKind()=="" || updatedChocolate.getDescription()=="" || updatedChocolate.getPrice()<=0 || updatedChocolate.getImage() == "" || updatedChocolate.getWeight()<=0 || updatedChocolate.getType()=="")
+		{
+			return Response.status(405).entity("invalid input").build();
+		}
+		else
+		{
+			ChocolateDAO chocolateDAO = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+			String contextPath = ctx.getRealPath("");
+			Chocolate editedChocolate= chocolateDAO.updateChocolate(updatedChocolate, contextPath);
+			return Response.status(200).entity(editedChocolate).build();
+		}
+		
+	}
 	
+	@GET
+	@Path("/getChocolate/{chocolateId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getChocolateById(@PathParam("chocolateId") int id)
+	{
+		ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+		
+		Chocolate chocolate =dao.getChocolateById(id);
+		if(chocolate==null)
+		{
+			return Response.status(405).entity("there is no chocolate with this id").build();
+		}
+		
+		return Response.status(200).entity(chocolate).build();	
+	}
+	
+	@OPTIONS
+	@Path("/deleteChocolate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean corsDeleteChocolate() {
+		return true;
+	}
+	@POST
+	@Path("/deleteChocolate")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteChocolate(Chocolate chocolate, @HeaderParam("Authorization") String authorizationHeader)  throws ParseException 
+	{
+		ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+		ChocolateFactoryDAO factoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+		String contextPath = ctx.getRealPath("");
+		
+		if (!JwtUtils.isManager(authorizationHeader) && !JwtUtils.isEmployee(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only managers or emplyees can update chocolates").build();
+        }
+		
+		if(dao.deleteChocolate(chocolate, contextPath) == null) {
+			return Response.status(405).entity("there is no chocolate with this id").build();
+		}
+		
+		if(factoryDAO.deleteChocolateFromFactory(chocolate, contextPath) == null) {
+			return Response.status(405).entity("there is no chocolate with this id").build();
+		}
+		
+		return Response.status(200).build();
+	}
 }

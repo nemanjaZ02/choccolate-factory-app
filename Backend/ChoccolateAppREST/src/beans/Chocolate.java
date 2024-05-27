@@ -14,6 +14,7 @@ public class Chocolate {
 	private String description;
 	private String image;
 	private int quantity;
+	private boolean isDeleted;
 
 	public Chocolate() {
 		super();
@@ -22,7 +23,7 @@ public class Chocolate {
 
 
 	public Chocolate(int id, int factoryId, String name, double price, String type, String kind, ChocolateStatus status,
-				double weight, String description, String image, int quantity) {
+				double weight, String description, String image, int quantity, boolean isDeleted) {
 
 		super();
 		this.id = id;
@@ -36,6 +37,7 @@ public class Chocolate {
 		this.description = description;
 		this.image = image;
 		this.quantity = quantity;
+		this.isDeleted = isDeleted;
 	}	
 	
 	public int getId() {
@@ -114,4 +116,10 @@ public class Chocolate {
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
 	}
+	public boolean getIsDeleted() {
+		return isDeleted;
+	}
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}	
 }

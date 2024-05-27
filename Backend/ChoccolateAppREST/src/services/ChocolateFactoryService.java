@@ -77,4 +77,27 @@ public class ChocolateFactoryService {
 		chocolateDAO.addChocolateToFactory(newChocolate, contextPath);
 		return Response.status(200).build();
 	}
+	
+	@OPTIONS
+	@Path("/updateChocolate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean updateChocolateInFactory() {
+		return true;
+	}
+	
+	@PUT()
+	@Path("/updateChocolate")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateChocolateInFactory(Chocolate newChocolate, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
+	{
+		if (!JwtUtils.isManager(authorizationHeader) && !JwtUtils.isEmployee(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only managers and employees can edit chocolates").build();
+        }
+		
+		ChocolateFactoryDAO chocolateDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+		String contextPath = ctx.getRealPath("");
+		chocolateDAO.updateChocolateInFactory(newChocolate, contextPath);
+		return Response.status(200).build();
+	}
+	
 }

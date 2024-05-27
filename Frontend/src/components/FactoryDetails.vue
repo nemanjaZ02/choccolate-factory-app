@@ -37,16 +37,31 @@
         </table>
         <div class="chocolate-div-container-container">
           <h1>CHOCOLATES</h1>
-     
-        
-         
-          <label style="margin-top: 50px; margin-left: 110px;" v-if="loggedInUser.factoryId == factory.id"><button v-on:click="showAddForm(factory.id)" class="button-with-image">
-  <img src="../../public/Images/add.png" style="width: 30px;"  alt="Image">
-</button></label>
+          <label style="margin-top: 50px; margin-left: 110px;" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
+            <button v-on:click="showAddForm(factory.id)" class="button-with-image">
+              <img src="../../public/Images/add.png" style="width: 30px;"  alt="Image">
+            </button>
+          </label>
           <div class="chocolate-div-container">
-            <div v-for="c in factory.chocolates" class="chocolate-div">
-              <img :src="c.image" alt="Chocolate" class="chocolate-image">
-              <label>{{ c.name }}</label>
+            <div style="height: 200px;" v-for="c in factory.chocolates" class="chocolate-div">
+              <table class="chocolate-table">
+                <tr><img :src="c.image" alt="Chocolate" class="chocolate-image"></tr>
+                <tr>
+                  <td style="text-align: center; font-size: 15px; font-weight: bold;">
+                    {{ c.name }}
+                  </td>
+                </tr>
+                <tr v-if="loggedInUser.factoryId == factory.id">
+                  <td  style="text-align: center;">
+                    <button v-on:click="showUpdateForm(c)" class="btn">Edit</button>
+                  </td>   
+                </tr>
+                <tr v-if="loggedInUser.factoryId == factory.id">
+                  <td style="text-align: center;">
+                    <button v-on:click="deleteChocolate(c)" class="btn">Delete</button>
+                  </td>   
+                </tr>
+              </table>
             </div>
           </div>
         </div>
@@ -67,15 +82,19 @@ const dataLoaded = ref(false);
 const router = useRouter();
 
 const loggedInUser = ref({});
-const isLoggedIn = ref(false);
 
 onMounted(() => {
+  loadFactory();
+});
+
+function loadFactory() {
   axios.get(`http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getById/${route.params.factoryId}`).then(response => {
     if(!response.data) {
       factory.value = null;
       return;
     }
     factory.value = response.data;
+    factory.value.chocolates = factory.value.chocolates.filter(chocolate => !chocolate.isDeleted);
     
     if(JSON.parse(localStorage.getItem('loggedUser')))
     {
@@ -84,9 +103,26 @@ onMounted(() => {
     
     dataLoaded.value = true;  
   });
-});
+}
+
 function showAddForm(factoryId) {
-     router.push({name: 'addChocolateForm', params: {factoryId: factoryId}});
+  router.push({name: 'addChocolateForm', params: {factoryId: factoryId}});
+}
+function showUpdateForm(chocolate){
+  router.push({ name: 'updateChocolateForm', params: { chocolateId: chocolate.id } });
+}
+function deleteChocolate(chocolate){
+  axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/deleteChocolate', chocolate, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+      }
+    })
+    .then(response => {
+       loadFactory();
+    })
+    .catch(error => {
+      console.error(error);
+    });
 }
 </script>
 
@@ -122,7 +158,7 @@ h1 {
 }
 
 .chocolate-div-container-container {
-  display: flex;
+    display: flex;
   width: 690px;
   flex-wrap: wrap;
   box-sizing: border-box;
@@ -137,7 +173,6 @@ h1 {
   flex-wrap: wrap;
   height: 650px;
   overflow-y: scroll;
-  
   border-bottom: 50px solid #dfd1c2;
 }
 
@@ -185,9 +220,33 @@ tbody tr:nth-child(even) {
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
+
   .button-with-image:hover {
     background-color: #ddd;
   
   }
- 
+
+  .item {
+    position: relative;
+    padding: 10px;
+  }
+
+.btn {
+    opacity: 0;
+    position:relative;  
+    transition: opacity 0.3s ease;
+}
+
+.chocolate-div:hover .btn {
+    opacity: 1;
+}
+
+.chocolate-table{
+  transition: background-color 0.3s ease;
+}
+
+.chocolate-table:hover {
+  background-color: #ddd;
+}
 </style>
+
