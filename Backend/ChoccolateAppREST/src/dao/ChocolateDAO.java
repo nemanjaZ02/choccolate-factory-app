@@ -102,8 +102,7 @@ public class ChocolateDAO {
 					chocolate.setStatus(updatedChocolate.getStatus());
 					chocolate.setWeight(updatedChocolate.getWeight());
 					chocolate.setImage(updatedChocolate.getImage());
-					
-					
+							
 					Gson gson = new Gson();  
 					String updatedJsonData;
 					

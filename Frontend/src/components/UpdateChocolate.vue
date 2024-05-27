@@ -54,26 +54,19 @@ const chocolate = ref({});
 const route = useRoute();
 const router = useRouter();
 
-
-
 onMounted(()=>{
   getChocolate();
 })
 
-
-
 function getChocolate()
 {
   axios.get(`http://localhost:8080/ChoccolateAppREST/rest/chocolates/getChocolate/${route.params.chocolateId}`).then(response=>{
-
     chocolate.value = response.data;
   })
    
 }
 function updateChocolate()
-{
-   
-    
+{   
     axios.put('http://localhost:8080/ChoccolateAppREST/rest/chocolates/updateChocolate', this.chocolate, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`

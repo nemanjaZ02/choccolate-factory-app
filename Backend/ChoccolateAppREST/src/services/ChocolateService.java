@@ -137,7 +137,6 @@ public class ChocolateService {
 	{
 		ChocolateDAO dao = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
 		
-		
 		Chocolate chocolate =dao.getChocolateById(id);
 		if(chocolate==null)
 		{

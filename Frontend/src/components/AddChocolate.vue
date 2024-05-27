@@ -52,9 +52,7 @@ function addImage()
   chocolate.value.image = target.files[0]; 
 }
 function addChocolate()
-{
-   
-    
+{ 
     axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/addChocolate', this.chocolate, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
