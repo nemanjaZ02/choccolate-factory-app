@@ -77,14 +77,13 @@ function handleFileUpload(event){
     selectedFile.value = event.target.files[0];
     const formData = new FormData();
     formData.append('file', selectedFile.value);
-    axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocholate/image', formData, {
+    axios.post('http://localhost:8080/ChoccolateAppREST/rest/image/upload', formData, {
       headers: {
          'Content-Type': 'multipart/form-data'
       }
     }).then( response => {
           if (response.status === 200) {
             chocolate.value.image = response.data;
-            alert('Image sent succsesfully!')
           }
       })
 }

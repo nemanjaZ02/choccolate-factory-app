@@ -22,7 +22,7 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
-@Path("/chocholate")
+@Path("/image")
 public class FileUploadService {
 	@Context
 	ServletContext ctx;
@@ -30,7 +30,7 @@ public class FileUploadService {
 	public FileUploadService() {
 	}
 	
-	@Path("/image")
+	@Path("/upload")
 	@POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -90,11 +90,11 @@ public class FileUploadService {
         firstPartBytes = new String(firstPartBytes, 0, firstPartBytes.length - 2).getBytes();
         
         String firstPart = new String(firstPartBytes); 
-        String path = "http://localhost:8080/ChoccolateAppREST/images/" + getFileName(firstPart);                   
+        String path = ctx.getRealPath("") + "/images/" + getFileName(firstPart);                   
         InputStream secondPart =  new ByteArrayInputStream(secondPartBuffer.toByteArray());
         saveToFile(secondPart, path);
         
-        return path;
+        return "http://localhost:8080/ChoccolateAppREST/images/" + getFileName(firstPart);
 	}
 	
 	private String getFileName(String firstPart)
