@@ -62,7 +62,7 @@ public class ChocolateFactoryDAO {
 		
 		return null;
 	}
-	public void addChocolateToFactory(Chocolate newChocolate, String contextPath)
+	public Chocolate addChocolateToFactory(Chocolate newChocolate, String contextPath)
 	{
 		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
 		
@@ -73,6 +73,15 @@ public class ChocolateFactoryDAO {
 			if(factory.getId()==newChocolate.getFactoryId())
 			{
 				chocolates = factory.getChocolates();
+				
+				for(Chocolate c : chocolates)
+				{
+					if(c.getName().equals(newChocolate.getName()) && !c.getIsDeleted())
+					{
+						return null;
+					}
+				}
+				
 				chocolates.add(newChocolate);
 				factory.setChocolates(chocolates);
 			
@@ -92,9 +101,11 @@ public class ChocolateFactoryDAO {
 					e.printStackTrace();
 				}
 
-				return;
+				return newChocolate;
 			}
 		}
+		
+		return null;
 	}
 	
 	public void updateChocolateInFactory(Chocolate updatedChocolate, String contextPath)

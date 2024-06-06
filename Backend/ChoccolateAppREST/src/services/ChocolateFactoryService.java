@@ -57,28 +57,6 @@ public class ChocolateFactoryService {
 	}
 	
 	@OPTIONS
-	@Path("/addChocolate")
-	@Produces(MediaType.APPLICATION_JSON)
-	public boolean corsAddChocolate() {
-		return true;
-	}
-	
-	@PUT
-	@Path("/addChocolate")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addChocolateToFactory(Chocolate newChocolate, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
-	{
-		if (!JwtUtils.isManager(authorizationHeader)) {
-            return Response.status(401).entity("Unauthorized: Only managers can add chocolates").build();
-        }
-		
-		ChocolateFactoryDAO chocolateDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
-		String contextPath = ctx.getRealPath("");
-		chocolateDAO.addChocolateToFactory(newChocolate, contextPath);
-		return Response.status(200).build();
-	}
-	
-	@OPTIONS
 	@Path("/updateChocolate")
 	@Produces(MediaType.APPLICATION_JSON)
 	public boolean updateChocolateInFactory() {

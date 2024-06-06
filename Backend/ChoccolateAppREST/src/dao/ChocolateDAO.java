@@ -151,6 +151,12 @@ public class ChocolateDAO {
 		Chocolate[] updateChocolateArray = chocolates.toArray(new Chocolate[0]);
 		updatedJsonData = gson.toJson(updateChocolateArray);
 		
+		try {
+			Files.write(filePath, updatedJsonData.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		return chocolateForDeletion;
 	}
 	

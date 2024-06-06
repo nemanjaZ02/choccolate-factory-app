@@ -98,7 +98,15 @@ public class ChocolateService {
 		else
 		{
 			ChocolateDAO chocolateDAO = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+			ChocolateFactoryDAO chocolateFactoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
 			String contextPath = ctx.getRealPath("");
+			
+			if(chocolateFactoryDAO.addChocolateToFactory(newChocolate, contextPath) == null)
+			{
+				return Response.status(405).entity("Chocolate with that name already exists in this factory!").build();
+			}
+			
+			
 			Chocolate choco = chocolateDAO.saveChocolate(newChocolate, contextPath);
 			return Response.status(200).entity(choco).build();
 		}

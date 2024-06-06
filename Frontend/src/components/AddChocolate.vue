@@ -33,6 +33,11 @@
   <tr>
     <th><input type="submit" value="Add"></th>
   </tr>
+  <tr>
+    <th>  
+      <label style="color: red">{{ errorMessage }}</label>
+    </th>
+  </tr>
 </table>
 </form>
 </template>
@@ -48,10 +53,7 @@ const selectedFile = ref(null);
 const router = useRouter();
 const route = useRoute();
 const chocolate = ref({id:0, factoryId:route.params.factoryId, name:"", price:0, type:"", kind:"", status:"NotInStock", weight:0, description:"", image:"", quantity:0, isDeleted: false});
-function addImage()
-{
-  chocolate.value.image = target.files[0]; 
-}
+const errorMessage = ref(" ");
 function addChocolate()
 { 
     axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/addChocolate', this.chocolate, {
@@ -61,15 +63,10 @@ function addChocolate()
       
     })
     .then(response=>{
-      let responseData = response.data;
-       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolate', responseData, {
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
-          }
-       })
-       .then(respone=>{
           router.push({name: 'factoryDetails', params: { factoryId: chocolate.factoryId }})
-        })
+    })
+    .catch(error => {
+        this.errorMessage = error.response.data
     });
 }
 
