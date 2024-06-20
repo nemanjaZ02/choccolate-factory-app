@@ -106,6 +106,31 @@ public class LoginService {
 			return Response.status(200).build();
 		}	
 	}
+	@OPTIONS
+	@Path("/registerManager")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean registerNewManager() {
+		return true;
+	}
+	@POST
+	@Path("/registerManager")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response registerNewManager(Manager newUser) {
+		String contextPath = ctx.getRealPath("");
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		if(newUser.getName() == "" || newUser.getSurname() == "" || newUser.getBirthday() == null || newUser.getUsername() == "" || newUser.getPassword() == "" || newUser.getRole() != Role.MANAGER || newUser.getGender() == null)
+		{
+			return Response.status(205).entity("Not all fields are filled/or trying to bypass ranking").build();
+		}
+		else
+		{
+			Manager newManager = dao.registerNewManager(newUser, contextPath);
+			ctx.setAttribute("loggedUser", newUser);
+			return Response.status(200).entity(newManager).build();
+		}	
+	}
 	
 	@GET
 	@Path("/logOut")

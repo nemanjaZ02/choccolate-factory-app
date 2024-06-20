@@ -18,6 +18,10 @@ public class Manager extends User {
 		super(id, username, password, name, surname, gender, birthday, role);
 		// TODO Auto-generated constructor stub
 	}
+	public Manager(User user) {
+		super(user.getId(),user.getUsername(),user.getPassword(),user.getName(),user.getSurname(),user.getGender(),user.getBirthday(),user.getRole());
+		// TODO Auto-generated constructor stub
+	}
 
 	public Manager(int factoryId) {
 		super();

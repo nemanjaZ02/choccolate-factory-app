@@ -1,6 +1,12 @@
 <template>
     <div class="container">
+        <div class="header-content">
         <h1>FACTORIES</h1>
+        <button v-if="loggedInUser.role == 'ADMIN'" v-on:click="showAddForm()" style="align-self: flex-end; margin-bottom: 100px;" value="add factory">Add Factory
+        </button>
+       
+        </div>
+       
         <div class="header">
             <form class="search-form">
                 <div class="form-group">
@@ -37,6 +43,7 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const factories = ref([]);
+const loggedInUser = ref({});
 
 onMounted(() => {
     loadFactories();
@@ -45,11 +52,19 @@ onMounted(() => {
 function loadFactories() {
     axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAll').then(response => {
             factories.value = response.data
+
+            if(JSON.parse(localStorage.getItem('loggedUser')))
+            {
+            loggedInUser.value= JSON.parse(localStorage.getItem('loggedUser'));  
+            }
         });
 }
 
 function showDetails(factory) {
     router.push({name: 'factoryDetails', params: { factoryId: factory.id }});
+}
+function showAddForm() {
+  router.push('/addChocolateFactoryForm');
 }
 </script>
 
@@ -73,7 +88,11 @@ function showDetails(factory) {
     color: #333;
     margin-bottom: 20px;
 }
-
+.header-content {
+    display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 .search-form {
     display: flex;
     justify-content: space-between;

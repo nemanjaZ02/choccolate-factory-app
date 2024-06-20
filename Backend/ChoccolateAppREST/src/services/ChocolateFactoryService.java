@@ -4,9 +4,11 @@ import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -19,6 +21,8 @@ import com.nimbusds.jose.shaded.json.parser.ParseException;
 
 import beans.Chocolate;
 import beans.ChocolateFactory;
+import beans.Manager;
+import dao.ChocolateDAO;
 import dao.ChocolateFactoryDAO;
 import dao.UserDAO;
 import jwt.JwtUtils;
@@ -38,6 +42,11 @@ public class ChocolateFactoryService {
 	    	String contextPath = ctx.getRealPath("");
 			ctx.setAttribute("chocolateFactoryDAO", new ChocolateFactoryDAO(contextPath));
 		}
+		if(ctx.getAttribute("userDAO")==null)
+		{
+			String contextPath = ctx.getRealPath("");
+			ctx.setAttribute("userDAO", new UserDAO(contextPath));
+		}	
 	}
 	
 	@GET
@@ -75,6 +84,75 @@ public class ChocolateFactoryService {
 		ChocolateFactoryDAO chocolateDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
 		String contextPath = ctx.getRealPath("");
 		chocolateDAO.updateChocolateInFactory(newChocolate, contextPath);
+		return Response.status(200).build();
+	}
+	@OPTIONS
+	@Path("/addChocolateFactory")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean addChocolateFactory() {
+		return true;
+	}
+	@POST
+	@Path("/addChocolateFactory")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response addChocolateFactory(ChocolateFactory newChocolateFactory, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
+	{
+        if (!JwtUtils.isAdministrator(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only admins can add chocolate factories").build();
+        }
+
+		if(newChocolateFactory.getName()=="" || newChocolateFactory.getWorkTime().toString()=="")
+		{
+			return Response.status(405).entity("invalid input").build();
+		}
+		else
+		{
+			ChocolateFactoryDAO chocolateFactoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+			
+			String contextPath = ctx.getRealPath("");
+			ChocolateFactory chocolateFactory = chocolateFactoryDAO.saveChocolateFactory(newChocolateFactory, contextPath);
+			if(chocolateFactory == null)
+			{
+				return Response.status(405).entity("Chocolate Factory with that name already exists").build();
+			}
+			
+			
+		
+			return Response.status(200).entity(chocolateFactory).build();
+		}
+		
+	}
+	@GET
+	@Path("/getAvailableManagers")
+	@Produces(MediaType.APPLICATION_JSON)
+	public 	ArrayList<Manager> getAvailableManagers() {
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+	   return  dao.getAvailableManagers();	
+	}
+	@OPTIONS
+	@Path("/updateManager")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean updateManager() {
+		return true;
+	}
+	
+	@PUT()
+	@Path("/updateManager")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updateManager(Manager newManager, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
+	{
+		if (!JwtUtils.isAdministrator(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only admins can edit managers").build();
+        }
+		
+		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		String contextPath = ctx.getRealPath("");
+		if(userDAO.updateManager(newManager, contextPath) == null)
+		{
+			return Response.status(405).entity("This manager does not exist!").build();
+		}
+		userDAO.updateManager(newManager, contextPath);
 		return Response.status(200).build();
 	}
 	

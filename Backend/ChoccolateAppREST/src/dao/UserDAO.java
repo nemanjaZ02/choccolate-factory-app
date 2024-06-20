@@ -13,6 +13,7 @@ import java.util.Collection;
 import com.google.gson.Gson;
 
 import beans.Admin;
+import beans.ChocolateFactory;
 import beans.Customer;
 import beans.Employee;
 import beans.Manager;
@@ -51,6 +52,11 @@ public class UserDAO {
 		for (User manager : managers) {
             if (manager.getUsername().equals(username) && manager.getPassword().equals(password)) {
                 return manager;
+            }
+        }
+		for (User admin : admins) {
+            if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
+                return admin;
             }
         }
 		
@@ -129,6 +135,7 @@ public class UserDAO {
         }
 	}
 	
+	
 	public User registerNewUser(User newUser, String contextPath) {
 		try {
 			Gson gson = new Gson();  
@@ -175,5 +182,85 @@ public class UserDAO {
 		}
 		return false;
 	}
-	
+	public Manager registerNewManager(Manager newUser, String contextPath) {
+		try {
+			Gson gson = new Gson();  
+			Path filePath;
+			String updatedJsonData;
+
+			int maxId = -1;
+			for(Manager manager : managers)
+			{
+				if(manager.getId() > maxId)
+				{
+					maxId = manager.getId();
+				}
+			}
+				
+			if(maxId == -1)
+			{
+				maxId = 0;
+			}
+				
+			newUser.setId(maxId + 1);
+			Manager managerUser = new Manager(newUser);
+			managers.add(managerUser);
+				
+			filePath = Paths.get(contextPath, "/managers.json");
+			Manager[] updatedUserArray = managers.toArray(new Manager[0]);
+			updatedJsonData = gson.toJson(updatedUserArray);
+			
+            Files.write(filePath, updatedJsonData.getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		return newUser;	
+	}
+	public ArrayList<Manager> getAvailableManagers()
+	{
+		ArrayList<Manager> availableManagers = new ArrayList<Manager>();
+		for(Manager manager: managers)
+		{
+			if(manager.getFactoryId()==0)
+				availableManagers.add(manager);
+		}
+		return availableManagers;
+	}
+	public Manager updateManager(Manager updatedManager,String contextPath )
+	{
+		int i = -1;
+		for(Manager manager:managers)
+		{
+			i++;
+			if(manager.getId()==updatedManager.getId())
+			{
+				manager.setFactoryId(updatedManager.getFactoryId());
+				//managers.remove(manager);
+				//managers.add(i, manager);
+				
+				
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/managers.json");
+				Manager[] updateManagerArray = managers.toArray(new Manager[0]);
+				updatedJsonData = gson.toJson(updateManagerArray);
+				
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            
+	            
+	            
+				return manager;
+			}
+		}
+		return null;
+	}
 }

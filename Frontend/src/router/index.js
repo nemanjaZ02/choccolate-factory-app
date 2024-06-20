@@ -5,6 +5,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import FactoryDetailsView from '@/views/FactoryDetailsView.vue'
 import AddChocolateView from '@/views/AddChocolateView.vue'
 import UpdateChocolateView from '@/views/UpdateChocolateView.vue'
+import AddChocolateFactoryView from '@/views/AddChocolateFactoryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       path: '/addChocolateForm/:factoryId',
       name: 'addChocolateForm',
       component: AddChocolateView,
+    },
+    {
+      path: '/addChocolateFactoryForm',
+      name: 'addChocolateForm',
+      component: AddChocolateFactoryView,
     },
     {
       path: '/updateChocolateForm/:chocolateId',

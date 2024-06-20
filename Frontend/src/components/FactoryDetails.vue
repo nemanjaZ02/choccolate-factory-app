@@ -94,7 +94,11 @@ function loadFactory() {
       return;
     }
     factory.value = response.data;
-    factory.value.chocolates = factory.value.chocolates.filter(chocolate => !chocolate.isDeleted);
+    if(factory.value.chocolates.length>0)
+    {
+      factory.value.chocolates = factory.value.chocolates.filter(chocolate => !chocolate.isDeleted);
+    }
+    
     
     if(JSON.parse(localStorage.getItem('loggedUser')))
     {
