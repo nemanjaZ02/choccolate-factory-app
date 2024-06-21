@@ -17,13 +17,32 @@
         <th><input v-model="chocolate.price" type="number"></th>
       </tr>
       <tr>
-        <th>Kind:</th>
-        <th><input v-model="chocolate.kind" type="text"></th>
-      </tr>
-      <tr>
         <th>Type:</th>
-        <th><input v-model="chocolate.type" type="text"></th>
-      </tr>
+        <th>
+          <select v-model="chocolate.type" class="form-select">
+            <option value="" disabled>Select Chocolate Type</option>
+            <option value="Dark">Dark</option>
+            <option value="Milk">Milk</option>
+            <option value="White">White</option>
+            <option value="Baking">Baking</option>
+            <option value="Bittersweet">BiterSweet</option>
+          </select>
+        </th>
+    </tr>
+    <tr>
+      <th>Kind:</th>
+      <th>
+        <select v-model="chocolate.kind" type="text">
+          <option value="" disabled>Select Chocolate Kind</option>
+          <option value="Nuts">With Nuts</option>
+          <option value="Strawberry">With Strawberry</option>
+          <option value="Filling">With Filling</option>
+          <option value="Caramel">With Caramel</option>
+          <option value="Cookies">With Cookie Crumbs</option>
+          <option value="Rice">With Rice</option>
+        </select>
+      </th>
+    </tr>
       <tr>
         <th>Weight:</th>
         <th><input v-model="chocolate.weight" type="number"></th>

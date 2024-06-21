@@ -62,7 +62,8 @@ public class ChocolateFactoryDAO {
 		
 		return null;
 	}
-	public Chocolate addChocolateToFactory(Chocolate newChocolate, String contextPath)
+	
+	public boolean factoryAlreadyHasChocolate(Chocolate newChocolate)
 	{
 		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
 		
@@ -78,10 +79,26 @@ public class ChocolateFactoryDAO {
 				{
 					if(c.getName().equals(newChocolate.getName()) && !c.getIsDeleted())
 					{
-						return null;
+						return true;
 					}
 				}
-				
+			}
+		}
+		return false;
+	}
+	
+	public Chocolate addChocolateToFactory(Chocolate newChocolate, String contextPath)
+	{
+		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
+		
+		int id = -1;
+		for(ChocolateFactory factory: factories)
+		{
+			id ++;
+			if(factory.getId()==newChocolate.getFactoryId())
+			{
+				chocolates = factory.getChocolates();
+					
 				chocolates.add(newChocolate);
 				factory.setChocolates(chocolates);
 			

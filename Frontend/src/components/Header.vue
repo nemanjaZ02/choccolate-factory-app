@@ -1,6 +1,6 @@
 <template>
 
-    <div class="div_style">
+    <nav class="div_style">
         <label v-if="isLoggedIn">{{loggedInUser.username}}</label>
         <router-link v-else to="/login">Login</router-link> 
 
@@ -9,9 +9,9 @@
         <router-link :to="{name: 'factoryDetails', params: { factoryId: loggedInUser.factoryId }}" v-if="isLoggedIn && loggedInUser.role == 'MANAGER'">My Factory</router-link> 
         <label v-if="isLoggedIn && loggedInUser.role == 'MANAGER'"> | </label>
 
-        <a v-on:click="logOut()" v-if="isLoggedIn">Log out</a>
+        <a href="#" class="router-link-like" @click.prevent="logOut" v-if="isLoggedIn">Log out</a>
         <router-link v-else to="/register">Register</router-link>    
-    </div>
+    </nav>
 
 </template>
 
