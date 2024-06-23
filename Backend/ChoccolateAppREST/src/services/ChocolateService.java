@@ -26,6 +26,7 @@ import beans.Chocolate;
 import dao.ChocolateDAO;
 import dao.ChocolateFactoryDAO;
 import dao.UserDAO;
+import enums.ChocolateType;
 import jwt.JwtUtils;
 
 @Path("/chocolates")
@@ -91,7 +92,7 @@ public class ChocolateService {
             return Response.status(401).entity("Unauthorized: Only managers can add chocolates").build();
         }
 
-		if(newChocolate.getName()=="" || newChocolate.getKind()=="" || newChocolate.getDescription()=="" || newChocolate.getPrice()<=0 || newChocolate.getImage() == "" || newChocolate.getWeight()<=0 || newChocolate.getType()=="")
+		if(newChocolate.getName()=="" || newChocolate.getType() == null || newChocolate.getDescription()=="" || newChocolate.getPrice()<=0 || newChocolate.getImage() == "" || newChocolate.getWeight()<=0 || newChocolate.getType() == null)
 		{
 			return Response.status(405).entity("invalid input").build();
 		}
@@ -101,16 +102,17 @@ public class ChocolateService {
 			ChocolateFactoryDAO chocolateFactoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
 			String contextPath = ctx.getRealPath("");
 			
-			if(chocolateFactoryDAO.addChocolateToFactory(newChocolate, contextPath) == null)
+			if(!chocolateFactoryDAO.factoryAlreadyHasChocolate(newChocolate))
+			{
+				Chocolate choco = chocolateDAO.saveChocolate(newChocolate, contextPath);
+				chocolateFactoryDAO.addChocolateToFactory(choco, contextPath);
+				return Response.status(200).entity(choco).build();
+			}
+			else
 			{
 				return Response.status(405).entity("Chocolate with that name already exists in this factory!").build();
 			}
-			
-			
-			Chocolate choco = chocolateDAO.saveChocolate(newChocolate, contextPath);
-			return Response.status(200).entity(choco).build();
-		}
-		
+		}	
 	}
 	
 	@OPTIONS
@@ -129,7 +131,7 @@ public class ChocolateService {
             return Response.status(401).entity("Unauthorized: Only managers or emplyees can update chocolates").build();
         }
 		
-		if(updatedChocolate.getName()=="" || updatedChocolate.getKind()=="" || updatedChocolate.getDescription()=="" || updatedChocolate.getPrice()<=0 || updatedChocolate.getImage() == "" || updatedChocolate.getWeight()<=0 || updatedChocolate.getType()=="")
+		if(updatedChocolate.getName()=="" || updatedChocolate.getKind()== null || updatedChocolate.getDescription()=="" || updatedChocolate.getPrice()<=0 || updatedChocolate.getImage() == "" || updatedChocolate.getWeight()<=0 || updatedChocolate.getType()== null)
 		{
 			return Response.status(405).entity("invalid input").build();
 		}
