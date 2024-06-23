@@ -3,11 +3,11 @@
     <form @submit.prevent="addChocolateFactory()">
     <table>
       <tr>
-        <th>Name:</th>
-        <th><input type="text" v-model="chocolateFactory.name"></th>
+        <td>Name:</td>
+        <td><input type="text" v-model="chocolateFactory.name"></td>
       </tr>
       <tr>
-      <th>Work time:</th>
+      <th><label style="font-weight: bold;">Work time</label></th>
       </tr>
       <tr>
        <th> <label for="from" >From:</label></th>
@@ -22,10 +22,9 @@
         <th><input type="file" @change="handleFileUpload"></th>
       </tr>
       <tr>
-        <th v-if="availableManagers.length > 0">Choose a Manager:</th>
-        <tr v-else>
-          Create a manager
-        </tr>
+        <th v-if="availableManagers.length > 0"> <label style="font-weight: bold;">Choose a Manager:</label></th>
+      </tr>
+     
         <th v-if="availableManagers.length > 0">
              <select v-model="manager"  >
                 <option v-for="manager in availableManagers" :value="manager" >
@@ -33,80 +32,72 @@
                 </option>
               </select>
         </th>
-       
-        <tr v-else>
-        <th >
-          <form >
-        <table>
-            <tr>
-                <td>
-                    <label>Username: </label>
-                </td>
-                <td>
-                    <input type="text" v-model="manager.username" required>
-                </td>     
-            </tr>
-            <tr>
-                <td>
-                    <label>Password: </label>
-                </td>
-                <td>
-                    <input type="password" v-model="manager.password" required>
-                </td> 
-            </tr>
-            <tr>
-                <td>
-                    <label>Re-Type Password: </label> 
-                </td>
-                <td>
-                    <input type="password" v-model="confirmedPassword" required>
-                </td> 
-                <td>
-                    <label v-bind:hidden="confirmedPassword == manager.password">Password are not matching!</label>
-                </td> 
-            </tr>
-            <tr>
-                <td>
-                    <label>Name: </label>
-                </td>
-                <td>
-                    <input type="text" v-model="manager.name" required>
-                </td> 
-            </tr>
-            <tr>
-                <td>
-                    <label>Surname: </label>
-                </td>
-                <td>
-                    <input type="text" v-model="manager.surname" required>
-                </td> 
-            </tr>
-            <tr>
-                <td>
-                    <label>Gender: </label>
-                </td>
-                <td>
-                    <select v-model="manager.gender" required>
-                        <option>MALE</option>
-                        <option>FEMALE</option>
-                    </select>
-                </td> 
-            </tr>
-            <tr>
-                <td>
-                    <label>Birthday: </label>
-                </td>
-                <td>
-                    <input type="date" v-model="manager.birthday" required>
-                </td> 
-            </tr>
-           
-        </table>
-    </form>
-       </th>
+        <tr v-if="availableManagers.length == 0">
+        <label style="font-weight: bold;"> Create a manager</label>
+      </tr> 
+      <tr  v-if="availableManagers.length == 0" >
+        <td>
+          <label>Username: </label>
+        </td>
+        <td>
+          <input type="text" v-model="manager.username" >
+        </td> 
       </tr>
+      <tr  v-if="availableManagers.length == 0">
+        <td>
+          <label>Password: </label>
+        </td>
+        <td>
+            <input type="password" v-model="manager.password" >
+        </td>
       </tr>
-      <tr> 
+      <tr v-if="availableManagers.length == 0">
+        <td>
+            <label>Re-Type Password: </label> 
+        </td>
+        <td>
+            <input type="password" v-model="confirmedPassword" >
+        </td> 
+        <td>
+            <label v-bind:hidden="confirmedPassword == manager.password">Password are not matching!</label>
+        </td> 
+      </tr>
+      <tr v-if="availableManagers.length == 0">
+          <td>
+            <label>Name: </label>
+         </td>
+         <td>
+            <input type="text" v-model="manager.name" >
+         </td> 
+      </tr>
+      <tr  v-if="availableManagers.length == 0">
+          <td>
+            <label>Surname: </label>
+         </td>
+         <td>
+            <input type="text" v-model="manager.surname" >
+         </td> 
+      </tr>
+      <tr  v-if="availableManagers.length == 0">
+        <td>
+           <label>Gender: </label>
+        </td>
+        <td>
+          <select v-model="manager.gender" >
+            <option>MALE</option>
+            <option>FEMALE</option>
+          </select>
+        </td> 
+      </tr>
+      <tr v-if="availableManagers.length == 0">
+        <td>
+          <label>Birthday: </label>
+        </td>
+        <td>
+          <input type="date" v-model="manager.birthday" >
+        </td> 
+      </tr>
+      <tr > 
         <th><input type="submit" value="Add factory"></th>
       </tr>
       <tr>
@@ -115,6 +106,9 @@
         </th>
       </tr>
     </table>
+
+
+   
     </form>
     </template>
 
@@ -128,6 +122,7 @@
     const router = useRouter();
     const route = useRoute();
     const availableManagers = ref([])
+    const errorMessage = ref(" ");
    const props = defineProps({
     coordinates: {
     type: Object, 
@@ -149,10 +144,11 @@
       street:"",
       streetNum:"",
       city:"",
+      country:"",
       postNum:0
     }
   }, logo:"", rating:""});
-  const errorMessage = ref(" ");
+  
  
   
   onMounted(()=>{
@@ -160,7 +156,8 @@
 })
  
   function addChocolateFactory()
-    { 
+  { 
+    errorMessage.value = " ";
       if (
       manager.value.username === "" ||
       manager.value.name === "" ||
@@ -170,20 +167,22 @@
       manager.value.birthday==""||
       chocolateFactory.value.name ==""||
       chocolateFactory.value.workTime.from ==""||
-      chocolateFactory.value.workTime.to == ""||
-      chocolateFactory.value.location.longitude ==""||
-      chocolateFactory.value.location.latitude ==""
+      chocolateFactory.value.workTime.to == ""
+      
+      
 
-
-    ) {
-      errorMessage.value = "Please fill in all required fields.";
+     ) {
+       errorMessage.value = "Please fill in all required fields.";
        
-    }
-    if(errorMessage.value!="")
+     }
+    if(errorMessage.value===" ")
     {
-      chocolateFactory.value.location.longitude = props.coordinates[0]
-      chocolateFactory.value.location.latitude = props.coordinates[1]
+
+    
+      chocolateFactory.value.location.longitude = props.coordinates[1]
+      chocolateFactory.value.location.latitude = props.coordinates[0]
       chocolateFactory.value.location.adress.city=props.adress.city
+      chocolateFactory.value.location.adress.country=props.adress.country
       chocolateFactory.value.location.adress.street=props.adress.street
       chocolateFactory.value.location.adress.postNum=props.adress.postcode
       chocolateFactory.value.location.adress.streetNum=props.adress.streetNum
@@ -192,12 +191,13 @@
         manager.value = response.data;
         axios.post('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolateFactory', this.chocolateFactory, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
-          }
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`,
+        'Content-Type': 'application/json' 
+      }
           
         }).then(response=>{
-      let responseData = response.data;
-      manager.value.factoryId = responseData.id
+     
+      manager.value.factoryId =  response.data.id
       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/updateManager', this.manager, {
           
           headers: {
@@ -208,12 +208,12 @@
        .then(respone=>{
           router.push("/")
         })
-    })
+      })
       });
     }
-      
-        
   }
+        
+  
     
   function handleFileUpload(event){
         selectedFile.value = event.target.files[0];

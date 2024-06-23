@@ -4,6 +4,7 @@ public class Adress {
 	private String street;
 	private String streetNum;
 	private String city;
+	private String country;
 	private int postNum;
 	
 	public Adress() {
@@ -43,6 +44,12 @@ public class Adress {
 	public void setPostNum(int postNum) {
 		this.postNum = postNum;
 	}
-	
-	
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}	
 }

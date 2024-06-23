@@ -102,7 +102,7 @@ public class ChocolateFactoryService {
             return Response.status(401).entity("Unauthorized: Only admins can add chocolate factories").build();
         }
 
-		if(newChocolateFactory.getName()=="" || newChocolateFactory.getWorkTime().toString()=="")
+		if(newChocolateFactory.getName()=="" || newChocolateFactory.getWorkTime().toString()=="" || newChocolateFactory.getLocation().getAdress().getCountry()=="")
 		{
 			return Response.status(405).entity("invalid input").build();
 		}

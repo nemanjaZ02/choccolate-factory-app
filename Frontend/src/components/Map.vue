@@ -4,7 +4,7 @@
       <div class="coordinates">
         <p v-if="selectedCoordinates">
           Selected coordinates: {{ selectedCoordinates }}
-          <button @click="saveFactoryLocation">Save Location</button>
+         
         </p>
         <p v-else>
         Click on the map to select factory location.
@@ -59,7 +59,7 @@
         
        this.selectedCoordinates = event.coordinate
       
-        this.$emit('location-selected', clickedCoordinate);
+        this.$emit('location-selected', transform3857To4326(clickedCoordinate));
        
         try {
          

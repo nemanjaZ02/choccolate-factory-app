@@ -1,14 +1,16 @@
 package beans;
 
+import enums.ChocolateKind;
 import enums.ChocolateStatus;
+import enums.ChocolateType;
 
 public class Chocolate {
 	private int id;
 	private int factoryId;
 	private  String name;
 	private double price;
-	private String type;
-	private String kind;
+	private ChocolateType type;
+	private ChocolateKind kind;
 	private ChocolateStatus status;
 	private double weight; 
 	private String description;
@@ -22,7 +24,7 @@ public class Chocolate {
 	}
 
 
-	public Chocolate(int id, int factoryId, String name, double price, String type, String kind, ChocolateStatus status,
+	public Chocolate(int id, int factoryId, String name, double price, ChocolateType type, ChocolateKind kind, ChocolateStatus status,
 				double weight, String description, String image, int quantity, boolean isDeleted) {
 
 		super();
@@ -56,19 +58,19 @@ public class Chocolate {
 		this.factoryId = factoryId;
 	}
 
-	public String getType() {
+	public ChocolateType getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(ChocolateType type) {
 		this.type = type;
 	}
 
-	public String getKind() {
+	public ChocolateKind getKind() {
 		return kind;
 	}
 
-	public void setKind(String kind) {
+	public void setKind(ChocolateKind kind) {
 		this.kind = kind;
 	}
 
