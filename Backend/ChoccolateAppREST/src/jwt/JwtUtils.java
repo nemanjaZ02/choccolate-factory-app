@@ -21,9 +21,7 @@ public class JwtUtils {
         JWSSigner signer = new MACSigner(secretKey);
 
         JWTClaimsSet jwtClaims = new JWTClaimsSet.Builder()
-                .claim("id", user.getId()) 
-                .claim("username", user.getUsername())
-                .claim("role", user.getRole())
+                .claim("user", user) 
                 .expirationTime(new Date(System.currentTimeMillis() + 3600_000)) 
                 .build();
 
