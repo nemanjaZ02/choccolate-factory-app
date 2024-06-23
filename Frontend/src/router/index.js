@@ -38,7 +38,7 @@ const router = createRouter({
     },
     {
       path: '/addChocolateFactoryForm',
-      name: 'addChocolateForm',
+      name: 'addChocolateFactoryForm',
       component: AddChocolateFactoryView,
     },
     {

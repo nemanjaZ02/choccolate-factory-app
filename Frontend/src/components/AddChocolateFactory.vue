@@ -36,7 +36,7 @@
        
         <tr v-else>
         <th >
-          <form v-on:click="Register" v-on:submit="registerNewManager($event)">
+          <form >
         <table>
             <tr>
                 <td>
@@ -100,11 +100,7 @@
                     <input type="date" v-model="manager.birthday" required>
                 </td> 
             </tr>
-            <tr>
-                <td>
-                    <input type="submit" value="Register" v-bind:disabled="!(confirmedPassword == manager.password)" required>
-                </td> 
-            </tr>
+           
         </table>
     </form>
        </th>
@@ -124,7 +120,7 @@
 
     <script setup>
     import axios from 'axios';
-    import {onMounted, ref} from 'vue';
+    import {watch,onMounted, ref} from 'vue';
     import {useRouter} from 'vue-router';
     import {useRoute} from 'vue-router';
     const confirmedPassword = ref("");
@@ -132,13 +128,23 @@
     const router = useRouter();
     const route = useRoute();
     const availableManagers = ref([])
+   const props = defineProps({
+    coordinates: {
+    type: Object, 
+    required: true
+  },
+    adress: {
+    type: Object, 
+    required: true
+  }  
+  });
     const manager = ref({factoryId:0, id:0, username:"", password:"", name:"", surname:"", gender:"", birthday:"", role:"MANAGER"})
     const chocolateFactory = ref({id:0,  name:"", chocolates:[],  workTime: {
     from: "",
     to: ""
   },  status:"CLOSED", location:{
-    longitude:"",
-    latitude:"",
+    longitude: "",
+    latitude:  "",
     adress:{
       street:"",
       streetNum:"",
@@ -147,13 +153,43 @@
     }
   }, logo:"", rating:""});
   const errorMessage = ref(" ");
+ 
+  
   onMounted(()=>{
     getAvailableManagers();
 })
-
-    function addChocolateFactory()
+ 
+  function addChocolateFactory()
     { 
+      if (
+      manager.value.username === "" ||
+      manager.value.name === "" ||
+      manager.value.surname === ""||
+      manager.value.password ===""||
+      manager.value.gender ==""||
+      manager.value.birthday==""||
+      chocolateFactory.value.name ==""||
+      chocolateFactory.value.workTime.from ==""||
+      chocolateFactory.value.workTime.to == ""||
+      chocolateFactory.value.location.longitude ==""||
+      chocolateFactory.value.location.latitude ==""
+
+
+    ) {
+      errorMessage.value = "Please fill in all required fields.";
        
+    }
+    if(errorMessage.value!="")
+    {
+      chocolateFactory.value.location.longitude = props.coordinates[0]
+      chocolateFactory.value.location.latitude = props.coordinates[1]
+      chocolateFactory.value.location.adress.city=props.adress.city
+      chocolateFactory.value.location.adress.street=props.adress.street
+      chocolateFactory.value.location.adress.postNum=props.adress.postcode
+      chocolateFactory.value.location.adress.streetNum=props.adress.streetNum
+      
+      axios.post("http://localhost:8080/ChoccolateAppREST/rest/registerManager", this.manager).then(response => {
+        manager.value = response.data;
         axios.post('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolateFactory', this.chocolateFactory, {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
@@ -165,17 +201,21 @@
       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/updateManager', this.manager, {
           
           headers: {
-            'Content-Type': 'application/json', // Explicitly set the Content-Type to application/json
+            'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
           }
         })
        .then(respone=>{
           router.push("/")
         })
-    });
+    })
+      });
     }
+      
+        
+  }
     
-    function handleFileUpload(event){
+  function handleFileUpload(event){
         selectedFile.value = event.target.files[0];
         const formData = new FormData();
         formData.append('file', selectedFile.value);
@@ -188,34 +228,13 @@
                 chocolateFactory.value.logo = response.data;
               }
           })
-    }
+  }
     
-    function getAvailableManagers(){
+  function getAvailableManagers(){
       axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAvailableManagers').then(response=>{
         availableManagers.value = response.data;
     })
     }
-      
-    function updateManager() {
-      manager.value.factoryId = this.chocolateFactory.id
-      axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/updateManager', this.manager, {
-          
-          headers: {
-            'Content-Type': 'application/json', // Explicitly set the Content-Type to application/json
-            'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
-          }
-        }).catch(error => {
-        this.errorMessage = error.response.data
-    });
-    }
-
-    function registerNewManager(event) {
-      event.preventDefault();
-      axios.post("http://localhost:8080/ChoccolateAppREST/rest/registerManager", this.manager).then(response => {
-        manager.value = response.data;
-      }).catch(error => {
-          console.log(error);
-      });
-    }
+    
     </script>
 
