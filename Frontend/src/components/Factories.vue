@@ -1,6 +1,10 @@
 <template>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch/dist/geosearch.css" /> 
+    </head>
     <nav class="navbar navbar-light" style="background-color: transparent; margin-top: 100px;">
-        <div class = "container" style="height: 200px;">
+        <div class = "container" style="height: 120px; width: 1000px;">
             <form class="form-inline" @submit.prevent="search()">
                 <div>
                     <label style="font-size: 1.5em; padding: 10px;">Factory Name</label>
@@ -14,10 +18,8 @@
 
                 <div>
                     <label style="font-size: 1.5em; padding: 10px;">Location</label>
-                    <input class="form-control mr-sm-2" type="search" v-model="locationFilter" placeholder="Search" aria-label="Search" pattern=".*\S.*" list = "locations">
-                    <datalist id="locations">
-                        <option v-for="location in locationAutoCompleteData" :key="location">{{ location }}</option>
-                    </datalist>
+                    <input v-if="mapShown == false" type="button" class="form-control mr-sm-2" @click="showMap()" value="Open Map"></input>
+                    <input v-else type="button" class="form-control mr-sm-2" @click="showMap()" value="Close Map"></input>
                 </div>
 
                 <div>
@@ -28,7 +30,10 @@
                     <label style="color: transparent; font-size: 1.5em; padding: 10px;">a</label>
                     <button id="searchButton" class="btn btn-primary my-2 my-sm-0"  type="submit">Search</button>
                 </div>
-            </form>
+
+                <div :style="{ width: '100%', height: '50vh', zIndex: 1, visibility: mapShown ? 'visible' : 'hidden' }" ref="mapContainer">
+                </div>
+            </form>        
         </div>
     </nav>
     <div>
@@ -37,8 +42,7 @@
                 <div class="container">
                     <div style="text-align: center"> 
                         <label style="font-size: 1.5em; padding: 10px;font-weight: bold; text-align: ">FILTERS</label>
-                    </div>
-                    
+                    </div>                 
                     <div>
                         <label>Show Only Open</label>
                     </div>
@@ -101,7 +105,6 @@
                     </div>
                 </div>
             </div>
-
             <div class = "col-md-10">
                 <div class="container">
                     <h1 style="text-align: center;">FACTORIES</h1> 
@@ -114,7 +117,6 @@
                         <option value="rating_asc">Rating Ascending</option>
                         <option value="rating_desc">Rating Descending</option>
                     </select>
-                
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-4 col-md-6 mb-4" v-for="f in filteredFactories" :key="f.id" @click="showDetails(f)">
@@ -146,6 +148,11 @@
 import axios from 'axios';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import L from 'leaflet'
+import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+import 'leaflet/dist/leaflet.css'
+import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
+import "leaflet-defaulticon-compatibility";
 
 const router = useRouter();
 const factories = ref([]);
@@ -155,8 +162,7 @@ const factoryNameFilter = ref("");
 const chocolateNameFilter = ref("");
 const averageRatingFilter = ref(0);
 
-const locationFilter = ref("");
-const locationAutoCompleteData = ref([]);
+const mapShown = ref(false)
 
 const sortOption = ref("Sort By");
 
@@ -164,14 +170,50 @@ const chocolateTypeFilters = ref([]);
 const chocolateKindFilters = ref([]);
 const showOnlyOpen = ref(false);
 
+const map = ref()
+const mapContainer = ref()
+
 onMounted(() => {
     loadFactories();
 })
+
+function createMap()
+{
+    map.value = L.map(mapContainer.value).setView([51.505, -0.09], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map.value);
+
+    const provider = new OpenStreetMapProvider();
+    const searchControl = new GeoSearchControl({
+        provider: provider,
+        style: 'bar',
+        showMarker: true,
+        retainZoomLevel: false,
+        animateZoom: true,
+        autoClose: true,
+        searchLabel: 'Enter address'
+    });
+
+    map.value.addControl(searchControl);
+
+    for(let factory of factories.value)
+    {
+        L.marker([factory.location.longitude, factory.location.latitude]).addTo(map.value)
+        .bindPopup(factory.name)
+        .openPopup().on('click', () => {
+            showDetails(factory); 
+        }).on('mouseover', function () {
+            this.openPopup();
+        });
+    }   
+}
 
 function loadFactories() {
     axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAll').then(response => {
             factories.value = response.data   
             filteredFactories.value = factories.value
+            createMap();
         });
 } 
 
@@ -199,9 +241,9 @@ function sortFactories() {
   } else if (sortOption.value === "name_desc") {
     filteredFactories.value.sort((a, b) => b.name.localeCompare(a.name));
   } else if (sortOption.value === "location_asc") {
-    filteredFactories.value.sort((a, b) => a.location.adress.city.localeCompare(b.location));
+    filteredFactories.value.sort((a, b) => a.location.adress.city.localeCompare(b.location.adress.city));
   } else if (sortOption.value === "location_desc") {
-    filteredFactories.value.sort((a, b) => b.location.adress.city.localeCompare(a.location));
+    filteredFactories.value.sort((a, b) => b.location.adress.city.localeCompare(a.location.adress.city));
   } else if (sortOption.value === "rating_asc") {
     filteredFactories.value.sort((a, b) => a.rating - b.rating);
   } else if (sortOption.value === "rating_desc") {
@@ -267,6 +309,17 @@ function filterByChocolateKind() {
 
 function showDetails(factory) {
     router.push({name: 'factoryDetails', params: { factoryId: factory.id }});
+}
+
+function showMap() {
+    if(!mapShown.value)
+    {
+        mapShown.value = true;
+    }
+    else
+    {
+        mapShown.value = false;
+    }
 }
 </script>
 

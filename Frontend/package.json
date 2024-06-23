@@ -12,6 +12,10 @@
     "axios": "^1.6.8",
     "bootstrap": "^5.3.3",
     "jquery": "^3.7.1",
+    "leaflet": "^1.9.4",
+    "leaflet-defaulticon-compatibility": "^0.1.2",
+    "leaflet-geosearch": "^4.0.0",
+    "react-leaflet": "^4.2.1",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
