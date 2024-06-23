@@ -174,8 +174,7 @@ const showOnlyOpen = ref(false);
 
 const map = ref()
 const mapContainer = ref()
-const loggedInUser = ref({});
-const isLoggedIn = ref(false);
+const loggedInUser = ref({role:""});
 
 onMounted(() => {
     loadFactories();
@@ -185,7 +184,10 @@ onMounted(() => {
     {
         loggedInUser.value= JSON.parse(localStorage.getItem('loggedUser'));  
     }
-
+    else {
+        
+        loggedInUser.value = { role: "" };
+    }
 })
 
 function createMap()

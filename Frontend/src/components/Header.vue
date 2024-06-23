@@ -41,7 +41,10 @@
         localStorage.removeItem('jsonWebToken');
         loggedInUser.value = null;
         isLoggedIn.value = false;
-        router.push('/');
+        router.push('/').then(() => router.go(0));
+       
+       
+        
     }
 </script>
 

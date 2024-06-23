@@ -237,8 +237,8 @@ public class UserDAO {
 			if(manager.getId()==updatedManager.getId())
 			{
 				manager.setFactoryId(updatedManager.getFactoryId());
-				//managers.remove(manager);
-				//managers.add(i, manager);
+				managers.remove(manager);
+				managers.add(i, manager);
 				
 				
 				Gson gson = new Gson();  

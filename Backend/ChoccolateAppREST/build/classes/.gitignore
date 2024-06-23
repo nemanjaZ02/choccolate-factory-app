@@ -1,2 +1,5 @@
 /dao/
 /services/
+/beans/
+/enums/
+/jwt/

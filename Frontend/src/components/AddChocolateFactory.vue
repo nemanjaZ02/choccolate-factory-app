@@ -185,7 +185,7 @@
       chocolateFactory.value.location.adress.country=props.adress.country
       chocolateFactory.value.location.adress.street=props.adress.street
       chocolateFactory.value.location.adress.postNum=props.adress.postcode
-      chocolateFactory.value.location.adress.streetNum=props.adress.streetNum
+      chocolateFactory.value.location.adress.streetNum=props.adress.housenumber
       
       axios.post("http://localhost:8080/ChoccolateAppREST/rest/registerManager", this.manager).then(response => {
         manager.value = response.data;
