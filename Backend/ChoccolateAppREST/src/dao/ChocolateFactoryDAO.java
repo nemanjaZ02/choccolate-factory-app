@@ -62,6 +62,47 @@ public class ChocolateFactoryDAO {
 		
 		return null;
 	}
+	public ChocolateFactory saveChocolateFactory(ChocolateFactory newChocolateFactory, String contextPath)
+	{
+		
+		try {
+			Gson gson = new Gson();  
+			Path filePath;
+			String updatedJsonData;
+
+			int maxId = -1;
+			for(ChocolateFactory chocolateFactory : factories)
+			{
+				if(newChocolateFactory.getName().equals(chocolateFactory.getName()))
+				{
+					return null;
+				}
+				if(chocolateFactory.getId() > maxId)
+				{
+					maxId = chocolateFactory.getId();
+				}
+			}
+				
+			if(maxId == -1)
+			{
+				maxId = 0;
+			}
+				
+			newChocolateFactory.setId(maxId + 1);
+			newChocolateFactory.setChocolates(new ArrayList<Chocolate>());
+			factories.add(newChocolateFactory);
+			filePath = Paths.get(contextPath, "/chocolateFactories.json");
+			ChocolateFactory[] updateChocolateFactoryArray = factories.toArray(new ChocolateFactory[0]);
+			updatedJsonData = gson.toJson(updateChocolateFactoryArray);
+			
+            Files.write(filePath, updatedJsonData.getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		return newChocolateFactory;	
+	}
 	
 	public boolean factoryAlreadyHasChocolate(Chocolate newChocolate)
 	{
@@ -128,9 +169,10 @@ public class ChocolateFactoryDAO {
 	public void updateChocolateInFactory(Chocolate updatedChocolate, String contextPath)
 	{
 		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
-		
+		int j = -1;
 		for(ChocolateFactory factory: factories)
 		{
+			j++;
 			if(factory.getId()==updatedChocolate.getFactoryId())
 			{
 				chocolates = factory.getChocolates();
@@ -149,8 +191,8 @@ public class ChocolateFactoryDAO {
 				
 				factory.setChocolates(chocolates);
 			
-				factories.remove(factory.getId()-1);
-				factories.add(factory);
+				factories.remove(factory);
+				factories.add(j,factory);
 				
 				Gson gson = new Gson();  
 				String updatedJsonData;

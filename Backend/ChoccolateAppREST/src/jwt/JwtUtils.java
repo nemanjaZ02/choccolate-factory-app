@@ -63,6 +63,25 @@ public class JwtUtils {
             return false;
         }
     }
+    public static boolean isAdministrator(String authorizationHeader) throws ParseException {
+        
+		String jwt = convertAuthorizationHeader(authorizationHeader);
+		
+		if(jwt == "")
+		{
+			return false;
+		}
+		
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(jwt);
+            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+            String role = (String) claimsSet.getClaim("role");
+            return role != null && role.equals(Role.ADMIN.toString());
+        } catch (java.text.ParseException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public static boolean isEmployee(String authorizationHeader) throws ParseException {
         
 		String jwt = convertAuthorizationHeader(authorizationHeader);

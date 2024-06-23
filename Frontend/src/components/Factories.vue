@@ -108,7 +108,8 @@
             <div class = "col-md-10">
                 <div class="container">
                     <h1 style="text-align: center;">FACTORIES</h1> 
-                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" v-on:change="sortFactories()" v-model="sortOption">
+                   
+                    <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" v-on:change="sortFactories()" v-model="sortOption"> 
                         <option disabled selected>Sort By</option>
                         <option value="name_asc">Name Ascending</option>
                         <option value="name_desc">Name Descending</option>
@@ -117,6 +118,7 @@
                         <option value="rating_asc">Rating Ascending</option>
                         <option value="rating_desc">Rating Descending</option>
                     </select>
+                    <button v-if="loggedInUser.role == 'ADMIN'"  v-on:click="showAddForm()" style="margin-left: 50px ;" value="add factory">Add Factory</button>
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-4 col-md-6 mb-4" v-for="f in filteredFactories" :key="f.id" @click="showDetails(f)">
@@ -172,9 +174,18 @@ const showOnlyOpen = ref(false);
 
 const map = ref()
 const mapContainer = ref()
+const loggedInUser = ref({});
+const isLoggedIn = ref(false);
 
 onMounted(() => {
     loadFactories();
+    loggedInUser.value = JSON.parse(localStorage.getItem('loggedUser'));
+
+    if(JSON.parse(localStorage.getItem('loggedUser')))
+    {
+        loggedInUser.value= JSON.parse(localStorage.getItem('loggedUser'));  
+    }
+
 })
 
 function createMap()
@@ -320,6 +331,9 @@ function showMap() {
     {
         mapShown.value = false;
     }
+}
+function showAddForm() {
+  router.push('/addChocolateFactoryForm');
 }
 </script>
 
