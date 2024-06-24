@@ -26,7 +26,6 @@ import dao.UserDAO;
 import enums.Role;
 import jwt.JwtConstants;
 import jwt.JwtUtils;
-import jwt.LoginResponse;
 
 @Path("")
 public class LoginService {
@@ -70,7 +69,7 @@ public class LoginService {
             ctx.setAttribute("loggedUser", loggedUser);
             
             return Response.status(Response.Status.OK)
-                           .entity(new LoginResponse(loggedUser, token))
+                           .entity(token)
                            .build();
         } catch (JOSEException e) {
             e.printStackTrace();
