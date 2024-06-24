@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import enums.PurchaseState;
 
 public class Purchase {
-	private ArrayList<Chocolate> chocolate = new ArrayList<Chocolate>();
-	private ChocolateFactory factory;
+	private int id;
+	private ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
+	private int factoryId;
 	private LocalDateTime dateAndTime;
 	private double price;
-	private Customer customer;
+	private int customerId;
 	private PurchaseState state;
 	
 	public Purchase() {
@@ -18,23 +19,24 @@ public class Purchase {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Purchase(ArrayList<Chocolate> chocolate, ChocolateFactory factory, LocalDateTime dateAndTime,
-			double price, Customer customer, PurchaseState state) {
+	public Purchase(int id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
+			double price, int customerId, PurchaseState state) {
 		super();
-		this.chocolate = chocolate;
-		this.factory = factory;
+		this.id = id;
+		this.chocolates = chocolate;
+		this.factoryId = factoryId;
 		this.dateAndTime = dateAndTime;
 		this.price = price;
-		this.customer = customer;
+		this.customerId = customerId;
 		this.state = state;
 	}
 
-	public ArrayList<Chocolate> getChocolate() {
-		return chocolate;
+	public ArrayList<Chocolate> getChocolates() {
+		return chocolates;
 	}
 
-	public void setChocolate(ArrayList<Chocolate> chocolate) {
-		this.chocolate = chocolate;
+	public void setChocolates(ArrayList<Chocolate> chocolate) {
+		this.chocolates = chocolate;
 	}
 
 	public LocalDateTime getDateAndTime() {
@@ -61,19 +63,27 @@ public class Purchase {
 		this.state = state;
 	}
 
-	public ChocolateFactory getFactory() {
-		return factory;
+	public int getFactoryId() {
+		return factoryId;
 	}
 
-	public void setFactory(ChocolateFactory factory) {
-		this.factory = factory;
+	public void setFactoryId(int factoryId) {
+		this.factoryId = factoryId;
 	}
 
-	public Customer getCustomer() {
-		return customer;
+	public int getCustomerId() {
+		return customerId;
 	}
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}	
 }

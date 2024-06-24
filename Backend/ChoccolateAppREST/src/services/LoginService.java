@@ -126,7 +126,6 @@ public class LoginService {
 		else
 		{
 			Manager newManager = dao.registerNewManager(newUser, contextPath);
-			ctx.setAttribute("loggedUser", newUser);
 			return Response.status(200).entity(newManager).build();
 		}	
 	}

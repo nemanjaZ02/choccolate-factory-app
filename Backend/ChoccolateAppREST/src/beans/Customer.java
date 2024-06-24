@@ -8,8 +8,8 @@ import enums.Role;
 
 public class Customer extends User {
 	private List<Purchase> purchases;
-	private Cart cart;
-	private int points;
+	private Cart cart = new Cart();
+	private double points;
 	private CustomerType type;
 	
 	public Customer() {
@@ -22,7 +22,7 @@ public class Customer extends User {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Customer(List<Purchase> purchases, Cart cart, int points, CustomerType type) {
+	public Customer(List<Purchase> purchases, Cart cart, double points, CustomerType type) {
 		super();
 		this.purchases = purchases;
 		this.cart = cart;
@@ -47,10 +47,10 @@ public class Customer extends User {
 	public void setCart(Cart cart) {
 		this.cart = cart;
 	}
-	public int getPoints() {
+	public double getPoints() {
 		return points;
 	}
-	public void setPoints(int points) {
+	public void setPoints(double points) {
 		this.points = points;
 	}
 	public CustomerType getType() {

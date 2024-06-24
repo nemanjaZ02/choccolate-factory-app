@@ -7,7 +7,8 @@
         <label> | </label>
 
         <router-link :to="{name: 'factoryDetails', params: { factoryId: loggedInUser.factoryId }}" v-if="isLoggedIn && loggedInUser.role == 'MANAGER'">My Factory</router-link> 
-        <label v-if="isLoggedIn && loggedInUser.role == 'MANAGER'"> | </label>
+        <router-link :to="{name: 'myCartView'}" v-if="isLoggedIn && loggedInUser.role == 'CUSTOMER'">My Cart</router-link>
+        <label v-if="isLoggedIn && (loggedInUser.role == 'MANAGER' || loggedInUser.role == 'CUSTOMER')"> | </label>
 
         <a href="#" class="router-link-like" @click.prevent="logOut" v-if="isLoggedIn">Log out</a>
         <router-link v-else to="/register">Register</router-link>    
@@ -39,12 +40,10 @@
     {
         localStorage.removeItem('loggedUser');
         localStorage.removeItem('jsonWebToken');
+        localStorage.removeItem('cart');
         loggedInUser.value = null;
         isLoggedIn.value = false;
         router.push('/').then(() => router.go(0));
-       
-       
-        
     }
 </script>
 
