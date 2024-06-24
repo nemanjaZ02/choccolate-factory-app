@@ -33,12 +33,12 @@ import jwt.JwtUtils;
 
 
 @Path("/purchases")
-public class PurchaseServis {
+public class PurchaseService {
 	
 	@Context
 	ServletContext ctx;
 	
-	public PurchaseServis(){
+	public PurchaseService(){
 		
 	}
 	
