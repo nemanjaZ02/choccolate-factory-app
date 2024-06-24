@@ -44,9 +44,7 @@ const decodeJWT = (token) => {
     }
 
     const decodeBase64Url = (base64Url) => {
-        // Replace URL-safe characters and add padding if necessary
         let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        // Add padding if the base64 string length is not a multiple of 4
         while (base64.length % 4) {
             base64 += '=';
         }
@@ -66,7 +64,7 @@ const login = () => {
             let decodedToken = decodeJWT(response.data);
             let user = JSON.stringify(decodedToken.payload.user);
             localStorage.setItem('loggedUser', user);
-            localStorage.setItem('jsonWebToken', JSON.stringify(response.data.jwt));
+            localStorage.setItem('jsonWebToken', JSON.stringify(response.data));
             success.value = 'Korisnik je uspesno prijavljen.';
             errorMessage.value = '';
             router.push('/');

@@ -13,6 +13,7 @@ import java.util.Collection;
 import com.google.gson.Gson;
 
 import beans.Admin;
+import beans.Chocolate;
 import beans.ChocolateFactory;
 import beans.Customer;
 import beans.Employee;
@@ -262,5 +263,51 @@ public class UserDAO {
 			}
 		}
 		return null;
+	}
+	
+	public Customer GetCustomerById(int id) {
+		for(Customer c : customers)
+		{
+			if(c.getId() == id)
+			{
+				return c;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Customer updateCustomer(Customer newCustomer, String contextPath) {
+		
+		int i = -1;
+		for(Customer customer : customers)
+		{
+			i++;
+		    if(customer.getId() == newCustomer.getId())
+		    {
+		    	customer = newCustomer;
+		    	
+		    	customers.remove(i);
+		    	customers.add(i, newCustomer);
+						
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/customers.json");
+				Customer[] updateCustomerArray = customers.toArray(new Customer[0]);
+				updatedJsonData = gson.toJson(updateCustomerArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            return newCustomer;
+		    }
+
+		}
+		
+		return null;	
 	}
 }

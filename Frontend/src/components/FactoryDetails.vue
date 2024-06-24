@@ -49,7 +49,11 @@
                 <tr>
                   <td style="text-align: center; font-size: 15px; font-weight: bold;">
                     {{ c.name }}
-                  </td>
+                  </td> 
+                </tr>
+                <tr>
+                  <td style="text-align: center; font-size: 15px;" v-if="c.quantity > 0">{{ "In Stock 🟢 (" + c.quantity + ")"}}</td>
+                  <td style="text-align: center; font-size: 15px;" v-else>Not In Stock 🔴</td>
                 </tr>
                 <tr v-if="loggedInUser.factoryId == factory.id">
                   <td  style="text-align: center;">
@@ -59,6 +63,11 @@
                 <tr v-if="loggedInUser.factoryId == factory.id">
                   <td style="text-align: center;">
                     <button v-on:click="deleteChocolate(c)" class="btn">Delete</button>
+                  </td>   
+                </tr>
+                <tr v-if="loggedInUser.role == 'CUSTOMER' && c.quantity > 0">
+                  <td  style="text-align: center;">
+                    <button v-on:click="showMyCart(c)" class="btn">Buy</button>
                   </td>   
                 </tr>
               </table>
@@ -114,6 +123,9 @@ function showAddForm(factoryId) {
 }
 function showUpdateForm(chocolate){
   router.push({ name: 'updateChocolateForm', params: { chocolateId: chocolate.id } });
+}
+function showMyCart(chocolate){
+  router.push({ name: 'myCartView', params: { chocolateId: chocolate.id }});
 }
 function deleteChocolate(chocolate){
   axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/deleteChocolate', chocolate, {
