@@ -146,7 +146,7 @@ public class JwtUtils {
         }
     }
     
-    public static int getCustomerId(String authorizationHeader) {
+    public static int getUserId(String authorizationHeader) {
     	String jwt = convertAuthorizationHeader(authorizationHeader);
 		
 		if(jwt == "")

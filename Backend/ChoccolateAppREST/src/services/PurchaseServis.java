@@ -159,7 +159,7 @@ public class PurchaseServis {
 			newPurchase.setFactoryId(cfc.getFactoryId());
 			newPurchase.setDateAndTime(LocalDateTime.now());
 			newPurchase.setPrice(cart.getPrice());
-			int customerId = JwtUtils.getCustomerId(authorizationHeader);
+			int customerId = JwtUtils.getUserId(authorizationHeader);
 			newPurchase.setCustomerId(customerId);
 			newPurchase.setState(PurchaseState.Processing);
 			
