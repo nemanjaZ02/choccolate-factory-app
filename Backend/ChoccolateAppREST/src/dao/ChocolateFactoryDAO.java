@@ -13,6 +13,7 @@ import beans.Adress;
 import beans.Chocolate;
 import beans.ChocolateFactory;
 import beans.Location;
+import beans.Manager;
 import beans.WorkTime;
 import enums.ChocolateStatus;
 import enums.WorkingStatus;
@@ -255,5 +256,53 @@ public class ChocolateFactoryDAO {
 		}
         
         return factory;	
+	}
+	
+	public ChocolateFactory updateChocolateFactory(ChocolateFactory factory, String contextPath)
+	{
+		int i = -1;
+		for(ChocolateFactory cf : factories)
+		{
+			i++;
+			if(cf.getId()==factory.getId())
+			{
+				cf = factory;
+				factories.remove(factory);
+				factories.add(i, factory);
+				
+				
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/chocolateFactories.json");
+				ChocolateFactory[] updateChocolateFactoriesArray = factories.toArray(new ChocolateFactory[0]);
+				updatedJsonData = gson.toJson(updateChocolateFactoriesArray);							
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	                        
+				return factory;
+			}
+		}
+		return null;
+	}
+	
+	public void recalculateRating(ChocolateFactory factory, int commentsNum, double rating, String contextPath)
+	{
+		if(commentsNum == 1)
+		{
+			factory.setRating(rating);
+			updateChocolateFactory(factory, contextPath);
+		}
+		else
+		{
+			double sum = factory.getRating() * (commentsNum - 1);
+			sum = sum + rating;
+			double newRating = sum / commentsNum;
+			factory.setRating(newRating);
+			updateChocolateFactory(factory, contextPath);
+		}
 	}
 }

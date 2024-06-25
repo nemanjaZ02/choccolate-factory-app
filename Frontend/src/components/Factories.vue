@@ -24,7 +24,7 @@
 
                 <div>
                     <label style="font-size: 1.5em; padding: 10px;">Average Rating</label>
-                    <input class="form-control mr-sm-2" type="number" step="any" v-model="averageRatingFilter" placeholder="Search" aria-label="Search" pattern=".*\S.*">
+                    <input class="form-control mr-sm-2" type="number" step="any" v-model="averageRatingFilter" placeholder="Search" aria-label="Search" pattern=".*\S.*" min="0" max="5">
                 </div>
                 <div>
                     <label style="color: transparent; font-size: 1.5em; padding: 10px;">a</label>
@@ -108,7 +108,6 @@
             <div class = "col-md-10">
                 <div class="container">
                     <h1 style="text-align: center;">FACTORIES</h1> 
-                   
                     <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example" v-on:change="sortFactories()" v-model="sortOption"> 
                         <option disabled selected>Sort By</option>
                         <option value="name_asc">Name Ascending</option>
@@ -138,7 +137,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>    
                     </div>
                 </div>
             </div>

@@ -1,24 +1,28 @@
 package beans;
 
+import enums.CommentStatus;
+
 public class Comment {
 	private int id;
-	private int customerId;
+	private Customer customer;
 	private int factoryId;
 	private String text;
 	private double rating;
+	private CommentStatus status;
 	
 	public Comment() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Comment(int id, int customerId, int factoryId, String text, double rating) {
+	public Comment(int id, Customer customer, int factoryId, String text, double rating, CommentStatus status) {
 		super();
 		this.id = id;
-		this.customerId = customerId;
+		this.customer = customer;
 		this.factoryId = factoryId;
 		this.text = text;
 		this.rating = rating;
+		this.status = status;
 	}
 
 	public String getText() {
@@ -45,12 +49,12 @@ public class Comment {
 		this.id = id;
 	}
 
-	public int getCustomerId() {
-		return customerId;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerId(int customerId) {
-		this.customerId = customerId;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	public int getFactoryId() {
@@ -60,4 +64,14 @@ public class Comment {
 	public void setFactoryId(int factoryId) {
 		this.factoryId = factoryId;
 	}
+
+	public CommentStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(CommentStatus status) {
+		this.status = status;
+	}
+	
+	
 }

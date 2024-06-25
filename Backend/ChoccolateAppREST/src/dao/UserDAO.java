@@ -277,6 +277,18 @@ public class UserDAO {
 		return null;
 	}
 	
+	public Manager GetManagerById(int id) {
+		for(Manager m : managers)
+		{
+			if(m.getId() == id)
+			{
+				return m;
+			}
+		}
+		
+		return null;
+	}
+	
 	public Customer updateCustomer(Customer newCustomer, String contextPath) {
 		
 		int i = -1;
