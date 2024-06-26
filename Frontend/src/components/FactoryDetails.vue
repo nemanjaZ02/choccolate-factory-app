@@ -45,7 +45,7 @@
           </label>
           <div class="chocolate-div-container">
             <div style="height: 200px;" v-for="c in factory.chocolates" class="chocolate-div">
-              <table class="chocolate-table">
+              <table class="chocolate-table hover-table">
                 <tr><img :src="c.image" alt="Chocolate" class="chocolate-image"></tr>
                 <tr>
                   <td style="text-align: center; font-size: 15px; font-weight: bold;">
@@ -56,17 +56,28 @@
                   <td style="text-align: center; font-size: 15px;" v-if="c.quantity > 0">{{ "In Stock 🟢 (" + c.quantity + ")"}}</td>
                   <td style="text-align: center; font-size: 15px;" v-else>Not In Stock 🔴</td>
                 </tr>
-                <tr v-if="loggedInUser.factoryId == factory.id">
+                <tr class="hover-row" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
                   <td  style="text-align: center;">
                     <button v-on:click="showUpdateForm(c)" class="btn">Edit</button>
                   </td>   
                 </tr>
-                <tr v-if="loggedInUser.factoryId == factory.id">
+                <tr class="hover-row" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
                   <td style="text-align: center;">
                     <button v-on:click="deleteChocolate(c)" class="btn">Delete</button>
                   </td>   
                 </tr>
-                <tr v-if="loggedInUser.role == 'CUSTOMER' && c.quantity > 0">
+                <tr class="hover-row" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'EMPLOYEE'">
+                  <td style="text-align: center;">
+                    <text>QTY </text>
+                    <input type="number" v-model="c.quantity" style="width: 65px;">
+                  </td>  
+                </tr>
+                <tr class="hover-row" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'EMPLOYEE'">
+                  <td style="text-align: center;">
+                    <button v-on:click="changeQuantity(c)" class="btn">Change</button>
+                  </td>   
+                </tr>
+                <tr class="hover-row" v-if="loggedInUser.role == 'CUSTOMER' && c.quantity > 0">
                   <td  style="text-align: center;">
                     <button v-on:click="showMyCart(c)" class="btn">Buy</button>
                   </td>   
@@ -117,6 +128,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility";
+import UpdateChocolate from './UpdateChocolate.vue';
 
 const route = useRoute();
 const factory = ref({});
@@ -249,6 +261,21 @@ function declineComment(comment) {
   }).then(response => {
     router.go(0);
   });
+}
+
+function changeQuantity(chocolate) {
+  axios.put('http://localhost:8080/ChoccolateAppREST/rest/chocolates/updateChocolate', chocolate, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+      }
+    }) .then(response=>{
+      let responseData = response.data;
+       axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/updateChocolate', responseData, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+          }
+       })
+    });
 }
 </script>
 
@@ -453,5 +480,14 @@ tbody tr:nth-child(even) {
   z-index: 1;
   margin-top: 100px;
   border-radius: 8px;
+}
+
+.hover-table .hover-row {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.hover-table:hover .hover-row {
+  opacity: 1;
 }
 </style>
