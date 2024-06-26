@@ -132,7 +132,7 @@
                                         <ul class="list-group list-group-flush">
                                             <li class="list-group-item">{{ "Open: " + f.workTime.from + " - " + f.workTime.to}}</li>
                                             <li class="list-group-item">{{ f.location.adress.city + ", " + f.location.adress.country}}</li>
-                                            <li class="list-group-item">{{ "Rating: " + f.rating }}</li>
+                                            <li class="list-group-item">{{ "Rating: " + f.rating.toFixed(2) }}</li>
                                         </ul>
                                     </div>
                                 </div>

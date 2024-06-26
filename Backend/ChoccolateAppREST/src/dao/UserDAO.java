@@ -61,6 +61,12 @@ public class UserDAO {
             }
         }
 		
+		for (User employee : employees) {
+            if (employee.getUsername().equals(username) && employee.getPassword().equals(password)) {
+                return employee;
+            }
+        }
+		
         return null;
     }
 	
