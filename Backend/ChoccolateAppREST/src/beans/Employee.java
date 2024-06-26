@@ -37,4 +37,13 @@ public class Employee extends User {
 	public void setFactoryId(int factoryId) {
 		this.factoryId = factoryId;
 	}
+	
+	public void update(User u)
+	{
+		setName(u.getName());
+		setSurname(u.getSurname());
+		setBirthday(u.getBirthday());
+		setUsername(u.getUsername());
+		setGender(u.getGender());
+	}
 }

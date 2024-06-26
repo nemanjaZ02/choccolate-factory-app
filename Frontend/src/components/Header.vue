@@ -1,7 +1,6 @@
 <template>
-
     <nav class="div_style">
-        <label v-if="isLoggedIn">{{loggedInUser.username}}</label>
+        <router-link :to="{name: 'myProfileView'}" v-if="isLoggedIn">{{loggedInUser.username}}</router-link>
         <router-link v-else to="/login">Login</router-link> 
 
         <label> | </label>
