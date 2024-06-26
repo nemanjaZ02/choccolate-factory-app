@@ -153,4 +153,53 @@ public class LoginService {
 		
 		return Response.status(200).entity(c).build();
 	}
+	
+	@OPTIONS
+	@Path("/updateUser")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean corsUpdateUser() {
+		return true;
+	}
+	
+	@POST
+	@Path("/updateUser")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response corsUpdateUser(User updatedUser, @HeaderParam("Authorization") String authorizationHeader) {
+		String contextPath = ctx.getRealPath("");
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		int id = JwtUtils.getUserId(authorizationHeader);
+		
+		if(dao.GetAdminById(id) != null)
+		{
+			Admin a = dao.GetAdminById(id);
+			a.update(updatedUser);
+			dao.updateAdmin(a, contextPath);
+			return Response.status(200).entity(a).build();
+		}
+		else if (dao.GetCustomerById(id) != null)
+		{
+			Customer c = dao.GetCustomerById(id);
+			c.update(updatedUser);
+			dao.updateCustomer(c, contextPath);
+			return Response.status(200).entity(c).build();
+		}
+		else if (dao.GetManagerById(id) != null)
+		{
+			Manager m = dao.GetManagerById(id);
+			m.update(updatedUser);
+			dao.updateManager(m, contextPath);
+			return Response.status(200).entity(m).build();
+		}
+		else if (dao.GetEmployeeById(id) != null)
+		{
+			Employee e = dao.GetEmployeeById(id);
+			e.update(updatedUser);
+			dao.updateEmployee(e, contextPath);
+			return Response.status(200).entity(e).build();
+		}
+		
+		
+		return Response.status(404).entity("User not found").build();
+	}
 }

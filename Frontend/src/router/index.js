@@ -7,6 +7,7 @@ import AddChocolateView from '@/views/AddChocolateView.vue'
 import UpdateChocolateView from '@/views/UpdateChocolateView.vue'
 import AddChocolateFactoryView from '@/views/AddChocolateFactoryView.vue'
 import MyCartView from '@/views/MyCartView.vue'
+import MyProfileView from '@/views/MyProfileView.vue'
 
 const routes = [
     {
@@ -54,6 +55,11 @@ const routes = [
       component: MyCartView,
       props: true,
       meta: { requiresAuth: true, requiredRole: 'CUSTOMER' }
+    },
+    {
+      path: '/myProfile',
+      name: 'myProfileView',
+      component: MyProfileView
     }
   ];
 

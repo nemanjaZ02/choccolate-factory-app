@@ -59,4 +59,13 @@ public class Customer extends User {
 	public void setType(CustomerType type) {
 		this.type = type;
 	}
+	
+	public void update(User u)
+	{
+		setName(u.getName());
+		setSurname(u.getSurname());
+		setBirthday(u.getBirthday());
+		setUsername(u.getUsername());
+		setGender(u.getGender());
+	}
 }
