@@ -3,6 +3,8 @@ package beans;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+
+
 import enums.PurchaseState;
 
 public class Purchase {
@@ -13,6 +15,7 @@ public class Purchase {
 	private double price;
 	private int customerId;
 	private PurchaseState state;
+	private String declineReason;
 	
 	public Purchase() {
 		super();
@@ -20,7 +23,7 @@ public class Purchase {
 	}
 
 	public Purchase(int id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
-			double price, int customerId, PurchaseState state) {
+			double price, int customerId, PurchaseState state, String declineReason ) {
 		super();
 		this.id = id;
 		this.chocolates = chocolate;
@@ -29,6 +32,7 @@ public class Purchase {
 		this.price = price;
 		this.customerId = customerId;
 		this.state = state;
+		this.declineReason = declineReason;
 	}
 
 	public ArrayList<Chocolate> getChocolates() {
@@ -65,6 +69,14 @@ public class Purchase {
 
 	public int getFactoryId() {
 		return factoryId;
+	}
+
+	public String getDeclineReason() {
+		return declineReason;
+	}
+
+	public void setDeclineReason(String declineReason) {
+		this.declineReason = declineReason;
 	}
 
 	public void setFactoryId(int factoryId) {

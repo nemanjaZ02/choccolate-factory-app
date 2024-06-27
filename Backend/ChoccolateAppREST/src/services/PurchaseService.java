@@ -11,7 +11,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -23,6 +25,7 @@ import beans.Cart;
 import beans.Chocolate;
 import beans.ChocolateFactory;
 import beans.Customer;
+import beans.Manager;
 import beans.Purchase;
 import dao.ChocolateDAO;
 import dao.ChocolateFactoryDAO;
@@ -33,12 +36,12 @@ import jwt.JwtUtils;
 
 
 @Path("/purchases")
-public class PurchaseServis {
+public class PurchaseService {
 	
 	@Context
 	ServletContext ctx;
 	
-	public PurchaseServis(){
+	public PurchaseService(){
 		
 	}
 	
@@ -164,7 +167,7 @@ public class PurchaseServis {
 			newPurchase.setState(PurchaseState.Processing);
 			
 			Customer customer = userDAO.GetCustomerById(customerId);
-			customer.setPoints(customer.getPoints() + (newPurchase.getPrice()/1000 * 133 * 4));
+			customer.setPoints(customer.getPoints() + (newPurchase.getPrice()/1000 * 133));
 			
 			//proveriti CustomerType!
 			
@@ -174,4 +177,119 @@ public class PurchaseServis {
 			return Response.status(200).entity(purchase).build();
 		}	
 	}
+	@GET
+	@Path("/getPurchasesForManager/{managerId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPurchacesForManager(@PathParam("managerId") int id)
+	{
+		
+		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
+		Manager manager = userDao.GetManagerById(id);
+		if(manager == null)
+		{
+			return Response.status(405).entity("Unauthorized: Only managers can see their purchases").build();
+		}
+		
+		ArrayList<Purchase> purchases = dao.getAllForManager(manager);
+		
+		if(purchases == null)
+		{
+			return Response.status(205).entity("There are no purchases to show").build();
+		}
+		else
+		{
+			return Response.status(200).entity(purchases).build();
+		}
+	}
+	
+	@GET
+	@Path("/getById/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPurchaseById(@PathParam("id") int id)
+	{
+	        
+		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+		Purchase purchase = dao.getById(id);
+		
+		
+		if(purchase == null)
+		{
+			return Response.status(205).entity("Purchase with this id doesn't exist").build();
+		}
+		else
+		{
+			return Response.status(200).entity(purchase).build();
+		}
+	}
+	@OPTIONS
+	@Path("/updatePurchaseStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean updatePurchaseStatusByManager() {
+		return true;
+	}
+	
+	@PUT
+	@Path("/updatePurchaseStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response updatePurchaseStatus(Purchase newPurchase, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
+	{
+		
+		if (!(JwtUtils.isManager(authorizationHeader)||JwtUtils.isCustomer(authorizationHeader))) {
+            return Response.status(401).entity("Unauthorized: Only managers or customers can change purchase state").build();
+        }
+		if(!(newPurchase.getState().equals(PurchaseState.Accepted) || newPurchase.getState().equals(PurchaseState.Declined)) && JwtUtils.isManager(authorizationHeader))
+		{
+			 return Response.status(401).entity("Invalid state: Managers can only accept and decline purchases").build();
+		}
+		if(!(newPurchase.getState().equals(PurchaseState.Canceled)) && JwtUtils.isCustomer(authorizationHeader))
+		{
+			 return Response.status(401).entity("Invalid state: Customers can only cancel purchases").build();
+		}
+		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		String contextPath = ctx.getRealPath("");
+		Purchase purchase = dao.updatePurchaseSatusByManager(newPurchase, contextPath);
+		
+		if(purchase==null)
+		{
+			return Response.status(405).entity("Purchase with this id doesn't exist").build();
+		}
+		
+		Customer customer = userDAO.GetCustomerById(purchase.getCustomerId());
+		customer.setPoints(customer.getPoints() - (newPurchase.getPrice()/1000 * 133 * 4));
+		
+		//proveriti CustomerType!
+		
+		userDAO.updateCustomer(customer, contextPath);
+		
+		return Response.status(200).entity(purchase).build();
+	}
+	
+	@GET
+	@Path("/getPurchasesForCustomer/{customerId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPurchacesForCustomer(@PathParam("customerId") int id)
+	{
+		
+		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
+		Customer customer = userDao.GetCustomerById(id);
+		if(customer==null)
+		{
+			return Response.status(405).entity("Unauthorized: Only customers can see their purchases").build();
+		}
+		
+		ArrayList<Purchase> purchases = dao.getAllForCustomer(customer);
+		
+		if(purchases == null)
+		{
+			return Response.status(205).entity("There are no purchases to show").build();
+		}
+		else
+		{
+			return Response.status(200).entity(purchases).build();
+		}
+	}
+	
 }

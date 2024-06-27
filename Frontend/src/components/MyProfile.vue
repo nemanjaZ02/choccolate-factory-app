@@ -89,7 +89,7 @@
 
             <p><strong>Birthday:</strong>
                 <input v-if="dateEditable" type="date" v-model="loggedInUser.birthday"></input>
-                <label v-else>{{ formatDate(loggedInUser.birthday) }}</label>
+                <label v-else>{{ convertToTimestamp(loggedInUser.birthday,true) }}</label>
                 <button v-if="!dateEditable" class="btn" v-on:click="changeDateEditable(false)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
                         <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"/>
@@ -194,7 +194,7 @@ function updateUser() {
     else
     {
         errorMessage.value = '';
-        axios.post(`http://localhost:8080/ChoccolateAppREST/rest/updateUser`, { id: loggedInUser.value.id, username: loggedInUser.value.username, password: '', name: loggedInUser.value.name, surname: loggedInUser.value.surname, gender: loggedInUser.value.gender, birthday: loggedInUser.value.birthday, role: loggedInUser.value.role}, { 
+        axios.post(`http://localhost:8080/ChoccolateAppREST/rest/updateUser`, { id: loggedInUser.value.id, username: loggedInUser.value.username, password: '', name: loggedInUser.value.name, surname: loggedInUser.value.surname, gender: loggedInUser.value.gender, birthday: convertToTimestamp(loggedInUser.value.birthday, false), role: loggedInUser.value.role}, { 
          headers: {
             'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
         }
@@ -216,34 +216,51 @@ function updateUser() {
     }
 }
 
-function formatDate(dateInput) {
-    try {
-        let date;
-        if (typeof dateInput === 'string') {
-            const regex = /(\w{3}) (\w{3}) (\d{2}) \d{2}:\d{2}:\d{2} \w{3,4} (\d{4})/;
-            const match = dateInput.match(regex);
+function convertToTimestamp(dateString, forShow) {
+    if (!(typeof dateString === 'number') && !forShow) {
+        const parts = dateString.split(' ');
 
-            if (!match) {
-                throw new Error('Invalid date string');
-            }
-
-            const [, , month, day, year] = match;
-            const months = {
-                Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5,
-                Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11
-            };
-
-            date = new Date(year, months[month], day);
-        } else if (typeof dateInput === 'number') {
-            date = new Date(dateInput);
-        } else {
-            throw new Error('Invalid input type');
+        if (parts.length !== 6) {
+            return dateString;
         }
 
-        return format(date, 'dd.MM.yyyy');
-    } catch (error) {
-        console.error(error);
-        return 'Invalid Date';
+        const [dayOfWeek, month, day, time, timezone, year] = parts;
+        
+        const dateWithoutTimezone = `${dayOfWeek} ${month} ${day} ${time} ${year}`;
+        
+        const parsedDate = new Date(dateWithoutTimezone);
+        
+        if (isNaN(parsedDate.getTime())) {
+            throw new Error('Invalid date string');
+        }
+
+        return parsedDate;
+    } else if(!(typeof dateString === 'number') && forShow) {
+        const parts = dateString.split(' ');
+
+        if (parts.length !== 6) {
+            return dateString;
+        }
+
+        const [dayOfWeek, month, day, time, timezone, year] = parts;
+        
+        const dateWithoutTimezone = `${dayOfWeek} ${month} ${day} ${time} ${year}`;
+        
+        const parsedDate = new Date(dateWithoutTimezone);
+        
+        if (isNaN(parsedDate.getTime())) {
+            throw new Error('Invalid date string');
+        }
+
+        return format(parsedDate, 'dd.MM.yyyy');
+    } 
+    else if(forShow)
+    {
+        return format(new Date(dateString), 'dd.MM.yyyy');
+    }
+    else
+    {
+        return dateString;
     }
 }
 

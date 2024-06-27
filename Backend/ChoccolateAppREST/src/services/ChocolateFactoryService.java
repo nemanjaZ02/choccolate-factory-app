@@ -65,6 +65,21 @@ public class ChocolateFactoryService {
 		return dao.getById(id);	
 	}
 	
+	@GET
+	@Path("/getFactoryById/{factoryId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getFactoryById(@PathParam("factoryId") int id) {
+		ChocolateFactoryDAO dao = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+		ChocolateFactory factory = dao.getById(id);
+		if(factory == null)
+		{
+			return Response.status(405).entity("Factory with this id doens't exist").build();
+		}
+		
+		return Response.status(200).entity(factory).build();
+		 	
+	}
+	
 	@OPTIONS
 	@Path("/updateChocolate")
 	@Produces(MediaType.APPLICATION_JSON)

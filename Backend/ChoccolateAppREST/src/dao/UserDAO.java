@@ -236,29 +236,7 @@ public class UserDAO {
 		return availableManagers;
 	}
 	
-	public Customer GetCustomerById(int id) {
-		for(Customer c : customers)
-		{
-			if(c.getId() == id)
-			{
-				return c;
-			}
-		}
-		
-		return null;
-	}
 	
-	public Manager GetManagerById(int id) {
-		for(Manager m : managers)
-		{
-			if(m.getId() == id)
-			{
-				return m;
-			}
-		}
-		
-		return null;
-	}
 	
 	public Admin GetAdminById(int id) {
 		for(Admin a : admins)
@@ -317,6 +295,29 @@ public class UserDAO {
 				return manager;
 			}
 		}
+		return null;
+	}
+	
+	public Customer GetCustomerById(int id) {
+		for(Customer c : customers)
+		{
+			if(c.getId() == id)
+			{
+				return c;
+			}
+		}
+		
+		return null;
+	}
+	public Manager GetManagerById(int id) {
+		for(Manager m : managers)
+		{
+			if(m.getId() == id)
+			{
+				return m;
+			}
+		}
+		
 		return null;
 	}
 	

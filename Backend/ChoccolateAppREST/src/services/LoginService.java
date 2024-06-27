@@ -12,6 +12,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -160,6 +161,26 @@ public class LoginService {
 	public boolean corsUpdateUser() {
 		return true;
 	}
+	
+	@GET
+	@Path("/getCustomer/{customerId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCustomer(@PathParam("customerId") int id) {
+		
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		Customer customer = dao.GetCustomerById(id);
+		if(customer==null)
+		{
+			return Response.status(405).entity("There is not customer with this id").build();
+		}
+		else
+			
+		{
+			return Response.status(200).entity(customer).build();
+		}
+	}
+	
 	
 	@POST
 	@Path("/updateUser")
