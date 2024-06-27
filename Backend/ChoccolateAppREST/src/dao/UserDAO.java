@@ -372,7 +372,7 @@ public class UserDAO {
 				String updatedJsonData;
 				
 				Path filePath = Paths.get(contextPath, "/admins.json");
-				Admin[] updateAdminArray = customers.toArray(new Admin[0]);
+				Admin[] updateAdminArray = admins.toArray(new Admin[0]);
 				updatedJsonData = gson.toJson(updateAdminArray);
 				
 	            try {
@@ -405,7 +405,7 @@ public class UserDAO {
 				Gson gson = new Gson();  
 				String updatedJsonData;
 				
-				Path filePath = Paths.get(contextPath, "/admins.json");
+				Path filePath = Paths.get(contextPath, "/employees.json");
 				Employee[] updateEmployeeArray = employees.toArray(new Employee[0]);
 				updatedJsonData = gson.toJson(updateEmployeeArray);
 				
