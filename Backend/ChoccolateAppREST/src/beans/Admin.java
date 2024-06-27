@@ -17,4 +17,13 @@ public class Admin extends User {
 		super(id, username, password, name, surname, gender, birthday, role);
 		// TODO Auto-generated constructor stub
 	}	
+	
+	public void update(User u)
+	{
+		setName(u.getName());
+		setSurname(u.getSurname());
+		setBirthday(u.getBirthday());
+		setUsername(u.getUsername());
+		setGender(u.getGender());
+	}
 }

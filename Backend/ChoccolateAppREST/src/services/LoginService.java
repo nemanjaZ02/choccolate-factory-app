@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -67,8 +68,6 @@ public class LoginService {
         
         try {
             String token = JwtUtils.generateToken(loggedUser, JwtConstants.SECRET_KEY);
-
-            ctx.setAttribute("loggedUser", loggedUser);
             
             return Response.status(Response.Status.OK)
                            .entity(token)
@@ -132,41 +131,35 @@ public class LoginService {
 		}	
 	}
 	
-	@GET
-	@Path("/logOut")
+	@OPTIONS
+	@Path("/getCustomer")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response logOut() {
-		if(ctx.getAttribute("loggedUser") != null)
-		{
-			ctx.setAttribute("loggedUser", null);
-			return Response.status(200).entity("User succesfully logged out").build();
-		}
-		else
-		{
-			return Response.status(205).entity("Nobody was logged in").build();
-		}		
+	public boolean corsGetCustomer() {
+		return true;
 	}
 	
 	@GET
-	@Path("/getLoggedInUser")
+	@Path("/getCustomer")
 	@Produces(MediaType.APPLICATION_JSON)
-	public User getLoggedInUser() {
-		User user = (User) ctx.getAttribute("loggedUser");
-        
-        if (user != null) {
-            switch (user.getRole()) {
-                case MANAGER:
-                    return (Manager) user;
-                case EMPLOYEE:
-                    return (Employee) user;
-                case ADMIN:
-                    return (Admin) user;
-                default:
-                    return user;
-            }
-        } else {
-            return null;
-        }
+	public Response getCustomer(@HeaderParam("Authorization") String authorizationHeader) {
+		
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		int id = JwtUtils.getUserId(authorizationHeader);
+		Customer c = dao.GetCustomerById(id);
+		
+		if(c == null)
+		{
+			return Response.status(404).entity("Customer not found").build();
+		}
+		
+		return Response.status(200).entity(c).build();
+	}
+	
+	@OPTIONS
+	@Path("/updateUser")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean corsUpdateUser() {
+		return true;
 	}
 	
 	@GET
@@ -189,4 +182,45 @@ public class LoginService {
 	}
 	
 	
+	@POST
+	@Path("/updateUser")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response corsUpdateUser(User updatedUser, @HeaderParam("Authorization") String authorizationHeader) {
+		String contextPath = ctx.getRealPath("");
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		int id = JwtUtils.getUserId(authorizationHeader);
+		
+		if(dao.GetAdminById(id) != null)
+		{
+			Admin a = dao.GetAdminById(id);
+			a.update(updatedUser);
+			dao.updateAdmin(a, contextPath);
+			return Response.status(200).entity(a).build();
+		}
+		else if (dao.GetCustomerById(id) != null)
+		{
+			Customer c = dao.GetCustomerById(id);
+			c.update(updatedUser);
+			dao.updateCustomer(c, contextPath);
+			return Response.status(200).entity(c).build();
+		}
+		else if (dao.GetManagerById(id) != null)
+		{
+			Manager m = dao.GetManagerById(id);
+			m.update(updatedUser);
+			dao.updateManager(m, contextPath);
+			return Response.status(200).entity(m).build();
+		}
+		else if (dao.GetEmployeeById(id) != null)
+		{
+			Employee e = dao.GetEmployeeById(id);
+			e.update(updatedUser);
+			dao.updateEmployee(e, contextPath);
+			return Response.status(200).entity(e).build();
+		}
+		
+		
+		return Response.status(404).entity("User not found").build();
+	}
 }

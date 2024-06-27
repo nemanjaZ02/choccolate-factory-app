@@ -7,6 +7,7 @@ import AddChocolateView from '@/views/AddChocolateView.vue'
 import UpdateChocolateView from '@/views/UpdateChocolateView.vue'
 import AddChocolateFactoryView from '@/views/AddChocolateFactoryView.vue'
 import MyCartView from '@/views/MyCartView.vue'
+import MyProfileView from '@/views/MyProfileView.vue'
 import ManagerPurchasesView from '@/views/ManagerPurchasesView.vue'
 import PurchaseDetailsView from '@/views/PurchaseDetailsView.vue'
 import CustomerPurchasesView from '@/views/CustomerPurchasesView.vue'
@@ -57,6 +58,11 @@ const routes = [
       component: MyCartView,
       props: true,
       meta: { requiresAuth: true, requiredRole: 'CUSTOMER' }
+    },
+    {
+      path: '/myProfile',
+      name: 'myProfileView',
+      component: MyProfileView
     },
     {
       path: '/managerPurchases',
