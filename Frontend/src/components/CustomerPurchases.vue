@@ -208,7 +208,7 @@ function showDetails(purchase){
     {
         return;
     }
-    router.push({name: 'purchaseDetails', params: { purchaseId: purchase.id }});
+    router.push({name: 'purchaseDetailsCustomer', params: { purchaseId: purchase.id }});
 }
 async function search() {
     filteredPurchases.value = [];

@@ -77,11 +77,20 @@ const routes = [
       meta: { requiresAuth: true, requiredRole: 'CUSTOMER' }
     },
     {
-      path: '/purchaseDetails/:purchaseId',
-      name: 'purchaseDetails',
+      path: '/purchaseDetailsManager/:purchaseId',
+      name: 'purchaseDetailsManager',
       component: PurchaseDetailsView,
       props: true,
-      meta: { requiresAuth: true, requiredRole: 'CUSTOMER'||'MANAGER' }
+      meta: { requiresAuth: true, requiredRole: 'MANAGER' }
+      
+    },
+    {
+      path: '/purchaseDetailsCustomer/:purchaseId',
+      name: 'purchaseDetailsCustomer',
+      component: PurchaseDetailsView,
+      props: true,
+      meta: { requiresAuth: true, requiredRole: 'CUSTOMER' }
+      
     }
   ];
 

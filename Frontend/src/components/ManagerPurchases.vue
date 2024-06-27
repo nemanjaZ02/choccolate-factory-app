@@ -188,7 +188,7 @@ function showDetails(purchase){
     {
         return;
     }
-    router.push({name: 'purchaseDetails', params: { purchaseId: purchase.id }});
+    router.push({name: 'purchaseDetailsManager', params: { purchaseId: purchase.id }});
 }
 function search() {
     filteredPurchases.value = purchases.value.filter(purchase => 
