@@ -11,6 +11,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Response;
 import com.nimbusds.jose.JOSEException;
 
 import beans.Admin;
+import beans.Customer;
 import beans.Employee;
 import beans.Manager;
 import beans.User;
@@ -165,6 +167,25 @@ public class LoginService {
         } else {
             return null;
         }
+	}
+	
+	@GET
+	@Path("/getCustomer/{customerId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCustomer(@PathParam("customerId") int id) {
+		
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		Customer customer = dao.GetCustomerById(id);
+		if(customer==null)
+		{
+			return Response.status(405).entity("There is not customer with this id").build();
+		}
+		else
+			
+		{
+			return Response.status(200).entity(customer).build();
+		}
 	}
 	
 	
