@@ -90,7 +90,7 @@ public class CommentService {
 		int purchasesInFactoryNum = 0;
 		for(Purchase purchase : purchaseDAO.getAll())
 		{
-			if(purchase.getFactoryId() == factoryId && purchase.getCustomerId() == customerId && purchase.getState() == PurchaseState.Accepted)
+			if(purchase.getFactoryId() == factoryId && purchase.getCustomer().getId() == customerId && purchase.getState() == PurchaseState.Accepted)
 			{
 				purchasesInFactoryNum++;
 			}

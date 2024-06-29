@@ -102,15 +102,11 @@ public class PurchaseDAO {
 	}
 	public ArrayList<Purchase> getAllForCustomer(Customer customer)
 	{
-		ArrayList<Purchase> purchasesForCustomer = new ArrayList<Purchase>();
-		
-		
-		
-		
+		ArrayList<Purchase> purchasesForCustomer = new ArrayList<Purchase>();	
 		
 		for(Purchase p:purchases)
 		{
-			if(p.getCustomerId()==customer.getId())
+			if(p.getCustomer().getId()==customer.getId())
 			{
 				purchasesForCustomer.add(p);
 			}

@@ -23,6 +23,9 @@
     <div class="card-body">
       <label class="card-text">{{ "In Total: " + totalPrice + "RSD" }}</label>
     </div> 
+    <div class="card-body" v-if="loggedInUser.type.typeName != 'Ordinary'">
+      <label class="card-text" >{{ "With Discount: " + totalPriceWithDiscount + "RSD (-" + loggedInUser.type.discount + "%)" }}</label>
+    </div>
     <div class="card-body">
       <a href="#" class="btn btn-primary" v-on:click="confirmPurchase()">Confirm</a>
     </div>  
@@ -45,6 +48,7 @@ const cart = ref({chocolates:[], price:0});
 const dataLoaded = ref(false);
 const errorMessage = ref('');
 let totalPrice = ref(0);
+let totalPriceWithDiscount = ref(0);
 
 onMounted(()=>{
   getChocolate();
@@ -125,7 +129,8 @@ function calculateTotal()
   totalPrice.value = 0;
   cart.value.chocolates.forEach(chocolate => {
     totalPrice.value += chocolate.price * chocolate.quantity;
-    cart.value.price = totalPrice.value;
+    totalPriceWithDiscount.value = totalPrice.value - (totalPrice.value * loggedInUser.value.type.discount / 100)
+    cart.value.price = totalPriceWithDiscount.value;
     localStorage.setItem('cart', JSON.stringify(cart.value));
   });
 }

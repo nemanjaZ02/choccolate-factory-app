@@ -143,7 +143,7 @@ public class UserDAO {
 	}
 	
 	
-	public User registerNewUser(User newUser, String contextPath) {
+	public User registerNewUser(Customer newUser, String contextPath) {
 		try {
 			Gson gson = new Gson();  
 			Path filePath;
@@ -164,8 +164,7 @@ public class UserDAO {
 			}
 				
 			newUser.setId(maxId + 1);
-			User customerUser = new Customer(newUser);
-			customers.add((Customer)customerUser);
+			customers.add(newUser);
 				
 			filePath = Paths.get(contextPath, "/customers.json");
 			Customer[] updatedUserArray = customers.toArray(new Customer[0]);
