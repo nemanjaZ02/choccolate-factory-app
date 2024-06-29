@@ -1,5 +1,5 @@
 <template>
-    <div v-if="dataLoaded" style="margin-top: 100px;">
+    <div v-if="dataLoaded && purchase.state == 'Processing'" style="margin-top: 100px;">
         <div class="container" style="padding: 10px;">
             <h1 style="font-weight: bold; text-align: center">Purchase detals</h1>
         <div class="row">
@@ -9,9 +9,9 @@
                         User info
                     </div>
                     <div style="padding: 10px">
-                        <p style="font-weight: bold;" class="card-text">Name:<label class="card-text" style="margin-left: 10px;">{{ loggedInUser.name }}</label></p>
-                        <p style="font-weight: bold;" class="card-text">Surname:<label class="card-text" style="margin-left: 10px;">{{ loggedInUser.surname }}</label></p>
-                        <p style="font-weight: bold;" class="card-text">Username:<label class="card-text" style="margin-left: 10px;">{{ loggedInUser.username }}</label></p>
+                        <p style="font-weight: bold;" class="card-text">Name:<label class="card-text" style="margin-left: 10px;">{{ purchase.customer.name }}</label></p>
+                        <p style="font-weight: bold;" class="card-text">Surname:<label class="card-text" style="margin-left: 10px;">{{ purchase.customer.surname }}</label></p>
+                        <p style="font-weight: bold;" class="card-text">Username:<label class="card-text" style="margin-left: 10px;">{{ purchase.customer.username }}</label></p>
                     </div>
                 </div>
                 <div class="card" style="width: 310px; margin-top: 20px;">
@@ -65,6 +65,9 @@
     <div v-else>
         <h1 style="color: red;">Can not load purchase</h1>
     </div>
+    <div v-else>
+        <h1 style="color: red;">Purchase is already processed</h1>
+    </div>
 </template>
 <script setup>
 import axios from 'axios';
@@ -75,7 +78,7 @@ import {useRouter, useRoute} from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 const loggedInUser = ref({});
-const purchase = ref({id:0,chocolates:{},factoryId:0,dateAndTime:{},price:0,customerId:0,state:'Processing', declineReason:""});
+const purchase = ref({id:0,chocolates:{},factoryId:0,dateAndTime:{},price:0,customer:{},state:'Processing', declineReason:""});
 const dataLoaded = ref(false);
 const user = ref({chocolates:{}})
 const factory = ref({name:""})

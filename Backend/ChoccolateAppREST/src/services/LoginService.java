@@ -25,6 +25,7 @@ import beans.Customer;
 import beans.Employee;
 import beans.Manager;
 import beans.User;
+import dao.CustomerTypeDAO;
 import dao.UserDAO;
 import enums.Role;
 import jwt.JwtConstants;
@@ -44,6 +45,11 @@ public class LoginService {
 	    	String contextPath = ctx.getRealPath("");
 	    	System.out.println(contextPath);
 			ctx.setAttribute("userDAO", new UserDAO(contextPath));
+			
+			if(ctx.getAttribute("customerTypeDAO") == null)
+			{
+				ctx.setAttribute("customerTypeDAO", new CustomerTypeDAO(contextPath));
+			}
 		}
 	}
 	
@@ -91,9 +97,13 @@ public class LoginService {
 	@Path("/register")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registerNewUser(User newUser) {
+	public Response registerNewUser(Customer newUser) {
 		String contextPath = ctx.getRealPath("");
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		CustomerTypeDAO customerTypeDAO = (CustomerTypeDAO) ctx.getAttribute("customerTypeDAO");
+		
+		newUser.setRole(Role.CUSTOMER);
+		newUser.setType(customerTypeDAO.getCustomerType(0));
 		
 		if(newUser.getName() == "" || newUser.getSurname() == "" || newUser.getBirthday() == null || newUser.getUsername() == "" || newUser.getPassword() == "" || newUser.getRole() != Role.CUSTOMER || newUser.getGender() == null)
 		{

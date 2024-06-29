@@ -13,7 +13,7 @@ public class Purchase {
 	private int factoryId;
 	private LocalDateTime dateAndTime;
 	private double price;
-	private int customerId;
+	private Customer customer;
 	private PurchaseState state;
 	private String declineReason;
 	
@@ -23,14 +23,14 @@ public class Purchase {
 	}
 
 	public Purchase(int id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
-			double price, int customerId, PurchaseState state, String declineReason ) {
+			double price, Customer customerId, PurchaseState state, String declineReason ) {
 		super();
 		this.id = id;
 		this.chocolates = chocolate;
 		this.factoryId = factoryId;
 		this.dateAndTime = dateAndTime;
 		this.price = price;
-		this.customerId = customerId;
+		this.customer = customer;
 		this.state = state;
 		this.declineReason = declineReason;
 	}
@@ -83,12 +83,12 @@ public class Purchase {
 		this.factoryId = factoryId;
 	}
 
-	public int getCustomerId() {
-		return customerId;
+	public Customer getCustomer() {
+		return customer;
 	}
 
-	public void setCustomerId(int customerId) {
-		this.customerId = customerId;
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 
 	public int getId() {

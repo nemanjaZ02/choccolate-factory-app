@@ -108,7 +108,10 @@
             </p>
 
             <p><strong>Role:</strong>{{ loggedInUser.role }} 
-            </p>       
+            </p>
+            
+            <p v-if="loggedInUser.role == 'CUSTOMER'"><strong>Type:</strong>{{ loggedInUser.type.typeName }} 
+            </p>      
         </div>
     </div>
 </div>

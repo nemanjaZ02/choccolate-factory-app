@@ -74,13 +74,14 @@
 
 <script setup>
 import axios from 'axios';
+import { type } from 'jquery';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 const confirmedPassword = ref("");
-const newUser = ref({ id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: "", role: "CUSTOMER"});
+const newUser = ref({ id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: ""});
 
 function registerNewUser(event) {
 	event.preventDefault();

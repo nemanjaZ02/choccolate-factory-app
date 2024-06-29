@@ -63,7 +63,6 @@
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">{{ "Purchase date: " +formatDate(p.dateAndTime)}}</li>
                             <li class="list-group-item">{{ "Price: "+p.price}}</li>
-                            <li class="list-group-item">{{ "Customer: " + getUser(p.customerId) }}</li>
                         </ul>
                     </div>
                 </div>
@@ -192,17 +191,6 @@ function convertAndFormatDate(dateString) {
 
     return formattedDate;
 }
-function getUser(id)
-{
-    
-    axios.get(`http://localhost:8080/ChoccolateAppREST/rest/getCustomer/`+id)
-    .then(response=>{
-       
-        username.value = response.data.username    
-    });
-    return username.value;
-}
-
 function showDetails(purchase){
  if(purchase.state !='Processing')
     {

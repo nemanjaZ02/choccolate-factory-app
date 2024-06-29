@@ -1,6 +1,7 @@
 package beans;
 
 public class CustomerType {
+	private int id;
 	private String typeName;
 	private double discount;
 	private int requiredPoints;
@@ -10,8 +11,9 @@ public class CustomerType {
 		// TODO Auto-generated constructor stub
 	}
 
-	public CustomerType(String typeName, double discount, int requiredPoints) {
+	public CustomerType(int id, String typeName, double discount, int requiredPoints) {
 		super();
+		this.id = id;
 		this.typeName = typeName;
 		this.discount = discount;
 		this.requiredPoints = requiredPoints;
@@ -39,5 +41,13 @@ public class CustomerType {
 
 	public void setRequiredPoints(int requiredPoints) {
 		this.requiredPoints = requiredPoints;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }

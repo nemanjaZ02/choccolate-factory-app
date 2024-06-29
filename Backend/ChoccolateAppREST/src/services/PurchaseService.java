@@ -29,6 +29,7 @@ import beans.Manager;
 import beans.Purchase;
 import dao.ChocolateDAO;
 import dao.ChocolateFactoryDAO;
+import dao.CustomerTypeDAO;
 import dao.PurchaseDAO;
 import dao.UserDAO;
 import enums.PurchaseState;
@@ -68,6 +69,11 @@ public class PurchaseService {
 		if(ctx.getAttribute("userDAO") == null)
 		{
 			ctx.setAttribute("userDAO", new UserDAO(contextPath));
+		}
+		
+		if(ctx.getAttribute("customerTypeDAO") == null)
+		{
+			ctx.setAttribute("customerTypeDAO", new CustomerTypeDAO(contextPath));
 		}
 	}
 	
@@ -159,19 +165,21 @@ public class PurchaseService {
 				}
 			}
 			
+			Customer customer = userDAO.GetCustomerById(JwtUtils.getUserId(authorizationHeader));
+			
 			newPurchase.setFactoryId(cfc.getFactoryId());
 			newPurchase.setDateAndTime(LocalDateTime.now());
-			newPurchase.setPrice(cart.getPrice());
 			int customerId = JwtUtils.getUserId(authorizationHeader);
-			newPurchase.setCustomerId(customerId);
+			newPurchase.setCustomer(customer);
 			newPurchase.setState(PurchaseState.Processing);
-			
-			Customer customer = userDAO.GetCustomerById(customerId);
-			customer.setPoints(customer.getPoints() + (newPurchase.getPrice()/1000 * 133));
-			
-			//proveriti CustomerType!
-			
-			userDAO.updateCustomer(customer, contextPath);
+				
+			double price = 0;
+			for(Chocolate c : cart.getChocolates())
+			{
+				price += c.getQuantity() * c.getPrice();
+			}
+			price = price - (price * customer.getType().getDiscount() / 100); 
+			newPurchase.setPrice(price);
 			
 			Purchase purchase = purchaseDAO.savePurchase(newPurchase, contextPath);
 			return Response.status(200).entity(purchase).build();
@@ -248,6 +256,7 @@ public class PurchaseService {
 		}
 		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		CustomerTypeDAO customerTypeDAO = (CustomerTypeDAO) ctx.getAttribute("customerTypeDAO");
 		String contextPath = ctx.getRealPath("");
 		Purchase purchase = dao.updatePurchaseSatusByManager(newPurchase, contextPath);
 		
@@ -256,13 +265,18 @@ public class PurchaseService {
 			return Response.status(405).entity("Purchase with this id doesn't exist").build();
 		}
 		
-		Customer customer = userDAO.GetCustomerById(purchase.getCustomerId());
-		customer.setPoints(customer.getPoints() - (newPurchase.getPrice()/1000 * 133 * 4));
+		Customer customer = purchase.getCustomer();
+		if(newPurchase.getState() == PurchaseState.Canceled)
+		{	
+			customer.setPoints(customer.getPoints() - (newPurchase.getPrice()/1000 * 133 * 4));	
+		}
+		else if(newPurchase.getState() == PurchaseState.Accepted)
+		{
+			customer.setPoints(customer.getPoints() + (newPurchase.getPrice()/1000 * 133));	
+		}
 		
-		//proveriti CustomerType!
-		
+		customer.setType(customerTypeDAO.getCustomerType(customer.getPoints()));
 		userDAO.updateCustomer(customer, contextPath);
-		
 		return Response.status(200).entity(purchase).build();
 	}
 	

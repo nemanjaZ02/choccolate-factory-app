@@ -11,7 +11,7 @@ public class Customer extends User {
 	private List<Purchase> purchases;
 	private Cart cart = new Cart();
 	private double points;
-	private CustomerType type;
+	private CustomerType type = new CustomerType();
 	
 	public Customer() {
 		super();
