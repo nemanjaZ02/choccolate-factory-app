@@ -113,4 +113,32 @@ private ArrayList<Comment> comments = new ArrayList<Comment>();
 		return null;		
 	}
 	
+	public Comment deleteComment(Comment updatedComment, String contextPath)
+	{
+		for(Comment comment : comments)
+		{
+		    if(comment.getId() == updatedComment.getId())
+		    {
+		    	comment.setDeleted(true);
+						
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/comments.json");
+				Comment[] updateCommentArray = comments.toArray(new Comment[0]);
+				updatedJsonData = gson.toJson(updateCommentArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            return updatedComment;
+		    }
+
+		}
+		
+		return null;		
+	}
 }

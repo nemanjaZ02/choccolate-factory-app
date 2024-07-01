@@ -9,13 +9,14 @@ public class Comment {
 	private String text;
 	private double rating;
 	private CommentStatus status;
+	private boolean isDeleted;
 	
 	public Comment() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Comment(int id, Customer customer, int factoryId, String text, double rating, CommentStatus status) {
+	public Comment(int id, Customer customer, int factoryId, String text, double rating, CommentStatus status, boolean isDeleted) {
 		super();
 		this.id = id;
 		this.customer = customer;
@@ -23,6 +24,7 @@ public class Comment {
 		this.text = text;
 		this.rating = rating;
 		this.status = status;
+		this.isDeleted = isDeleted;
 	}
 
 	public String getText() {
@@ -73,5 +75,11 @@ public class Comment {
 		this.status = status;
 	}
 	
+	public boolean getIsDeleted() {
+		return isDeleted;
+	}
 	
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}	
 }

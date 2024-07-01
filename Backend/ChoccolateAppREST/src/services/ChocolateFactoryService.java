@@ -171,4 +171,45 @@ public class ChocolateFactoryService {
 		return Response.status(200).build();
 	}
 	
+	
+	@OPTIONS
+	@Path("/updateChocolateFactoryStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean corsUpdateChocolateFactory() {
+		return true;
+	}
+	@POST
+	@Path("/updateChocolateFactoryStatus")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response corsUpdateChocolateFactory(ChocolateFactory newChocolateFactory)
+	{
+		String contextPath = ctx.getRealPath("");
+		ChocolateFactoryDAO dao = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+		dao.updateChocolateFactoryStatus(newChocolateFactory, contextPath);
+		return Response.status(200).entity(newChocolateFactory).build();
+	}
+	
+	@OPTIONS
+	@Path("/deleteChocolateFactory")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean corsDeleteChocolateFactory() {
+		return true;
+	}
+	@POST
+	@Path("/deleteChocolateFactory")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteChocolateFactory(ChocolateFactory chocolateFactory, @HeaderParam("Authorization") String authorizationHeader) throws ParseException
+	{
+		if (!JwtUtils.isAdministrator(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only admins can delete factories").build();
+        }
+		
+		String contextPath = ctx.getRealPath("");
+		ChocolateFactoryDAO dao = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+		dao.deleteChocolateFactory(chocolateFactory, contextPath);
+		return Response.status(200).entity(chocolateFactory).build();
+	}
+	
 }

@@ -115,6 +115,7 @@
       <p class="card-text">{{ comment.text }}</p>
       <button class="btn btn-primary" v-if="comment.status == 'PENDING' && loggedInUser.role == 'MANAGER'" style="background-color: green;" v-on:click="approveComment(comment)">Approve</button>
       <button class="btn btn-secondary" v-if="comment.status == 'PENDING' && loggedInUser.role == 'MANAGER'" style="background-color: red; margin-left: 20px" v-on:click="declineComment(comment)">Decline</button>
+      <button class="btn btn-danger" v-if="loggedInUser.role == 'ADMIN'" v-on:click="deleteComment(comment)">DELETE</button>
     </div>
   </div>
 </template>
@@ -157,7 +158,7 @@ function loadComments() {
     if (!response.data) {
       return;
     }
-    comments.value = response.data;
+    comments.value = response.data.filter(comment => comment.isDeleted == false);
   });
 }
 
@@ -276,6 +277,17 @@ function changeQuantity(chocolate) {
           }
        })
     });
+}
+
+function deleteComment(comment) {
+  axios.post(`http://localhost:8080/ChoccolateAppREST/rest/comments/deleteComment`, comment, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+    }
+  }).then(response => {
+    loadComments();
+  });
+
 }
 </script>
 

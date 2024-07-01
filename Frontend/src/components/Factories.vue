@@ -120,8 +120,8 @@
                     <button v-if="loggedInUser.role == 'ADMIN'"  v-on:click="showAddForm()" style="margin-left: 50px ;" value="add factory">Add Factory</button>
                     <div class="container">
                         <div class="row">
-                            <div class="col-lg-4 col-md-6 mb-4" v-for="f in filteredFactories" :key="f.id" @click="showDetails(f)">
-                                <div class="factory">
+                            <div class="col-lg-4 col-md-6 mb-4" v-for="f in filteredFactories" @click="showDetails(f)" :key="f.id" >
+                                <div v-if="f.isDeleted == false" class="factory">
                                     <div class="card">
                                         <img :src="f.logo" class="card-img-top" :alt="f.name">
                                         <div class="card-body">
@@ -133,6 +133,9 @@
                                             <li class="list-group-item">{{ "Open: " + f.workTime.from + " - " + f.workTime.to}}</li>
                                             <li class="list-group-item">{{ f.location.adress.city + ", " + f.location.adress.country}}</li>
                                             <li class="list-group-item">{{ "Rating: " + f.rating.toFixed(2) }}</li>
+                                            <li v-if="loggedInUser.role == 'ADMIN'" class="list-group-item">
+                                                <button class="btn-danger" @click.stop="deleteFactory(f)">DELETE</button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -224,10 +227,67 @@ function createMap()
 function loadFactories() {
     axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAll').then(response => {
             factories.value = response.data   
-            filteredFactories.value = factories.value
+            filteredFactories.value = factories.value.filter(factory => factory.isDeleted == false);
+            filteredFactories.value.sort((a, b) => b.status.localeCompare(a.status));
             createMap();
+            checkFactoriesWorkingStatus();
+            setInterval(checkFactoriesWorkingStatus, 60000);
         });
 } 
+
+function checkFactoriesWorkingStatus() {
+    filteredFactories.value.forEach(factory => {
+        let currentTime = getCurrentTimeFormatted();
+        let currentTimeParsed = parseTimeString(currentTime);
+
+        let factoryTimeFrom = factory.workTime.from;
+        let factoryTimeFromParsed = parseTimeString(factoryTimeFrom);
+        let factoryTimeTo = factory.workTime.to;
+        let factoryTimeToParsed = parseTimeString(factoryTimeTo);
+
+        if(factoryTimeFromParsed <= currentTimeParsed && factoryTimeToParsed >= currentTimeParsed)
+        {       
+            factory.status = "OPEN";
+        }
+        else
+        {
+            factory.status = "CLOSED";
+        } 
+        
+        axios.post('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/updateChocolateFactoryStatus', factory).then(response => {
+        });
+    });
+}
+
+function getCurrentTimeFormatted() {
+    let now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    let seconds = now.getSeconds();
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    let strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+    return strTime;
+}
+
+function parseTimeString(timeString) {
+    let [time, modifier] = timeString.split(' ');
+    let [hours, minutes, seconds] = time.split(':');
+    if (hours === '12') {
+        hours = '00';
+    }
+    if (modifier === 'PM') {
+        hours = parseInt(hours, 10) + 12;
+    }
+    let date = new Date();
+    date.setHours(parseInt(hours, 10));
+    date.setMinutes(parseInt(minutes, 10));
+    date.setSeconds(parseInt(seconds, 10));
+    return date;
+}
 
 function search() {
     filteredFactories.value = factories.value.filter(factory => factory.name.toLowerCase().includes(factoryNameFilter.value.toLowerCase())
@@ -335,6 +395,29 @@ function showMap() {
 }
 function showAddForm() {
   router.push('/addChocolateFactoryForm');
+}
+
+function deleteFactory(factory) {
+    axios.post('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/deleteChocolateFactory', factory, { 
+         headers: {
+            'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+        }
+        }).then(response => {
+            response.data.chocolates.forEach(choco => {
+                axios.post('http://localhost:8080/ChoccolateAppREST/rest/chocolates/deleteChocolate', choco, {
+                    headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+                    }
+                })
+                .then(response => {
+                    
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+            });
+        loadFactories();  
+    });  
 }
 </script>
 
