@@ -21,6 +21,7 @@ import com.nimbusds.jose.shaded.json.parser.ParseException;
 
 import beans.Chocolate;
 import beans.ChocolateFactory;
+import beans.Employee;
 import beans.Manager;
 import dao.ChocolateDAO;
 import dao.ChocolateFactoryDAO;
@@ -208,7 +209,31 @@ public class ChocolateFactoryService {
 		
 		String contextPath = ctx.getRealPath("");
 		ChocolateFactoryDAO dao = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
-		dao.deleteChocolateFactory(chocolateFactory, contextPath);
+		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		
+		if(dao.deleteChocolateFactory(chocolateFactory, contextPath) == null)
+		{
+			return Response.status(404).entity("Factory not found").build();
+		}
+		
+		for(Manager m : userDAO.findAllManagers())
+		{
+			if(m.getFactoryId() == chocolateFactory.getId())
+			{
+				m.setFactoryId(0);
+				userDAO.updateManager(m, contextPath);
+			}
+		}
+		
+		for(Employee e : userDAO.findAllEmployees())
+		{
+			if(e.getFactoryId() == chocolateFactory.getId())
+			{
+				e.setFactoryId(0);
+				userDAO.updateEmployee(e, contextPath);
+			}
+		}
+		
 		return Response.status(200).entity(chocolateFactory).build();
 	}
 	
