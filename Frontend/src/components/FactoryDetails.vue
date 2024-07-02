@@ -39,9 +39,14 @@
         <div class="chocolate-div-container-container">
           <h1>CHOCOLATES</h1>
           <label style="margin-top: 50px; margin-left: 110px;" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
-            <button v-on:click="showAddForm(factory.id)" class="button-with-image">
-              <img src="../../public/Images/add.png" style="width: 30px;"  alt="Image">
+          <div class="button-container">
+            <button v-on:click="showAddForm(factory.id)"  class="button-with-image">
+              <img src="../../public/Images/addChocolate.png" style="width: 64px;"  alt="Image">
             </button>
+            <button v-on:click="showAddEmployeeForm(factory.id)" style="margin-left: 60px;" class="button-with-image">
+              <img src="../../public/Images/addUser.png" style="width: 40px; "  alt="Image">
+            </button>
+          </div>
           </label>
           <div class="chocolate-div-container">
             <div style="height: 200px;" v-for="c in factory.chocolates" class="chocolate-div">
@@ -208,6 +213,9 @@ function checkCanUserComment() {
 
 function showAddForm(factoryId) {
   router.push({ name: 'addChocolateForm', params: { factoryId: factoryId } });
+}
+function showAddEmployeeForm(factoryId){
+  router.push({ name: 'addEmployeeView', params: { factoryId: factoryId } });
 }
 function showUpdateForm(chocolate) {
   router.push({ name: 'updateChocolateForm', params: { chocolateId: chocolate.id } });
@@ -378,19 +386,30 @@ tbody tr:nth-child(even) {
   background-color: #d6cdc4;
 }
 
-.button-with-image {
-  display: inline-block;
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+.button-container {
+      font-size: 0; 
+  }
 
-.button-with-image:hover {
-  background-color: #ddd;
-}
+  .button-with-image {
+      display: inline-block;
+      background-color: transparent;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      padding: 10px; 
+      margin-right: 20px;
+  }
 
+
+  .button-with-image img {
+      width: 100%; 
+      height: auto; 
+  }
+
+  .button-with-image:hover {
+      background-color: #ddd;
+  }
 .item {
   position: relative;
   padding: 10px;

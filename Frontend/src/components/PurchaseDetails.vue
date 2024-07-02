@@ -53,6 +53,7 @@
          <div style="display: flex; flex-direction: column; align-items: flex-start;">
          <button v-if="loggedInUser.role=='MANAGER'" type="button" class="btn btn-success" style="margin-bottom: 10px; height: 50px; margin-left: 50px;" @click="updatePurchaseStatus('Accepted')">Accept</button>
          <button v-if="loggedInUser.role=='CUSTOMER'" type="button" class="btn btn-danger" style="margin-bottom: 10px; height: 50px; margin-left: 50px;" @click="updatePurchaseStatus('Canceled')">Cancel</button>
+         <button v-if="loggedInUser.role=='ADMIN'" type="button" class="btn btn-danger" style="margin-bottom: 10px; height: 50px; margin-left: 50px;" @click="deletePurchase(purchase.id)">Delete</button>
          <label v-if="loggedInUser.role=='CUSTOMER'" style="color: red; margin-left: 50px;" >Warning: Canceling the order results in losing points</label>
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 50px;">
         <button v-if="loggedInUser.role=='MANAGER'" type="button" class="btn btn-danger" style="margin-right: 10px; height: 50px;" @click="updatePurchaseStatus('Declined')">Decline</button>
@@ -184,6 +185,18 @@ function updatePurchaseStatus(status){
         
     return;
 }
+/*function deletePurchase(id){
+    axios.post('http://localhost:8080/ChoccolateAppREST/rest/deleteUser', user.id, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`,
+        'Content-Type': 'application/json'
+      }
+      
+    })
+    .then(response=>{
+        loadUsers();
+    });
+}*/
 
 </script>
 <style scoped>

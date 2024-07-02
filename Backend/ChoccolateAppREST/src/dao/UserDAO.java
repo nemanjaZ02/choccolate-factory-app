@@ -203,11 +203,11 @@ public class UserDAO {
 			String updatedJsonData;
 
 			int maxId = -1;
-			for(Manager manager : managers)
+			for(User user : getAllUsers())
 			{
-				if(manager.getId() > maxId)
+				if(user.getId() > maxId)
 				{
-					maxId = manager.getId();
+					maxId = user.getId();
 				}
 			}
 				
@@ -231,6 +231,43 @@ public class UserDAO {
         }
 		
 		return newUser;	
+	}
+	public Employee registerNewEmployee(Employee newEmployee, String contextPath) {
+		try {
+			Gson gson = new Gson();  
+			Path filePath;
+			String updatedJsonData;
+
+			int maxId = -1;
+			for(User user : getAllUsers())
+			{
+				if(user.getId() > maxId)
+				{
+					maxId = user.getId();
+				}
+			}
+				
+			if(maxId == -1)
+			{
+				maxId = 0;
+			}
+				
+			newEmployee.setId(maxId + 1);
+			Employee employeeUser = new Employee(newEmployee);
+			employeeUser.setFactoryId(newEmployee.getFactoryId());
+			employees.add(employeeUser);
+				
+			filePath = Paths.get(contextPath, "/employees.json");
+			Employee[] updatedUserArray = employees.toArray(new Employee[0]);
+			updatedJsonData = gson.toJson(updatedUserArray);
+			
+            Files.write(filePath, updatedJsonData.getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		return newEmployee;	
 	}
 	public ArrayList<Manager> getAvailableManagers()
 	{
@@ -278,9 +315,6 @@ public class UserDAO {
 			if(manager.getId()==updatedManager.getId())
 			{
 				manager.setFactoryId(updatedManager.getFactoryId());
-				managers.remove(manager);
-				managers.add(i, manager);
-				
 				
 				Gson gson = new Gson();  
 				String updatedJsonData;
@@ -428,5 +462,27 @@ public class UserDAO {
 		}
 		
 		return null;	
+	}
+	public ArrayList<User> getAllUsers()
+	{
+		ArrayList<User> users = new ArrayList<User>();
+		
+		for(Customer c: customers)
+		{
+			users.add(c);
+		}
+		for(Employee e: employees)
+		{
+			users.add(e);
+		}
+		for(Manager m: managers)
+		{
+			users.add(m);
+		}
+		for(Admin a: admins)
+		{
+			users.add(a);
+		}
+		return users;
 	}
 }

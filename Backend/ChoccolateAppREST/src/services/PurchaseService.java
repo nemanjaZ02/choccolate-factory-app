@@ -306,4 +306,36 @@ public class PurchaseService {
 		}
 	}
 	
+	@OPTIONS
+	@Path("/deletePurchase")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean deletePurchase() {
+		return true;
+	}
+	@POST
+	@Path("/deletePurchase")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deletePurchase(int id, @HeaderParam("Authorization") String authorizationHeader)  throws ParseException 
+	{
+		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+		String contextPath = ctx.getRealPath("");
+		
+		if (!JwtUtils.isAdministrator(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only admins  can delete purchase").build();
+        }
+		
+		
+		if(dao.deletePurchase(dao.getById(id), contextPath)==null)
+		{
+			return Response.status(405).entity("there is no chocolate with this id").build();
+		}
+		
+		Purchase purchase = dao.deletePurchase(dao.getById(id), contextPath);
+		return Response.status(200).entity(purchase).build();
+		
+		
+		
+	}
+	
 }

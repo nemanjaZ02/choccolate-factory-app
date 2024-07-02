@@ -15,6 +15,7 @@ public class User {
 	private Gender gender;
 	private Date birthday;
 	private Role role;
+	private boolean isDeleted;
 	
 	public User() {
 		super();
@@ -22,7 +23,7 @@ public class User {
 	}
 
 	public User(int id, String username, String password, String name, String surname, Gender gender, Date birthday,
-			Role role) {
+			Role role, boolean isDeleted) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -32,6 +33,15 @@ public class User {
 		this.gender = gender;
 		this.birthday = birthday;
 		this.role = role;
+		this.isDeleted = isDeleted;
+	}
+
+	public boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 	public int getId() {

@@ -15,14 +15,14 @@ public class Employee extends User {
 	}
 
 	public Employee(int id, String username, String password, String name, String surname, Gender gender, Date birthday,
-			Role role, int factoryId) {
-		super(id, username, password, name, surname, gender, birthday, role);
+			Role role, int factoryId, boolean isDeleted) {
+		super(id, username, password, name, surname, gender, birthday, role, isDeleted);
 		
 		this.factoryId = factoryId;
 	}
 	
 	public Employee(User user) {
-		super(user.getId(),user.getUsername(),user.getPassword(),user.getName(),user.getSurname(),user.getGender(),user.getBirthday(),user.getRole());
+		super(user.getId(),user.getUsername(),user.getPassword(),user.getName(),user.getSurname(),user.getGender(),user.getBirthday(),user.getRole(), user.getIsDeleted());
 		// TODO Auto-generated constructor stub
 	}
 

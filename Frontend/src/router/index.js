@@ -11,6 +11,9 @@ import MyProfileView from '@/views/MyProfileView.vue'
 import ManagerPurchasesView from '@/views/ManagerPurchasesView.vue'
 import PurchaseDetailsView from '@/views/PurchaseDetailsView.vue'
 import CustomerPurchasesView from '@/views/CustomerPurchasesView.vue'
+import UsersView from '@/views/UsersView.vue'
+import AddEmployeeView from '@/views/AddEmployeeView.vue'
+import AddManagerView from '@/views/AddManagerView.vue'
 
 const routes = [
     {
@@ -90,6 +93,28 @@ const routes = [
       component: PurchaseDetailsView,
       props: true,
       meta: { requiresAuth: true, requiredRole: 'CUSTOMER' }
+      
+    },
+    {
+      path: '/allUsersView',
+      name: 'allUsersView',
+      component: UsersView,
+      meta: { requiresAuth: true, requiredRole: 'ADMIN' }
+      
+    },
+    {
+      path: '/addEmployeeView/:factoryId',
+      name: 'addEmployeeView',
+      component: AddEmployeeView,
+      meta: { requiresAuth: true, requiredRole: 'MANAGER' }
+      
+    }
+    ,
+    {
+      path: '/addManagerView',
+      name: 'addManagerView',
+      component: AddManagerView,
+      meta: { requiresAuth: true, requiredRole: 'ADMIN' }
       
     }
   ];

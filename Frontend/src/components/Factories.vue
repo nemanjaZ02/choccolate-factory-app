@@ -117,7 +117,7 @@
                         <option value="rating_asc">Rating Ascending</option>
                         <option value="rating_desc">Rating Descending</option>
                     </select>
-                    <button v-if="loggedInUser.role == 'ADMIN'"  v-on:click="showAddForm()" style="margin-left: 50px ;" value="add factory">Add Factory</button>
+                    <button id="addFactoryButton" class="btn btn-primary my-2 my-sm-0" v-if="loggedInUser.role == 'ADMIN'"  v-on:click="showAddForm()" style="margin-left: 50px ;" value="add factory">Add Factory</button>
                     <div class="container">
                         <div class="row">
                             <div class="col-lg-4 col-md-6 mb-4" v-for="f in filteredFactories" @click="showDetails(f)" :key="f.id" >
@@ -473,6 +473,14 @@ function deleteFactory(factory) {
 }
 
 #searchButton:hover {
+    background: rgb(83, 43, 0);
+}
+#addFactoryButton {
+    background: rgba(123,63,0,1);
+    
+}
+
+#addFactoryButton:hover {
     background: rgb(83, 43, 0);
 }
 </style>
