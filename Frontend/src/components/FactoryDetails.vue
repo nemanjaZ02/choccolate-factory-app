@@ -20,7 +20,7 @@
           <tbody>
             <tr>
               <td>Address:</td>
-              <td>{{ factory.location.adress.street + " " + factory.location.adress.streetNum + ", " + factory.location.adress.city }}</td>
+              <td>{{ factory.location.adress.street + " " + factory.location.adress.streetNum + ", " + factory.location.adress.city + ", " + factory.location.adress.postNum }}</td>
             </tr>
             <tr>
               <td>City:</td>

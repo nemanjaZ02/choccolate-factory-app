@@ -294,17 +294,18 @@ public class LoginService {
 		}
 		int id = JwtUtils.getUserId(authorizationHeader);
 		
+		User userToDelete = new User();
 		for(User user : users)
 		{
 			if(user.getId() == id)
 			{
-				users.remove(user);
+				userToDelete = user;
 			}
 		}
-
-		return Response.status(200).entity(users).build();
 		
+		users.remove(userToDelete);
 		
+		return Response.status(200).entity(users).build();	
 	}
 	
 	
