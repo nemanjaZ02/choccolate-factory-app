@@ -177,8 +177,8 @@ public class ChocolateService {
 		ChocolateFactoryDAO factoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
 		String contextPath = ctx.getRealPath("");
 		
-		if (!JwtUtils.isManager(authorizationHeader)) {
-            return Response.status(401).entity("Unauthorized: Only managers or emplyees can update chocolates").build();
+		if (!(JwtUtils.isManager(authorizationHeader) || JwtUtils.isAdministrator(authorizationHeader))) {
+            return Response.status(401).entity("Unauthorized: Only managers or admins can delete chocolates").build();
         }
 		
 		if(dao.deleteChocolate(chocolate, contextPath) == null) {

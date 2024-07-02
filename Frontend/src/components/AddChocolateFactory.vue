@@ -1,5 +1,10 @@
 <template>
-    <h1>Add Chocolate</h1>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch/dist/geosearch.css" /> 
+    </head>
+    <h1 style="margin-top: 100px">Add Chocolate Factory</h1>
+    <div :style="{ width: '1100px', height: '300px'}" ref="mapContainer"></div>
     <form @submit.prevent="addChocolateFactory()">
     <table>
       <tr>
@@ -113,6 +118,10 @@
     </template>
 
     <script setup>
+    import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
+    import 'leaflet/dist/leaflet.css'
+    import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
+    import "leaflet-defaulticon-compatibility";
     import axios from 'axios';
     import {watch,onMounted, ref} from 'vue';
     import {useRouter} from 'vue-router';
@@ -121,18 +130,10 @@
     const selectedFile = ref(null);
     const router = useRouter();
     const route = useRoute();
+    const map = ref();
+    const mapContainer = ref();
     const availableManagers = ref([])
     const errorMessage = ref(" ");
-   const props = defineProps({
-    coordinates: {
-    type: Object, 
-    required: true
-  },
-    adress: {
-    type: Object, 
-    required: true
-  }  
-  });
     const manager = ref({factoryId:0, id:0, username:"", password:"", name:"", surname:"", gender:"", birthday:"", role:"MANAGER"})
     const chocolateFactory = ref({id:0,  name:"", chocolates:[],  workTime: {
     from: "",
@@ -152,9 +153,63 @@
  
   
   onMounted(()=>{
+    createMap();
     getAvailableManagers();
 })
- 
+function createMap()
+{
+    map.value = L.map(mapContainer.value).setView([51.505, -0.09], 13);
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map.value);
+
+    const provider = new OpenStreetMapProvider();
+    const searchControl = new GeoSearchControl({
+        provider: provider,
+        style: 'bar',
+        showMarker: true,
+        retainZoomLevel: false,
+        animateZoom: true,
+        autoClose: true,
+        searchLabel: 'Enter address'
+    });
+
+    map.value.addControl(searchControl);
+    let currentMarker = null;
+
+    map.value.on('click', function (e) {
+        if (currentMarker) {
+            map.value.removeLayer(currentMarker);
+        }
+        currentMarker = L.marker(e.latlng).addTo(map.value);
+
+        const { lat, lng } = e.latlng;
+
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`)
+            .then(response => response.json())
+            .then(data => {
+                const { address } = data;
+                const country = address.country || '';
+                const city = address.city || address.town || address.village || '';
+                const postalCode = address.postcode || '';
+                const street = address.road || '';
+                const houseNumber = address.house_number || '';
+
+                chocolateFactory.value.location.longitude = lat
+                chocolateFactory.value.location.latitude = lng
+                chocolateFactory.value.location.adress.city = city
+                chocolateFactory.value.location.adress.country = country
+                chocolateFactory.value.location.adress.street = street
+                chocolateFactory.value.location.adress.postNum = postalCode
+                chocolateFactory.value.location.adress.streetNum = houseNumber
+
+                currentMarker.bindPopup(`Country: ${country}<br>City: ${city}<br>Postal Code: ${postalCode}<br>Latitude: ${lat}<br>Longitude: ${lng}<br>Street: ${street}<br>Number: ${houseNumber}`).openPopup();
+            })
+            .catch(error => {
+                console.error('Error fetching location details:', error);
+            });
+    });
+}
   function addChocolateFactory()
   { 
     errorMessage.value = " ";
@@ -178,14 +233,8 @@
     if(errorMessage.value===" ")
     {
 
-    
-      chocolateFactory.value.location.longitude = props.coordinates[1]
-      chocolateFactory.value.location.latitude = props.coordinates[0]
-      chocolateFactory.value.location.adress.city=props.adress.city
-      chocolateFactory.value.location.adress.country=props.adress.country
-      chocolateFactory.value.location.adress.street=props.adress.street
-      chocolateFactory.value.location.adress.postNum=props.adress.postcode
-      chocolateFactory.value.location.adress.streetNum=props.adress.housenumber
+      chocolateFactory.value.workTime.from = getTimeFormatted(chocolateFactory.value.workTime.from)
+      chocolateFactory.value.workTime.to = getTimeFormatted(chocolateFactory.value.workTime.to)
       
       axios.post("http://localhost:8080/ChoccolateAppREST/rest/registerManager",this.manager, {
       headers: {
@@ -234,7 +283,19 @@
               }
           })
   }
-    
+  
+  function getTimeFormatted(time) {
+    let [hours, minutes] = time.split(':')
+    let seconds = 0
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    seconds = seconds < 10 ? '0' + seconds : seconds;
+    let strTime = hours + ':' + minutes + ':' + seconds + ' ' + ampm;
+    return strTime;
+}
+
   function getAvailableManagers(){
       axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAvailableManagers').then(response=>{
         availableManagers.value = response.data;

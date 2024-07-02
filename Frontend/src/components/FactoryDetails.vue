@@ -39,12 +39,14 @@
         <div class="chocolate-div-container-container">
           <h1>CHOCOLATES</h1>
           <label style="margin-top: 50px; margin-left: 110px;" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
+          <div class="button-container">
             <button v-on:click="showAddForm(factory.id)"  class="button-with-image">
-              <img src="../../public/Images/addChocolate.png" style="width: 30px;"  alt="Image">
+              <img src="../../public/Images/addChocolate.png" style="width: 64px;"  alt="Image">
             </button>
-            <button v-on:click="showAddEmployeeForm(factory.id)" class="button-with-image">
-              <img src="../../public/Images/addUser.png" style="width: 30px;"  alt="Image">
+            <button v-on:click="showAddEmployeeForm(factory.id)" style="margin-left: 60px;" class="button-with-image">
+              <img src="../../public/Images/addUser.png" style="width: 40px; "  alt="Image">
             </button>
+          </div>
           </label>
           <div class="chocolate-div-container">
             <div style="height: 200px;" v-for="c in factory.chocolates" class="chocolate-div">
@@ -118,6 +120,7 @@
       <p class="card-text">{{ comment.text }}</p>
       <button class="btn btn-primary" v-if="comment.status == 'PENDING' && loggedInUser.role == 'MANAGER'" style="background-color: green;" v-on:click="approveComment(comment)">Approve</button>
       <button class="btn btn-secondary" v-if="comment.status == 'PENDING' && loggedInUser.role == 'MANAGER'" style="background-color: red; margin-left: 20px" v-on:click="declineComment(comment)">Decline</button>
+      <button class="btn btn-danger" v-if="loggedInUser.role == 'ADMIN'" v-on:click="deleteComment(comment)">DELETE</button>
     </div>
   </div>
 </template>
@@ -160,7 +163,7 @@ function loadComments() {
     if (!response.data) {
       return;
     }
-    comments.value = response.data;
+    comments.value = response.data.filter(comment => comment.isDeleted == false);
   });
 }
 
@@ -283,6 +286,17 @@ function changeQuantity(chocolate) {
        })
     });
 }
+
+function deleteComment(comment) {
+  axios.post(`http://localhost:8080/ChoccolateAppREST/rest/comments/deleteComment`, comment, {
+    headers: {
+      'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+    }
+  }).then(response => {
+    loadComments();
+  });
+
+}
 </script>
 
 <style scoped>
@@ -372,19 +386,30 @@ tbody tr:nth-child(even) {
   background-color: #d6cdc4;
 }
 
-.button-with-image {
-  display: inline-block;
-  background-color: transparent;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
+.button-container {
+      font-size: 0; 
+  }
 
-.button-with-image:hover {
-  background-color: #ddd;
-}
+  .button-with-image {
+      display: inline-block;
+      background-color: transparent;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      padding: 10px; 
+      margin-right: 20px;
+  }
 
+
+  .button-with-image img {
+      width: 100%; 
+      height: auto; 
+  }
+
+  .button-with-image:hover {
+      background-color: #ddd;
+  }
 .item {
   position: relative;
   padding: 10px;

@@ -1,34 +1,4 @@
 <template>
-     <!-- <nav class="div_style">
-
- Fixed logo image with class
-<router-link :to="{ name: 'home' }" class="logo-link">
-    <img src="../../public/Images/appLogo.jpg" alt="Logo" class="logo-image">
-</router-link>
-
-
-<router-link :to="{ name: 'myProfileView' }" v-if="isLoggedIn">{{ loggedInUser.username }}</router-link>
-<router-link v-else to="/login">Login</router-link> 
-
-<label > | </label>
-
-<router-link :to="{ name: 'factoryDetails', params: { factoryId: loggedInUser.factoryId } }" v-if="isLoggedIn && loggedInUser.role === 'MANAGER'">My Factory</router-link> 
-<router-link :to="{ name: 'myCartView' }" v-if="isLoggedIn && loggedInUser.role === 'CUSTOMER'">My Cart</router-link>
-<router-link :to="{ name: 'allUsersView' }" v-if="isLoggedIn && loggedInUser.role === 'ADMIN'">Registered Users</router-link>
-<label v-if="isLoggedIn && (loggedInUser.role === 'MANAGER' || loggedInUser.role === 'CUSTOMER' || loggedInUser.role === 'ADMIN')"> | </label>
-
-<router-link :to="{ name: 'managerPurchases' }" v-if="isLoggedIn && loggedInUser.role === 'MANAGER'">My Factory Purchases</router-link> 
-
-<label v-if="isLoggedIn && loggedInUser.role === 'MANAGER'"> | </label>
-
-<router-link :to="{ name: 'customerPurchases' }" v-if="isLoggedIn && loggedInUser.role === 'CUSTOMER'">My Purchases</router-link> 
-
-<label v-if="isLoggedIn && loggedInUser.role === 'CUSTOMER'"> | </label>
-
-<a href="#" class="router-link-like" @click.prevent="logOut" v-if="isLoggedIn">Log out</a>
-<router-link v-else to="/register">Register</router-link>    
-</nav>  -->
-
 <nav class="nav-bar">
     
     <div class="nav-content">
@@ -117,73 +87,6 @@
 </script>
 
 <style scoped>
-   /* .div_style {
-        width: 100%;
-        padding: 15px 2%;
-        background-color: #333;
-        color: white;
-        text-align: right;
-        box-sizing: border-box;
-        position: fixed; 
-        top: 0;
-        left: 0;
-        z-index: 1000;
-        display: flex; 
-        align-items: center; 
-    }
-
-    .logo-link {
-        margin-right: auto; 
-    }
-
-    .logo-image {
-        width: 120px; 
-        height: auto; 
-        margin-right: 10px; 
-    }
-
-    a:hover {
-        cursor: pointer;
-    }
-    .nav-bar {
-    width: 100%;
-    padding: 16px 2%;
-    background-color: #2C2123; 
-    color: #EAD9B9; 
-    text-align: right;
-    box-sizing: border-box;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
-}
-
-.nav-content {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-.nav-link {
-    margin: 0 10px;
-    color: #EAD9B9; 
-    text-decoration: none;
-    transition: color 0.3s, transform 0.3s;
-}
-
-.nav-link:hover {
-    color: #D4A058; 
-    transform: scale(1.1);
-}
-
-.separator {
-    margin: 0 5px;
-}
-
-.nav-item {
-    margin: 0 10px;
-} */
 .logo-image {
     width: 75px; 
     height: auto; 

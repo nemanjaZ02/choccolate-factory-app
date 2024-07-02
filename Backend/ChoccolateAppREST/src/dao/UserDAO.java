@@ -43,6 +43,14 @@ public class UserDAO {
 		return customers;
 	}
 	
+	public ArrayList<Manager> findAllManagers() {
+		return managers;
+	}
+	
+	public ArrayList<Employee> findAllEmployees() {
+		return employees;
+	}
+	
 	public User find(String username, String password) {
 		for (User customer : customers) {
             if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
@@ -307,9 +315,6 @@ public class UserDAO {
 			if(manager.getId()==updatedManager.getId())
 			{
 				manager.setFactoryId(updatedManager.getFactoryId());
-				managers.remove(manager);
-				managers.add(i, manager);
-				
 				
 				Gson gson = new Gson();  
 				String updatedJsonData;

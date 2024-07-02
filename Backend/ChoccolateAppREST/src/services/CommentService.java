@@ -274,4 +274,34 @@ public class CommentService {
 		
 		return Response.status(404).entity("Comment not found").build();
 	}
+	
+	@OPTIONS
+	@Path("/deleteComment")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public boolean corsDeleteComment() {
+		return true;
+	}
+	
+	@POST
+	@Path("/deleteComment")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteComment(Comment comment , @HeaderParam("Authorization") String authorizationHeader) throws ParseException
+	{
+		if(!JwtUtils.isAdministrator(authorizationHeader))
+		{
+			return Response.status(401).entity("Unauthorized: Only admins can delete comments").build();
+		}		
+		
+		String contextPath = ctx.getRealPath("");
+		CommentDAO commentDAO = (CommentDAO) ctx.getAttribute("commentDAO");
+		
+		if(commentDAO.deleteComment(comment, contextPath) != null)
+		{
+			return Response.status(200).entity(comment).build(); 
+		}	
+		
+		return Response.status(404).entity("Comment not found").build();
+	}
 }

@@ -258,18 +258,39 @@ public class ChocolateFactoryDAO {
         return factory;	
 	}
 	
-	public ChocolateFactory updateChocolateFactory(ChocolateFactory factory, String contextPath)
+	public ChocolateFactory updateChocolateFactoryStatus(ChocolateFactory factory, String contextPath)
 	{
-		int i = -1;
 		for(ChocolateFactory cf : factories)
 		{
-			i++;
 			if(cf.getId()==factory.getId())
 			{
-				cf = factory;
-				factories.remove(factory);
-				factories.add(i, factory);
+				cf.setStatus(factory.getStatus());
 				
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/chocolateFactories.json");
+				ChocolateFactory[] updateChocolateFactoriesArray = factories.toArray(new ChocolateFactory[0]);
+				updatedJsonData = gson.toJson(updateChocolateFactoriesArray);							
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	                        
+				return factory;
+			}
+		}
+		return null;
+	}
+	
+	public ChocolateFactory deleteChocolateFactory(ChocolateFactory factory, String contextPath)
+	{
+		for(ChocolateFactory cf : factories)
+		{
+			if(cf.getId()==factory.getId())
+			{
+				cf.setDeleted(true);
 				
 				Gson gson = new Gson();  
 				String updatedJsonData;
@@ -294,7 +315,7 @@ public class ChocolateFactoryDAO {
 		if(commentsNum == 1)
 		{
 			factory.setRating(rating);
-			updateChocolateFactory(factory, contextPath);
+			updateChocolateFactoryStatus(factory, contextPath);
 		}
 		else
 		{
@@ -302,7 +323,7 @@ public class ChocolateFactoryDAO {
 			sum = sum + rating;
 			double newRating = sum / commentsNum;
 			factory.setRating(newRating);
-			updateChocolateFactory(factory, contextPath);
+			updateChocolateFactoryStatus(factory, contextPath);
 		}
 	}
 }

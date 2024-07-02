@@ -70,6 +70,7 @@ function addChocolateToCart()
   if(JSON.parse(localStorage.getItem('cart')))
   {
     cart.value= JSON.parse(localStorage.getItem('cart'));
+    loggedInUser.value = JSON.parse(localStorage.getItem('loggedUser'));
   }
   else if(JSON.parse(localStorage.getItem('loggedUser')))
   {
