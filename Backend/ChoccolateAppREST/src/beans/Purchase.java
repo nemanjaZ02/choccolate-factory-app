@@ -24,7 +24,7 @@ public class Purchase {
 	}
 
 	public Purchase(int id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
-			double price, Customer customerId, PurchaseState state, String declineReason, boolean isDeleted) {
+			double price, Customer customer, PurchaseState state, String declineReason, boolean isDeleted) {
 		super();
 		this.id = id;
 		this.chocolates = chocolate;

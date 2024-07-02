@@ -18,10 +18,10 @@ public class Customer extends User {
 		// TODO Auto-generated constructor stub
 	}
 	public Customer(int id, String username, String password, String name, String surname, Gender gender, Date birthday,
-			Role role,boolean isDeleted) {
-		super(id, username, password, name, surname, gender, birthday, role,isDeleted);
+			Role role, boolean isDeleted, boolean isSuspicious, boolean isBanned) {
+		super(id, username, password, name, surname, gender, birthday, role, isDeleted, isSuspicious, isBanned);
 		// TODO Auto-generated constructor stub
-	}
+	}	
 	
 	public Customer(List<Purchase> purchases, Cart cart, double points, CustomerType type) {
 		super();
@@ -32,7 +32,7 @@ public class Customer extends User {
 	}
 	
 	public Customer(User user) {
-		super(user.getId(), user.getUsername(), user.getPassword(), user.getName(), user.getSurname(), user.getGender(), user.getBirthday(), user.getRole(), user.getIsDeleted());
+		super(user.getId(), user.getUsername(), user.getPassword(), user.getName(), user.getSurname(), user.getGender(), user.getBirthday(), user.getRole(), user.getIsDeleted(), user.getIsBanned(), user.getIsSuspicious());
 		// TODO Auto-generated constructor stub
 	}
 	
