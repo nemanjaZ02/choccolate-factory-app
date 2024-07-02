@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.nimbusds.jose.JOSEException;
+import com.nimbusds.jose.shaded.json.parser.ParseException;
 
 import beans.Admin;
 import beans.Customer;
@@ -66,7 +67,7 @@ public class LoginService {
 	public Response login(User user) {
 		UserDAO userDao = (UserDAO) ctx.getAttribute("userDAO");
 		User loggedUser = userDao.find(user.getUsername(), user.getPassword());
-		if (loggedUser == null) {
+		if (loggedUser == null || loggedUser.getIsDeleted()) {
             return Response.status(Response.Status.UNAUTHORIZED)
                            .entity("Invalid username and/or password")
                            .build();
@@ -126,9 +127,13 @@ public class LoginService {
 	@Path("/registerManager")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response registerNewManager(Manager newUser) {
+	public Response registerNewManager(Manager newUser,@HeaderParam("Authorization") String authorizationHeader) throws ParseException {
 		String contextPath = ctx.getRealPath("");
 		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		if (!JwtUtils.isAdministrator(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only admins can register a new manager").build();
+        }
 		
 		if(newUser.getName() == "" || newUser.getSurname() == "" || newUser.getBirthday() == null || newUser.getUsername() == "" || newUser.getPassword() == "" || newUser.getRole() != Role.MANAGER || newUser.getGender() == null)
 		{
@@ -140,6 +145,36 @@ public class LoginService {
 			return Response.status(200).entity(newManager).build();
 		}	
 	}
+	
+	@OPTIONS
+	@Path("/registerEmployee")
+	@Produces(MediaType.APPLICATION_JSON)
+	public boolean registerNewEmployee() {
+		return true;
+	}
+	@POST
+	@Path("/registerEmployee")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response registerNewEmployee(Employee newUser, @HeaderParam("Authorization") String authorizationHeader) throws ParseException {
+		String contextPath = ctx.getRealPath("");
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		if (!JwtUtils.isManager(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only managers can register a new employee").build();
+        }
+		
+		if(newUser.getName() == "" || newUser.getSurname() == "" || newUser.getBirthday() == null || newUser.getUsername() == "" || newUser.getPassword() == "" || newUser.getRole() != Role.EMPLOYEE || newUser.getGender() == null)
+		{
+			return Response.status(205).entity("Not all fields are filled").build();
+		}
+		else
+		{
+			Employee newEmployee = dao.registerNewEmployee(newUser, contextPath);
+			return Response.status(200).entity(newEmployee).build();
+		}	
+	}
+	
 	
 	@OPTIONS
 	@Path("/getCustomer")
@@ -233,4 +268,90 @@ public class LoginService {
 		
 		return Response.status(404).entity("User not found").build();
 	}
+	
+	@OPTIONS
+    @Path("/getAllUsers")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean getAllUsers() {
+        return true;
+    }
+	
+	@GET
+	@Path("/getAllUsers")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllUsers(@HeaderParam("Authorization") String authorizationHeader) throws ParseException {
+		
+		if (!JwtUtils.isAdministrator(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only admins have access to all registered users").build();
+        }
+		
+		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
+		ArrayList<User> users = userDAO.getAllUsers();
+		
+		if(users == null)
+		{
+			return Response.status(404).entity("There are no registered users").build();
+		}
+		int id = JwtUtils.getUserId(authorizationHeader);
+		
+		for(User user : users)
+		{
+			if(user.getId() == id)
+			{
+				users.remove(user);
+			}
+		}
+
+		return Response.status(200).entity(users).build();
+		
+		
+	}
+	
+	
+	@OPTIONS
+    @Path("/deleteUser")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean deleteuser() {
+        return true;
+    }
+	
+	@POST
+	@Path("/deleteUser")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response deleteuser(int userId, @HeaderParam("Authorization") String authorizationHeader) throws ParseException {
+		String contextPath = ctx.getRealPath("");
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		if(!JwtUtils.isAdministrator(authorizationHeader))
+		{
+			 return Response.status(401).entity("Unauthorized: Only admins can delete users").build();
+		}
+		
+		if(dao.GetCustomerById(userId)!=null)
+		{
+			Customer c = dao.GetCustomerById(userId);
+			c.setDeleted(true);
+			dao.updateCustomer(c, contextPath);
+			return Response.status(200).entity(c).build();
+		}
+		else if (dao.GetManagerById(userId) != null)
+		{
+			Manager m = dao.GetManagerById(userId);
+			m.setDeleted(true);
+			dao.updateManager(m, contextPath);
+			return Response.status(200).entity(m).build();
+		}
+		else if (dao.GetEmployeeById(userId) != null)
+		{
+			Employee e = dao.GetEmployeeById(userId);
+			e.setDeleted(true);
+			dao.updateEmployee(e, contextPath);
+			return Response.status(200).entity(e).build();
+		}
+		
+		
+		return Response.status(404).entity("User not found").build();
+	}
+	
 }

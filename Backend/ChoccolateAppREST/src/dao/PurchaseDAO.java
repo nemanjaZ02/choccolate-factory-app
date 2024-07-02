@@ -162,4 +162,39 @@ public class PurchaseDAO {
 		}
 		return null;
 	}
+	public Purchase deletePurchase(Purchase purchase, String contextPath) {
+		
+		int id = purchase.getId();
+		
+		Purchase purchaseForDeletion = getById(id);
+		if(purchaseForDeletion == null)
+			return null;
+		
+		purchaseForDeletion.setDeleted(true);
+		
+		int i = -1;
+		for(Purchase p : purchases)
+		{
+			i++;
+			if(p.getId() == purchaseForDeletion.getId())
+			{
+				purchases.set(i, purchaseForDeletion);
+			}
+		}
+		
+		Gson gson = new Gson();  
+		String updatedJsonData;
+		
+		Path filePath = Paths.get(contextPath, "/purchases.json");
+		Purchase[] updatePurchaseArray = purchases.toArray(new Purchase[0]);
+		updatedJsonData = gson.toJson(updatePurchaseArray);
+		
+		try {
+			Files.write(filePath, updatedJsonData.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return purchaseForDeletion;
+	}
 }

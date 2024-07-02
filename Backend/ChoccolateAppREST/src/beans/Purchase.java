@@ -16,6 +16,7 @@ public class Purchase {
 	private Customer customer;
 	private PurchaseState state;
 	private String declineReason;
+	private boolean isDeleted;
 	
 	public Purchase() {
 		super();
@@ -23,7 +24,7 @@ public class Purchase {
 	}
 
 	public Purchase(int id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
-			double price, Customer customerId, PurchaseState state, String declineReason ) {
+			double price, Customer customerId, PurchaseState state, String declineReason, boolean isDeleted) {
 		super();
 		this.id = id;
 		this.chocolates = chocolate;
@@ -33,6 +34,15 @@ public class Purchase {
 		this.customer = customer;
 		this.state = state;
 		this.declineReason = declineReason;
+		this.isDeleted = isDeleted;
+	}
+
+	public boolean getIsDeleted() {
+		return isDeleted;
+	}
+
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 
 	public ArrayList<Chocolate> getChocolates() {

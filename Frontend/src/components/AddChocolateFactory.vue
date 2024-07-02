@@ -187,7 +187,12 @@
       chocolateFactory.value.location.adress.postNum=props.adress.postcode
       chocolateFactory.value.location.adress.streetNum=props.adress.housenumber
       
-      axios.post("http://localhost:8080/ChoccolateAppREST/rest/registerManager", this.manager).then(response => {
+      axios.post("http://localhost:8080/ChoccolateAppREST/rest/registerManager",this.manager, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
+      }
+      
+    }).then(response => {
         manager.value = response.data;
         axios.post('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolateFactory', this.chocolateFactory, {
           headers: {

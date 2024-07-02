@@ -39,8 +39,11 @@
         <div class="chocolate-div-container-container">
           <h1>CHOCOLATES</h1>
           <label style="margin-top: 50px; margin-left: 110px;" v-if="loggedInUser.factoryId == factory.id && loggedInUser.role == 'MANAGER'">
-            <button v-on:click="showAddForm(factory.id)" class="button-with-image">
-              <img src="../../public/Images/add.png" style="width: 30px;"  alt="Image">
+            <button v-on:click="showAddForm(factory.id)"  class="button-with-image">
+              <img src="../../public/Images/addChocolate.png" style="width: 30px;"  alt="Image">
+            </button>
+            <button v-on:click="showAddEmployeeForm(factory.id)" class="button-with-image">
+              <img src="../../public/Images/addUser.png" style="width: 30px;"  alt="Image">
             </button>
           </label>
           <div class="chocolate-div-container">
@@ -207,6 +210,9 @@ function checkCanUserComment() {
 
 function showAddForm(factoryId) {
   router.push({ name: 'addChocolateForm', params: { factoryId: factoryId } });
+}
+function showAddEmployeeForm(factoryId){
+  router.push({ name: 'addEmployeeView', params: { factoryId: factoryId } });
 }
 function showUpdateForm(chocolate) {
   router.push({ name: 'updateChocolateForm', params: { chocolateId: chocolate.id } });

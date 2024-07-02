@@ -14,8 +14,8 @@ public class Admin extends User {
 	}
 
 	public Admin(int id, String username, String password, String name, String surname, Gender gender, Date birthday,
-			Role role) {
-		super(id, username, password, name, surname, gender, birthday, role);
+			Role role, boolean isDeleted) {
+		super(id, username, password, name, surname, gender, birthday, role,isDeleted);
 		// TODO Auto-generated constructor stub
 	}	
 	
@@ -26,5 +26,6 @@ public class Admin extends User {
 		setBirthday(u.getBirthday());
 		setUsername(u.getUsername());
 		setGender(u.getGender());
+		setDeleted(u.getIsDeleted());
 	}
 }

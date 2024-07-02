@@ -18,8 +18,8 @@ public class Customer extends User {
 		// TODO Auto-generated constructor stub
 	}
 	public Customer(int id, String username, String password, String name, String surname, Gender gender, Date birthday,
-			Role role) {
-		super(id, username, password, name, surname, gender, birthday, role);
+			Role role,boolean isDeleted) {
+		super(id, username, password, name, surname, gender, birthday, role,isDeleted);
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -32,7 +32,7 @@ public class Customer extends User {
 	}
 	
 	public Customer(User user) {
-		super(user.getId(), user.getUsername(), user.getPassword(), user.getName(), user.getSurname(), user.getGender(), user.getBirthday(), user.getRole());
+		super(user.getId(), user.getUsername(), user.getPassword(), user.getName(), user.getSurname(), user.getGender(), user.getBirthday(), user.getRole(), user.getIsDeleted());
 		// TODO Auto-generated constructor stub
 	}
 	

@@ -9,6 +9,7 @@ public class CustomerType {
 	public CustomerType() {
 		super();
 		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CustomerType(int id, String typeName, double discount, int requiredPoints) {
