@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import enums.PurchaseState;
 
 public class Purchase {
-	private int id;
+	private String id;
 	private ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
 	private int factoryId;
 	private LocalDateTime dateAndTime;
@@ -23,7 +23,7 @@ public class Purchase {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Purchase(int id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
+	public Purchase(String id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
 			double price, Customer customer, PurchaseState state, String declineReason, boolean isDeleted) {
 		super();
 		this.id = id;
@@ -101,11 +101,11 @@ public class Purchase {
 		this.customer = customer;
 	}
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}	
 }

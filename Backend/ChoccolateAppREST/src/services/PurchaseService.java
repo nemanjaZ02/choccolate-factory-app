@@ -214,7 +214,7 @@ public class PurchaseService {
 	@GET
 	@Path("/getById/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPurchaseById(@PathParam("id") int id)
+	public Response getPurchaseById(@PathParam("id") String id)
 	{
 	        
 		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
@@ -316,7 +316,7 @@ public class PurchaseService {
 	@Path("/deletePurchase")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response deletePurchase(int id, @HeaderParam("Authorization") String authorizationHeader)  throws ParseException 
+	public Response deletePurchase(String id, @HeaderParam("Authorization") String authorizationHeader)  throws ParseException 
 	{
 		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
 		String contextPath = ctx.getRealPath("");
@@ -332,10 +332,7 @@ public class PurchaseService {
 		}
 		
 		Purchase purchase = dao.deletePurchase(dao.getById(id), contextPath);
-		return Response.status(200).entity(purchase).build();
-		
-		
-		
+		return Response.status(200).entity(purchase).build();		
 	}
 	
 }

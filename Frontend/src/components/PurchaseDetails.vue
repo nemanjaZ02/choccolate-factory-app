@@ -80,6 +80,7 @@ const route = useRoute();
 const router = useRouter();
 const loggedInUser = ref({});
 const purchase = ref({id:0,chocolates:{},factoryId:0,dateAndTime:{},price:0,customer:{},state:'Processing', declineReason:""});
+const purchaseToSend = ref({id:0,chocolates:{},factoryId:0,dateAndTime:{},price:0,customer:{},state:'Processing', declineReason:""});
 const dataLoaded = ref(false);
 const user = ref({chocolates:{}})
 const factory = ref({name:""})
@@ -158,14 +159,17 @@ function updatePurchaseStatus(status){
         comment.value = "";
     }
 
-    purchase.value.state = status
-    purchase.value.declineReason = this.comment
-    
+    if(purchaseToSend.value.id == 0) {
+        purchaseToSend.value = JSON.parse(JSON.stringify(purchase.value));
+    }
 
-    if((this.purchase.state == 'Declined' && this.purchase.declineReason!="") || (this.purchase.state == 'Accepted' && this.purchase.declineReason=="") || (this.purchase.state == 'Canceled' && this.purchase.declineReason==""))
+    purchaseToSend.value.state = status
+    purchaseToSend.value.declineReason = this.comment
+    
+    if((this.purchaseToSend.state == 'Declined' && this.purchaseToSend.declineReason!="") || (this.purchaseToSend.state == 'Accepted' && this.purchaseToSend.declineReason=="") || (this.purchaseToSend.state == 'Canceled' && this.purchaseToSend.declineReason==""))
     {
-        purchase.value.dateAndTime = ref(null)
-        axios.put('http://localhost:8080/ChoccolateAppREST/rest/purchases/updatePurchaseStatus', this.purchase, {
+        purchaseToSend.value.dateAndTime = ref(null)
+        axios.put('http://localhost:8080/ChoccolateAppREST/rest/purchases/updatePurchaseStatus', this.purchaseToSend, {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
       }

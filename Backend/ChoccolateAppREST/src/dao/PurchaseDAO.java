@@ -56,20 +56,22 @@ public class PurchaseDAO {
 			String updatedJsonData;
 
 			int maxId = -1;
-			for(Purchase p : purchases)
-			{
-				if(p.getId() > maxId)
-				{
-					maxId = p.getId();
-				}
+			for (Purchase p : purchases) {
+			    int currentId = Integer.parseInt(p.getId());
+			    if (currentId > maxId) {
+			        maxId = currentId;
+			    }
 			}
-				
-			if(maxId == -1)
-			{
-				maxId = 0;
+
+			if (maxId == -1) {
+			    maxId = 0;
 			}
-				
-			newPurchase.setId(maxId + 1);
+
+			int newId = maxId + 1;
+			String formattedId = String.format("%010d", newId);
+
+			newPurchase.setId(formattedId);
+			
 			purchases.add(newPurchase);
 			filePath = Paths.get(contextPath, "/purchases.json");
 			Purchase[] updatePurchaseArray = purchases.toArray(new Purchase[0]);
@@ -86,11 +88,7 @@ public class PurchaseDAO {
 	public ArrayList<Purchase> getAllForManager(Manager manager)
 	{
 		ArrayList<Purchase> purchasesForManager = new ArrayList<Purchase>();
-		
-		
-		
-		
-		
+			
 		for(Purchase p:purchases)
 		{
 			if(p.getFactoryId()==manager.getFactoryId())
@@ -114,11 +112,11 @@ public class PurchaseDAO {
 		return purchasesForCustomer;
 	}
 	
-	public Purchase getById(int id)
+	public Purchase getById(String id)
 	{
 		for(Purchase p:purchases)
 		{
-			if(p.getId()==id)
+			if(p.getId().equals(id))
 			{
 				return p;
 			}
@@ -132,18 +130,11 @@ public class PurchaseDAO {
 	
 		for(Purchase purchase: purchases)
 		{
-			//int i = -1;
-			if(purchase.getId()==newPurchase.getId())
+			if(purchase.getId().equals(newPurchase.getId()))
 			{
-				
-			//	i++;
-				
 				purchase.setState(newPurchase.getState());
 				purchase.setDeclineReason(newPurchase.getDeclineReason());
-				
-			
-			//	purchases.remove(purchase);
-			//	purchases.add(i,purchase);			
+						
 				Gson gson = new Gson();  
 				String updatedJsonData;
 				
@@ -164,7 +155,7 @@ public class PurchaseDAO {
 	}
 	public Purchase deletePurchase(Purchase purchase, String contextPath) {
 		
-		int id = purchase.getId();
+		String id = purchase.getId();
 		
 		Purchase purchaseForDeletion = getById(id);
 		if(purchaseForDeletion == null)
