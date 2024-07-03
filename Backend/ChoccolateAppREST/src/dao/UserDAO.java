@@ -396,6 +396,35 @@ public class UserDAO {
 		return null;	
 	}
 	
+	public Customer setSuspicious(User user, String contextPath) {
+		
+		for(Customer c : customers)
+		{
+		    if(c.getId() == user.getId())
+		    {
+		    	c.setSuspicious(user.getIsSuspicious());
+						
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/customers.json");
+				Customer[] updateCustomerArray = customers.toArray(new Customer[0]);
+				updatedJsonData = gson.toJson(updateCustomerArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            return c;
+		    }
+
+		}
+		
+		return null;	
+	}
+	
 	public Admin updateAdmin(Admin newAdmin, String contextPath) {
 		
 		int i = -1;

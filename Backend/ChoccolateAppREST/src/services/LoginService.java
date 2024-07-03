@@ -1,6 +1,7 @@
 package services;
 
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
@@ -25,9 +26,12 @@ import beans.Admin;
 import beans.Customer;
 import beans.Employee;
 import beans.Manager;
+import beans.Purchase;
 import beans.User;
 import dao.CustomerTypeDAO;
+import dao.PurchaseDAO;
 import dao.UserDAO;
+import enums.PurchaseState;
 import enums.Role;
 import jwt.JwtConstants;
 import jwt.JwtUtils;
@@ -45,11 +49,20 @@ public class LoginService {
 		if (ctx.getAttribute("productDAO") == null) {
 	    	String contextPath = ctx.getRealPath("");
 	    	System.out.println(contextPath);
-			ctx.setAttribute("userDAO", new UserDAO(contextPath));
+	    	
+	    	if(ctx.getAttribute("userDAO") == null)
+			{
+	    		ctx.setAttribute("userDAO", new UserDAO(contextPath));
+			}
 			
 			if(ctx.getAttribute("customerTypeDAO") == null)
 			{
 				ctx.setAttribute("customerTypeDAO", new CustomerTypeDAO(contextPath));
+			}
+			
+			if(ctx.getAttribute("purchaseDAO") == null)
+			{
+				ctx.setAttribute("purchaseDAO", new PurchaseDAO(contextPath));
 			}
 		}
 	}
@@ -285,6 +298,7 @@ public class LoginService {
             return Response.status(401).entity("Unauthorized: Only admins have access to all registered users").build();
         }
 		
+		String contextPath = ctx.getRealPath("");
 		UserDAO userDAO = (UserDAO) ctx.getAttribute("userDAO");
 		ArrayList<User> users = userDAO.getAllUsers();
 		
@@ -301,11 +315,50 @@ public class LoginService {
 			{
 				userToDelete = user;
 			}
+			
+			if(user.getRole() == Role.CUSTOMER)
+			{
+				user.setSuspicious(checkIsSuspicious(user));
+				userDAO.setSuspicious(user, contextPath);
+			}
+		}		
+		users.remove(userToDelete);
+			
+		return Response.status(200).entity(users).build();	
+	}
+	
+	private boolean checkIsSuspicious(User user)
+	{
+		PurchaseDAO purchaseDAO = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
+		
+		int canceled = 0;
+		
+		for(Purchase p : purchaseDAO.getAll())
+		{
+			if(p.getCustomer().getId() == user.getId() && p.getState() == PurchaseState.Canceled && p.getIsDeleted() == false)
+			{
+				canceled++;
+				for(Purchase p1 : purchaseDAO.getAll())
+				{
+					if(p1.getCustomer().getId() == user.getId() && p1.getState() == PurchaseState.Canceled && p1.getIsDeleted() == false
+							&& p1.getDateAndTime().isAfter(p.getDateAndTime()) && p1.getDateAndTime().isBefore(p.getDateAndTime().plusMonths(1)))
+					{
+						canceled ++;
+					}
+				}
+				
+				if(canceled >= 5)
+				{
+					return true;
+				}
+				else
+				{
+					canceled = 0;
+				}
+			}
 		}
 		
-		users.remove(userToDelete);
-		
-		return Response.status(200).entity(users).build();	
+		return false;
 	}
 	
 	

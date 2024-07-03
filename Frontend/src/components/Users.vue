@@ -73,7 +73,10 @@
                 </div>
             </div>
         <div class = "col-md-10" >
-            
+            <div style="display: flex; align-items: center;">
+                <div style="height: 25px; width: 25px; background: #FFFACD;"></div>
+                <label style="margin-left: 12px; margin-top: 8px; font-weight: 500;">- Suspicious users</label>
+            </div>
             <div class="container">
                 <h1 style="text-align: center;" >Users</h1>
                 
@@ -96,7 +99,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-md-6 mb-4" v-if="dataLoaded" v-for="u in filteredUsers" :key="u.id"  >
                         <div class="col-md-2">
-                        <div class="card" style="width: 250px;">
+                        <div :style="{ backgroundColor: u.isSuspicious ? '#FFFACD' : 'white', width: '250px' }" class="card" style="width: 250px;">
                             <div class="card-header" style="font-weight: bold;">
                                 {{ u.role }}
                             </div>
@@ -317,7 +320,7 @@ function deleteUser(user){
     font-family: Arial, sans-serif;
     background-color: #dfd1c2;
     border-radius: 8px;
-    margin-top: 50px;
+    margin-top: 20px;
 }
 #searchButton {
     background: rgba(123,63,0,1);
