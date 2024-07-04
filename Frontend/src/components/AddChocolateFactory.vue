@@ -4,11 +4,12 @@
       <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch/dist/geosearch.css" /> 
   </head>
   <h1 style="margin-top: 100px">Add Chocolate Factory</h1>
+  <label  style=" font-weight: bold; margin-top: 30px;">Choose a location:</label>
   <div :style="{ width: '1100px', height: '300px'}" ref="mapContainer"></div>
   <form @submit.prevent="addChocolateFactory()">
   <table>
     <tr>
-      <td>Name:</td>
+      <td>Factory Name:</td>
       <td><input type="text" v-model="chocolateFactory.name"></td>
     </tr>
     <tr>
@@ -23,7 +24,7 @@
       <th><input type="time" v-model="chocolateFactory.workTime.to"></th>
     </tr>
     <tr>
-      <th>Logo:</th>
+      <th>Factory Logo:</th>
       <th><input type="file" @change="handleFileUpload"></th>
     </tr>
     <tr>
@@ -99,7 +100,7 @@
         <label>Birthday: </label>
       </td>
       <td>
-        <input type="date" v-model="manager.birthday" >
+        <input type="date" :max="getMaxBirthday()" v-model="manager.birthday" >
       </td> 
     </tr>
     <tr > 
@@ -217,10 +218,16 @@ function addChocolateFactory()
     manager.value.password ===""||
     manager.value.gender ==""||
     manager.value.birthday==""||
+    chocolateFactory.value.logo == "" ||
     chocolateFactory.value.name ==""||
     chocolateFactory.value.workTime.from ==""||
-    chocolateFactory.value.workTime.to == ""
-   ) {
+    chocolateFactory.value.workTime.to == "" ||
+    chocolateFactory.value.location.longitude == ""||
+    chocolateFactory.value.location.latitude == "" ||
+    chocolateFactory.value.location.adress.city == "" ||
+    chocolateFactory.value.location.adress.country ==""||
+    chocolateFactory.value.location.adress.street ==""
+    ) {
      errorMessage.value = "Please fill in all required fields.";
      
    }
@@ -285,9 +292,24 @@ function addChocolateFactory()
   }
 
   }
+  
+  
 }
-      
 
+function getMaxBirthday() {
+    // Get today's date
+    let today = new Date();
+
+    // Format today's date to yyyy-mm-dd (required by the input type=date)
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+    let yyyy = today.getFullYear();
+
+    // Calculate max date as yyyy-mm-dd
+    let maxDate = yyyy + '-' + mm + '-' + dd;
+
+    return maxDate;
+}
   
 function handleFileUpload(event){
       selectedFile.value = event.target.files[0];

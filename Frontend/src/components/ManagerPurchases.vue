@@ -1,5 +1,5 @@
 <template>
-    <nav class="navbar navbar-light" style="background-color: transparent; margin-top: 100px;">
+    <nav  class="navbar navbar-light" style="background-color: transparent; margin-top: 100px;">
         <div class = "container" style="height: 120px; width: 1000px;">
             <form class="form-inline" @submit.prevent="search()">
                 <div>
@@ -58,8 +58,11 @@
                             <li class="list-group-item">{{ "Purchase date: " +formatDate(p.dateAndTime)}}</li>
                             <li class="list-group-item">{{ "Price: "+p.price}}</li>
                             <li class="list-group-item">{{ "Customer: " + p.customer.username }}</li>
+                            <li class="list-group-item"><button v-if="loggedInUser.role=='MANAGER'" type="button" class="btn-danger" style="margin-left: 10px; height: 50px; width: 90px;" @click.stop="deletePurchase(p.id)">Delete</button></li>
                         </ul>
-                        <button v-if="loggedInUser.role=='MANAGER'" type="button" class="btn btn-danger" style="margin-left: 10px; height: 50px; width: 90px;" @click="deletePurchase(p.id)">Delete</button>
+                        <div>
+                        
+                        </div>
                     </div>
                 </div>
             </div>

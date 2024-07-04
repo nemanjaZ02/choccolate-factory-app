@@ -269,10 +269,44 @@ public class PurchaseService {
 		if(newPurchase.getState() == PurchaseState.Canceled)
 		{	
 			customer.setPoints(customer.getPoints() - (newPurchase.getPrice()/1000 * 133 * 4));	
+			ChocolateDAO chocolateDAO = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+			ChocolateFactoryDAO chocolateFactoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+			for(Chocolate check : chocolateDAO.findAllChocolates())
+			{
+				for(Chocolate c : newPurchase.getChocolates())
+				{
+					if(c.getId() == check.getId())
+					{
+						
+						check.setQuantity(check.getQuantity() + c.getQuantity());
+						chocolateDAO.updateChocolate(check, contextPath);
+						chocolateFactoryDAO.updateChocolateInFactory(check, contextPath);
+					}
+				}
+			}
+			
 		}
 		else if(newPurchase.getState() == PurchaseState.Accepted)
 		{
 			customer.setPoints(customer.getPoints() + (newPurchase.getPrice()/1000 * 133));	
+		}
+		else if(newPurchase.getState() == PurchaseState.Declined)
+		{
+			ChocolateDAO chocolateDAO = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+			ChocolateFactoryDAO chocolateFactoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+			for(Chocolate check : chocolateDAO.findAllChocolates())
+			{
+				for(Chocolate c : newPurchase.getChocolates())
+				{
+					if(c.getId() == check.getId())
+					{
+						
+						check.setQuantity(check.getQuantity() + c.getQuantity());
+						chocolateDAO.updateChocolate(check, contextPath);
+						chocolateFactoryDAO.updateChocolateInFactory(check, contextPath);
+					}
+				}
+			}
 		}
 		
 		customer.setType(customerTypeDAO.getCustomerType(customer.getPoints()));
@@ -330,6 +364,25 @@ public class PurchaseService {
 		if(purchase==null)
 		{
 			return Response.status(405).entity("there is no chocolate with this id").build();
+		}
+		
+		if(purchase.getState()==PurchaseState.Processing)
+		{
+			ChocolateDAO chocolateDAO = (ChocolateDAO) ctx.getAttribute("chocolateDAO");
+			ChocolateFactoryDAO chocolateFactoryDAO = (ChocolateFactoryDAO) ctx.getAttribute("chocolateFactoryDAO");
+			for(Chocolate check : chocolateDAO.findAllChocolates())
+			{
+				for(Chocolate c : purchase.getChocolates())
+				{
+					if(c.getId() == check.getId())
+					{
+						
+						check.setQuantity(check.getQuantity() + c.getQuantity());
+						chocolateDAO.updateChocolate(check, contextPath);
+						chocolateFactoryDAO.updateChocolateInFactory(check, contextPath);
+					}
+				}
+			}
 		}
 		
 		return Response.status(200).entity(purchase).build();		

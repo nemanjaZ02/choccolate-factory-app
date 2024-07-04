@@ -44,7 +44,10 @@ public class ChocolateFactoryDAO {
             ChocolateFactory[] factoriesArray = gson.fromJson(jsonData, ChocolateFactory[].class);
             if (factoriesArray != null) {
                 for (ChocolateFactory cf : factoriesArray) {
-                    factories.add(cf);
+                	
+                		 factories.add(cf);
+                	
+                  
                 }
             }
         } catch (IOException e) {
@@ -74,7 +77,7 @@ public class ChocolateFactoryDAO {
 			int maxId = -1;
 			for(ChocolateFactory chocolateFactory : factories)
 			{
-				if(newChocolateFactory.getName().equals(chocolateFactory.getName()))
+				if(newChocolateFactory.getName().equals(chocolateFactory.getName()) && !chocolateFactory.getIsDeleted())
 				{
 					return null;
 				}

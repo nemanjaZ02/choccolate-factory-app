@@ -1,5 +1,5 @@
 <template>
-    <div v-if="dataLoaded && purchase.state == 'Processing'" style="margin-top: 100px;">
+    <div v-if="dataLoaded && purchase.state == 'Processing' && !purchase.isDeleted" style="margin-top: 100px;">
         <div class="container" style="padding: 10px;">
             <h1 style="font-weight: bold; text-align: center">Purchase detals</h1>
         <div class="row">
@@ -53,7 +53,6 @@
          <div style="display: flex; flex-direction: column; align-items: flex-start;">
          <button v-if="loggedInUser.role=='MANAGER'" type="button" class="btn btn-success" style="margin-bottom: 10px; height: 50px; margin-left: 50px;" @click="updatePurchaseStatus('Accepted')">Accept</button>
          <button v-if="loggedInUser.role=='CUSTOMER'" type="button" class="btn btn-danger" style="margin-bottom: 10px; height: 50px; margin-left: 50px;" @click="updatePurchaseStatus('Canceled')">Cancel</button>
-         <button v-if="loggedInUser.role=='ADMIN'" type="button" class="btn btn-danger" style="margin-bottom: 10px; height: 50px; margin-left: 50px;" @click="deletePurchase(purchase.id)">Delete</button>
          <label v-if="loggedInUser.role=='CUSTOMER'" style="color: red; margin-left: 50px;" >Warning: Canceling the order results in losing points</label>
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 50px;">
         <button v-if="loggedInUser.role=='MANAGER'" type="button" class="btn btn-danger" style="margin-right: 10px; height: 50px;" @click="updatePurchaseStatus('Declined')">Decline</button>
@@ -68,6 +67,9 @@
     </div>
     <div v-else>
         <h1 style="color: red;">Purchase is already processed</h1>
+    </div>
+    <div v-else>
+        <h1 style="color: red;">Purchase is already deleted</h1>
     </div>
 </template>
 <script setup>
