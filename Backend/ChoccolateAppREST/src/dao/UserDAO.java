@@ -51,6 +51,16 @@ public class UserDAO {
 		return employees;
 	}
 	
+	public boolean usernameAlreadyExists(String username) {
+		for (User u : getAllUsers())
+		{
+			if (u.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public User find(String username, String password) {
 		for (User customer : customers) {
             if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {

@@ -58,6 +58,14 @@
                   </td> 
                 </tr>
                 <tr>
+                  <td  style="text-align: center;">
+                    <button id="toggleDescriptionButton" style="text-align: center;" v-on:click="toggleDescription(c)" class="btn btn-primary my-2 my-sm-0">Show Details</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ "Price: " + c.price + "RSD/" + c.weight + "g" }}</td>
+                </tr>
+                <tr>
                   <td style="text-align: center; font-size: 15px;" v-if="c.quantity > 0">{{ "In Stock 🟢 (" + c.quantity + ")"}}</td>
                   <td style="text-align: center; font-size: 15px;" v-else>Not In Stock 🔴</td>
                 </tr>
@@ -88,6 +96,9 @@
                   </td>   
                 </tr>
               </table>
+              <div v-if="c.showDescription" class="description-popup">
+                <div class="description-content">{{ c.description }}</div>
+              </div>
             </div>
           </div>
         </div>
@@ -185,6 +196,10 @@ function loadFactory() {
     dataLoaded.value = true;
     if(loggedInUser.value.role == 'CUSTOMER')
       checkCanUserComment();
+
+    if(loggedInUser.value.role == 'CUSTOMER' || !loggedInUser.value.role || (loggedInUser.value.role == 'MANAGER' && loggedInUser.value.factoryId != factory.value.id) || (loggedInUser.value.role == 'EMPLOYEE' && loggedInUser.value.factoryId != factory.value.id))
+      factory.value.chocolates = factory.value.chocolates.filter(chocolate => chocolate.quantity > 0);
+
     createMap();
   });
 }
@@ -297,9 +312,30 @@ function deleteComment(comment) {
   });
 
 }
+
+function toggleDescription(chocolate) {
+    chocolate.showDescription = !chocolate.showDescription;
+}
 </script>
 
 <style scoped>
+.description-popup {
+  position: absolute;
+  top: 210px; 
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.description-content {
+  max-height: 300px; 
+  overflow-y: auto;
+}
+
 .container {
   max-width: 960px;
   margin: 0 auto;
@@ -353,6 +389,8 @@ h1 {
   justify-content: center;
   align-items: center;
   margin: 25px;
+  position: relative;
+  margin-bottom: 20px;
 }
 
 .factory-table th,
@@ -520,5 +558,14 @@ tbody tr:nth-child(even) {
 
 .hover-table:hover .hover-row {
   opacity: 1;
+}
+
+#toggleDescriptionButton {
+    background: rgba(123,63,0,1);
+    
+}
+
+#toggleDescriptionButton:hover {
+    background: rgb(83, 43, 0);
 }
 </style>

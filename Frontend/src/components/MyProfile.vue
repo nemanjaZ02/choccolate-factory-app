@@ -88,7 +88,7 @@
             </p>
 
             <p><strong>Birthday:</strong>
-                <input v-if="dateEditable" type="date" v-model="loggedInUser.birthday"></input>
+                <input v-if="dateEditable" type="date" v-model="loggedInUser.birthday" :max="getMaxBirthday()"></input>
                 <label v-else>{{ convertToTimestamp(loggedInUser.birthday,true) }}</label>
                 <button v-if="!dateEditable" class="btn" v-on:click="changeDateEditable(false)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
@@ -117,6 +117,7 @@
             </p> 
         </div>
     </div>
+    
 </div>
 <div v-else>
     <h1 style="color: red;">Not logged in</h1>
@@ -219,6 +220,10 @@ function updateUser() {
                 dateEditable.value = false;
             }   
         })
+        .catch(error => {
+            errorMessage.value = error.response.data;
+            console.error(error);
+        });
     }
 }
 
@@ -270,6 +275,17 @@ function convertToTimestamp(dateString, forShow) {
     }
 }
 
+function getMaxBirthday() {
+    let today = new Date();
+
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+
+    let maxDate = yyyy + '-' + mm + '-' + dd;
+
+    return maxDate;
+}
 </script>
   
 <style scoped>

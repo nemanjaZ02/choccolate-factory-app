@@ -126,10 +126,14 @@ public class LoginService {
 		
 		if(newUser.getName() == "" || newUser.getSurname() == "" || newUser.getBirthday() == null || newUser.getUsername() == "" || newUser.getPassword() == "" || newUser.getRole() != Role.CUSTOMER || newUser.getGender() == null)
 		{
-			return Response.status(205).entity("Not all fields are filled/or trying to bypass ranking").build();
+			return Response.status(405).entity("Not all fields are filled/or trying to bypass ranking").build();
 		}
 		else
 		{
+			if(dao.usernameAlreadyExists(newUser.getUsername())) {
+				return Response.status(405).entity("User with that username already exists!").build();
+			}
+			
 			dao.registerNewUser(newUser, contextPath);
 			ctx.setAttribute("loggedUser", newUser);
 			return Response.status(200).build();
@@ -155,10 +159,14 @@ public class LoginService {
 		
 		if(newUser.getName() == "" || newUser.getSurname() == "" || newUser.getBirthday() == null || newUser.getUsername() == "" || newUser.getPassword() == "" || newUser.getRole() != Role.MANAGER || newUser.getGender() == null)
 		{
-			return Response.status(205).entity("Not all fields are filled/or trying to bypass ranking").build();
+			return Response.status(405).entity("Not all fields are filled/or trying to bypass ranking").build();
 		}
 		else
 		{
+			if(dao.usernameAlreadyExists(newUser.getUsername())) {
+				return Response.status(405).entity("User with that username already exists!").build();
+			}
+			
 			Manager newManager = dao.registerNewManager(newUser, contextPath);
 			return Response.status(200).entity(newManager).build();
 		}	
@@ -188,6 +196,10 @@ public class LoginService {
 		}
 		else
 		{
+			if(dao.usernameAlreadyExists(newUser.getUsername())) {
+				return Response.status(405).entity("User with that username already exists!").build();
+			}
+			
 			Employee newEmployee = dao.registerNewEmployee(newUser, contextPath);
 			return Response.status(200).entity(newEmployee).build();
 		}	
@@ -257,6 +269,11 @@ public class LoginService {
 		if(dao.GetAdminById(id) != null)
 		{
 			Admin a = dao.GetAdminById(id);
+			
+			if(!a.getUsername().equals(updatedUser.getUsername()) && dao.usernameAlreadyExists(updatedUser.getUsername())) {
+				return Response.status(405).entity("User with that username already exists!").build();
+			}
+			
 			a.update(updatedUser);
 			dao.updateAdmin(a, contextPath);
 			return Response.status(200).entity(a).build();
@@ -264,6 +281,11 @@ public class LoginService {
 		else if (dao.GetCustomerById(id) != null)
 		{
 			Customer c = dao.GetCustomerById(id);
+			
+			if(!c.getUsername().equals(updatedUser.getUsername()) && dao.usernameAlreadyExists(updatedUser.getUsername())) {
+				return Response.status(405).entity("User with that username already exists!").build();
+			}
+			
 			c.update(updatedUser);
 			dao.updateCustomer(c, contextPath);
 			return Response.status(200).entity(c).build();
@@ -271,6 +293,11 @@ public class LoginService {
 		else if (dao.GetManagerById(id) != null)
 		{
 			Manager m = dao.GetManagerById(id);
+			
+			if(!m.getUsername().equals(updatedUser.getUsername()) && dao.usernameAlreadyExists(updatedUser.getUsername())) {
+				return Response.status(405).entity("User with that username already exists!").build();
+			}
+			
 			m.update(updatedUser);
 			dao.updateManager(m, contextPath);
 			return Response.status(200).entity(m).build();
@@ -278,6 +305,11 @@ public class LoginService {
 		else if (dao.GetEmployeeById(id) != null)
 		{
 			Employee e = dao.GetEmployeeById(id);
+			
+			if(!e.getUsername().equals(updatedUser.getUsername()) && dao.usernameAlreadyExists(updatedUser.getUsername())) {
+				return Response.status(405).entity("User with that username already exists!").build();
+			}
+			
 			e.update(updatedUser);
 			dao.updateEmployee(e, contextPath);
 			return Response.status(200).entity(e).build();

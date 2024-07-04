@@ -35,13 +35,14 @@
     </select>
     <div class="mb-3">
     <label for="date" class="form-label">Birthdate</label>
-    <input type="date" class="form-control" v-model="newUser.birthday" required id="date">
+    <input type="date" class="form-control" v-model="newUser.birthday" required id="date" :max="getMaxBirthday()">
   </div>
   </div>
   
   <button type="submit" class="btn btn-primary" v-bind:disabled="!(confirmedPassword == newUser.password)">Submit</button>
-</form>
+  </form>
   </div>
+  <p style="color: red;">{{ errorMessage }}</p>
 </div>
    
 </template>
@@ -55,6 +56,7 @@ const router = useRouter();
 const confirmedPassword = ref("");
 const route = useRoute();
 const newUser = ref({factoryId:route.params.factoryId,username:"",password:"",name:"",surname:"",gender:"",birthday:"",role:"EMPLOYEE"});
+const errorMessage = ref('');
 
 function registerNewUser(event) {
 	event.preventDefault();
@@ -66,7 +68,20 @@ function registerNewUser(event) {
     }).then(response => {
         router.push({name: 'factoryDetails', params: { factoryId: newUser.factoryId }})
     }).catch(error => {
-        console.log(error);
+        errorMessage.value = error.response.data;
+        console.error(error);
     });
+}
+
+function getMaxBirthday() {
+    let today = new Date();
+
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+
+    let maxDate = yyyy + '-' + mm + '-' + dd;
+
+    return maxDate;
 }
 </script>

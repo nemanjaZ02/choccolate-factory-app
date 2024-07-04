@@ -265,47 +265,38 @@ function addChocolateFactory()
         headers: {
         'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
         }
-      
-    }).then(response => {
-        manager.value = response.data;
-        axios.post('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolateFactory', this.chocolateFactory, {
+        }).then(response => {
+          manager.value = response.data;
+          axios.post('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/addChocolateFactory', this.chocolateFactory, {
           headers: {
-        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`,
-        'Content-Type': 'application/json' 
-      }
-          
-        }).then(response=>{
-    
-      manager.value.factoryId =  response.data.id
-      axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/updateManager', this.manager, {
-          
-          headers: {
+          'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`,
+          'Content-Type': 'application/json' 
+          }
+          }).then(response=>{
+            manager.value.factoryId =  response.data.id
+            axios.put('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/updateManager', this.manager, {
+            headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`
-          }
-        })
-      .then(respone=>{
-          router.push("/")
-        })
-      })
-      });
-  }
-
-  }
-  
-  
+            }
+            }).then(respone=>{
+              router.push("/")
+            })
+          })
+        }).catch(error => {
+          errorMessage.value = error.response.data;
+          console.error(error);
+        });
+  }} 
 }
 
 function getMaxBirthday() {
-    // Get today's date
     let today = new Date();
 
-    // Format today's date to yyyy-mm-dd (required by the input type=date)
     let dd = String(today.getDate()).padStart(2, '0');
-    let mm = String(today.getMonth() + 1).padStart(2, '0'); // January is 0!
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
     let yyyy = today.getFullYear();
 
-    // Calculate max date as yyyy-mm-dd
     let maxDate = yyyy + '-' + mm + '-' + dd;
 
     return maxDate;

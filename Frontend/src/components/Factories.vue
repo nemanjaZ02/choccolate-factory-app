@@ -80,6 +80,10 @@
                     </div>
                     <div>
                         <div>
+                            <input type="checkbox" group="chocolateKind" v-on:change="addChocolateKindFilter('Plain')">Plain</input>
+                        </div>
+
+                        <div>
                             <input type="checkbox" group="chocolateKind" v-on:change="addChocolateKindFilter('Nuts')">With Nuts</input>
                         </div>
                         
@@ -291,7 +295,8 @@ function parseTimeString(timeString) {
 
 function search() {
     filteredFactories.value = factories.value.filter(factory => factory.name.toLowerCase().includes(factoryNameFilter.value.toLowerCase())
-     &&  (chocolateNameFilter.value === "" || factory.chocolates.some(chocolate => chocolate.name.toLowerCase().includes(chocolateNameFilter.value.toLowerCase())))
+     &&  (chocolateNameFilter.value === "" || factory.chocolates.some(chocolate => (((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.quantity > 0 && chocolate.name.toLowerCase().includes(chocolateNameFilter.value.toLowerCase()))
+      || (!(loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.name.toLowerCase().includes(chocolateNameFilter.value.toLowerCase())))))
      &&  (averageRatingFilter.value == "" || averageRatingFilter.value == 0 || (factory.rating >= averageRatingFilter.value - 0.5 && factory.rating <= averageRatingFilter.value + 0.5)))
 
     if(showOnlyOpen.value === true) {
@@ -359,7 +364,9 @@ function filterByChocolateType() {
     let uniqueFactories = new Set();
     chocolateTypeFilters.value.forEach(type => {
     filteredFactories.value.forEach(factory => {
-            if (factory.chocolates.some(chocolate => chocolate.type === type)) {
+            if (factory.chocolates.some(chocolate => ((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
+            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.quantity > 0 && chocolate.type === type) || (!(loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
+            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.type == type))) {
                 uniqueFactories.add(factory);
             }
         });
@@ -371,7 +378,9 @@ function filterByChocolateKind() {
     let uniqueFactories = new Set();
     chocolateKindFilters.value.forEach(kind => {
     filteredFactories.value.forEach(factory => {
-            if (factory.chocolates.some(chocolate => chocolate.kind === kind)) {
+            if (factory.chocolates.some(chocolate => ((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
+            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.quantity > 0 && chocolate.kind === kind) || (!(loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == ""
+            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.kind == kind))) {
                 uniqueFactories.add(factory);
             }
         });

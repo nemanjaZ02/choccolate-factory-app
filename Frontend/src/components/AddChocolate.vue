@@ -28,6 +28,7 @@
     <th>
       <select v-model="chocolate.kind" type="text">
         <option value="" disabled>Select Chocolate Kind</option>
+        <option value="Plain">Plain</option>
         <option value="Nuts">With Nuts</option>
         <option value="Strawberry">With Strawberry</option>
         <option value="Filling">With Filling</option>
