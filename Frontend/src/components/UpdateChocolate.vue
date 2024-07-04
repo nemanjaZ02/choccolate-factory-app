@@ -53,7 +53,7 @@
       </tr>
       <tr>
         <th>Image:</th>
-        <th><input v-model="chocolate.image" type="text" ></th>
+        <th><input type="file" @change="handleFileUpload"></th>
       </tr>
       <tr>
         <th><input type="submit" value="Edit"></th>
@@ -72,6 +72,7 @@ import {useRoute} from 'vue-router';
 const chocolate = ref({});
 const route = useRoute();
 const router = useRouter();
+const selectedFile = ref(null);
 
 onMounted(()=>{
   getChocolate();
@@ -101,6 +102,21 @@ function updateChocolate()
           router.push({name: 'factoryDetails', params: { factoryId: responseData.factoryId }})
         })
     });
+}
+
+function handleFileUpload(event){
+      selectedFile.value = event.target.files[0];
+      const formData = new FormData();
+      formData.append('file', selectedFile.value);
+      axios.post('http://localhost:8080/ChoccolateAppREST/rest/image/upload', formData, {
+        headers: {
+           'Content-Type': 'multipart/form-data'
+        }
+      }).then( response => {
+            if (response.status === 200) {
+              chocolate.value.image = response.data;
+            }
+        })
 }
 </script>
 

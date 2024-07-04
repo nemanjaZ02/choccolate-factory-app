@@ -158,11 +158,11 @@ public class UserDAO {
 			String updatedJsonData;
 
 			int maxId = -1;
-			for(Customer customer : customers)
+			for(User user : getAllUsers())
 			{
-				if(customer.getId() > maxId)
+				if(user.getId() > maxId)
 				{
-					maxId = customer.getId();
+					maxId = user.getId();
 				}
 			}
 				

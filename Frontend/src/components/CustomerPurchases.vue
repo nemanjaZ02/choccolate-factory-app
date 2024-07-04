@@ -8,12 +8,12 @@
                 </div>
                 <div>
                     <label style="font-size: 1.5em; padding: 10px;">Minimum Price</label>
-                    <input class="form-control mr-sm-2" type="number" style="width: 170px;"  step="any" v-model="minimumPrice" placeholder="Search" aria-label="Search" pattern=".*\S.*">
+                    <input class="form-control mr-sm-2" type="number" style="width: 170px;"  step="any" v-model="minimumPrice" min="0" placeholder="Search" aria-label="Search" pattern=".*\S.*">
                 </div>
                 
                 <div>
                     <label style="font-size: 1.5em; padding: 10px;">Maximum Price</label>
-                    <input class="form-control mr-sm-2" type="number" style="width: 170px;"  step="any" v-model="maximumPrice" placeholder="Search" aria-label="Search" pattern=".*\S.*">
+                    <input class="form-control mr-sm-2" type="number" style="width: 170px;"  step="any" v-model="maximumPrice" min="0" placeholder="Search" aria-label="Search" pattern=".*\S.*">
                 </div>
 
                 <div>
@@ -51,7 +51,7 @@
             <div class="col-lg-4 col-md-6 mb-4" v-for="p in filteredPurchases" :key="p.id" @click="showDetails(p)" >
                 <div class="purchase">
                     <div class="card">
-                        <img src="../../public/Images/logo.jpg" class="card-img-top">
+                        <img src="../../public/Images/shoppingCart.png" class="card-img-top">
                         <div class="card-body">
                             <h5 class="card-title">Purchase {{p.id }}</h5>
                             <p v-if="p.state === 'Accepted'" class="text-success">ACCEPTED 🟢</p>
@@ -103,7 +103,11 @@ function loadPurchases() {
     .then(response=>{
         purchases.value = response.data 
         filteredPurchases.value = purchases.value  
-      
+        if (purchases.value.length > 0) {
+            purchases.value = purchases.value.filter(purchase => !purchase.isDeleted);
+            filteredPurchases.value = purchases.value;
+        }
+        dataLoaded.value = true;
     });
 } 
 async function getFactory(factoryId) {

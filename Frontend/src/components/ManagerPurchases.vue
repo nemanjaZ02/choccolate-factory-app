@@ -4,12 +4,12 @@
             <form class="form-inline" @submit.prevent="search()">
                 <div>
                     <label style="font-size: 1.5em; padding: 10px;">Minimum Price</label>
-                    <input class="form-control mr-sm-2" type="number" step="any" v-model="minimumPrice" placeholder="Search" aria-label="Search" pattern=".*\S.*">
+                    <input class="form-control mr-sm-2" type="number" step="any" v-model="minimumPrice" placeholder="Search" min="0" aria-label="Search" pattern=".*\S.*">
                 </div>
                 
                 <div>
                     <label style="font-size: 1.5em; padding: 10px;">Maximum Price</label>
-                    <input class="form-control mr-sm-2" type="number" step="any" v-model="maximumPrice" placeholder="Search" aria-label="Search" pattern=".*\S.*">
+                    <input class="form-control mr-sm-2" type="number" step="any" v-model="maximumPrice" placeholder="Search" min="0" aria-label="Search" pattern=".*\S.*">
                 </div>
 
                 <div>
@@ -45,7 +45,7 @@
             <div class="col-lg-4 col-md-6 mb-4" v-if="dataLoaded" v-for="p in filteredPurchases" :key="p.id" @click="showDetails(p)" >
                 <div class="purchase">
                     <div class="card">
-                        <img src="../../public/Images/logo.jpg" class="card-img-top">
+                        <img src="../../public/Images/shoppingCart.png" class="card-img-top">
                         <div class="card-body">
                             <h5 class="card-title">Purchase {{p.id }}</h5>
                             <p v-if="p.state === 'Accepted'" class="text-success">ACCEPTED 🟢</p>
