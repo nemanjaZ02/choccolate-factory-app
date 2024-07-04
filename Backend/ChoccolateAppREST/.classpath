@@ -42,7 +42,7 @@
 	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/nimbus-jose-jwt-9.0.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/mimepull-1.9.3.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/jersey-core-1.19.4.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/jersey-media-multipart-2.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Nemanja/Desktop/Projekti/web projekat/choccolate-factory-app/apache-tomcat-9.0.73/apache-tomcat-9.0.73/lib/jersey-core-1.19.4.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

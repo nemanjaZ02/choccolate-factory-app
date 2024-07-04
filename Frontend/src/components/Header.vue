@@ -89,8 +89,7 @@
 <style scoped>
 .logo-image {
     width: 75px; 
-    height: auto; 
-    margin-right: 10px; 
+    height: auto;  
 }
 .logo-link {
     margin-right: auto; 

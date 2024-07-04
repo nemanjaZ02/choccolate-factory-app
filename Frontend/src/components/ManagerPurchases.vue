@@ -59,6 +59,7 @@
                             <li class="list-group-item">{{ "Price: "+p.price}}</li>
                             <li class="list-group-item">{{ "Customer: " + p.customer.username }}</li>
                         </ul>
+                        <button v-if="loggedInUser.role=='MANAGER'" type="button" class="btn btn-danger" style="margin-left: 10px; height: 50px; width: 90px;" @click="deletePurchase(p.id)">Delete</button>
                     </div>
                 </div>
             </div>
@@ -96,6 +97,10 @@ function loadPurchases() {
     .then(response=>{
         purchases.value = response.data 
         filteredPurchases.value = purchases.value  
+        if (purchases.value.length > 0) {
+            purchases.value = purchases.value.filter(purchase => !purchase.isDeleted);
+            filteredPurchases.value = purchases.value;
+        }
         dataLoaded.value = true;
       
     });
@@ -189,7 +194,18 @@ function search() {
     );
 
 }
-
+function deletePurchase(purchaseId){
+    axios.post('http://localhost:8080/ChoccolateAppREST/rest/purchases/deletePurchase', purchaseId, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`,
+        'Content-Type': 'application/json'
+      }
+      
+    })
+    .then(response=>{
+        loadPurchases();
+    });
+}
 </script>
 <style scoped>
 

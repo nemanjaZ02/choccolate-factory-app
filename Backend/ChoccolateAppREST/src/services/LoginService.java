@@ -85,6 +85,11 @@ public class LoginService {
                            .entity("Invalid username and/or password")
                            .build();
         }
+		if (loggedUser.getIsBanned()) {
+            return Response.status(Response.Status.UNAUTHORIZED)
+                           .entity("Account is banned")
+                           .build();
+        }
         
         try {
             String token = JwtUtils.generateToken(loggedUser, JwtConstants.SECRET_KEY);
@@ -402,6 +407,55 @@ public class LoginService {
 			e.setDeleted(true);
 			dao.updateEmployee(e, contextPath);
 			return Response.status(200).entity(e).build();
+		}
+		
+		
+		return Response.status(404).entity("User not found").build();
+	}
+	@OPTIONS
+    @Path("/banUser")
+    @Produces(MediaType.APPLICATION_JSON)
+    public boolean banUser() {
+        return true;
+    }
+	
+	@POST
+	@Path("/banUser")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response banUser(int userId, @HeaderParam("Authorization") String authorizationHeader) throws ParseException {
+		String contextPath = ctx.getRealPath("");
+		UserDAO dao = (UserDAO) ctx.getAttribute("userDAO");
+		
+		if(!JwtUtils.isAdministrator(authorizationHeader))
+		{
+			 return Response.status(401).entity("Unauthorized: Only admins can delete users").build();
+		}
+	
+		if(dao.GetCustomerById(userId)!=null)
+		{
+			Customer c = dao.GetCustomerById(userId);
+			c.setBanned(true);
+			dao.updateCustomer(c, contextPath);
+			return Response.status(200).entity(c).build();
+		}
+		else if (dao.GetManagerById(userId) != null)
+		{
+			Manager m = dao.GetManagerById(userId);
+			m.setBanned(true);
+			dao.updateManager(m, contextPath);
+			return Response.status(200).entity(m).build();
+		}
+		else if (dao.GetEmployeeById(userId) != null)
+		{
+			Employee e = dao.GetEmployeeById(userId);
+			e.setBanned(true);
+			dao.updateEmployee(e, contextPath);
+			return Response.status(200).entity(e).build();
+		}
+		else if (dao.GetAdminById(userId) != null)
+		{
+			return Response.status(404).entity("Admins can not be banned or deleted").build();
 		}
 		
 		

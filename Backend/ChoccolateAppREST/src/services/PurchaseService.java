@@ -321,17 +321,17 @@ public class PurchaseService {
 		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
 		String contextPath = ctx.getRealPath("");
 		
-		if (!JwtUtils.isAdministrator(authorizationHeader)) {
-            return Response.status(401).entity("Unauthorized: Only admins  can delete purchase").build();
+		if (!JwtUtils.isManager(authorizationHeader)) {
+            return Response.status(401).entity("Unauthorized: Only m  can delete purchase").build();
         }
 		
+		Purchase purchase = dao.deletePurchase(dao.getById(id), contextPath);
 		
-		if(dao.deletePurchase(dao.getById(id), contextPath)==null)
+		if(purchase==null)
 		{
 			return Response.status(405).entity("there is no chocolate with this id").build();
 		}
 		
-		Purchase purchase = dao.deletePurchase(dao.getById(id), contextPath);
 		return Response.status(200).entity(purchase).build();		
 	}
 	
