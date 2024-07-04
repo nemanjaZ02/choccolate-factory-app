@@ -32,7 +32,18 @@
                 <div class="container" style=" padding: 10px; ">
                     <div style="text-align: center"> 
                         <label style="font-size: 1.5em; padding: 10px;font-weight: bold; text-align: ">FILTERS</label>
-                    </div>                 
+                    </div>   
+                    <div>
+                        <label>Show</label>
+                    </div>       
+                    <div>
+                        <div>
+                            <input type="checkbox" group="role" v-on:change="changeSuspiciousFilter(true)">SUSPICIOUS</input>
+                        </div>
+                        <div style="margin-bottom: 20px;">
+                            <input type="checkbox" group="role" v-on:change="changeSuspiciousFilter(false)">NON-SUSPICIOUS</input>
+                        </div>
+                    </div>        
                     <div>
                         <label>Role</label>
                     </div>
@@ -143,6 +154,7 @@ const surnameFilter = ref("");
 const usernameFilter = ref("");
 const usersRoleFilters = ref([]);
 const usersCustomerTypeFilters = ref([]);
+const usersSuspiciousFilters = ref([]);
 onMounted(()=>{
     loggedInUser.value = JSON.parse(localStorage.getItem('loggedUser'));
     loadUsers();
@@ -241,14 +253,17 @@ function search() {
      &&  (user.surname.toLowerCase().includes(surnameFilter.value.toLowerCase()))
      &&   (user.username.toLowerCase().includes(usernameFilter.value.toLowerCase())))
 
-     if(usersRoleFilters.value.length > 0) {
+    if(usersRoleFilters.value.length > 0) {
         filterByUserRole();
     }  
 
-   
-   if(usersCustomerTypeFilters.value.length > 0) {
-    filterByCustomerType();
-    }  
+    if(usersCustomerTypeFilters.value.length > 0) {
+        filterByCustomerType();
+    } 
+    
+    if(usersSuspiciousFilters.value.length > 0) {
+        filterBySuspiciousFiter();
+    }
 }
 function changeRoleFilter(userRole) {
     if(usersRoleFilters.value.includes(userRole)) {
@@ -267,6 +282,16 @@ function changeCustomerTypeFilter(customerType) {
     else
     {
         usersCustomerTypeFilters.value.push(customerType);
+    }
+    search();
+}
+function changeSuspiciousFilter(suspicious) {
+    if(usersSuspiciousFilters.value.includes(suspicious)) {
+        usersSuspiciousFilters.value = usersSuspiciousFilters.value.filter(filter => filter !== suspicious);
+    }
+    else
+    {
+        usersSuspiciousFilters.value.push(suspicious);
     }
     search();
 }
@@ -295,6 +320,17 @@ function filterByCustomerType() {
                 
                
             
+        });
+    });
+    filteredUsers.value = Array.from(uniqueUsers);  
+}
+function filterBySuspiciousFiter() {
+    let uniqueUsers = new Set();
+    usersSuspiciousFilters.value.forEach(filter => {
+        filteredUsers.value.forEach(user => {
+            if (user.isSuspicious == filter) {
+                uniqueUsers.add(user);
+            }
         });
     });
     filteredUsers.value = Array.from(uniqueUsers);  

@@ -203,7 +203,7 @@ function deletePurchase(purchaseId){
       
     })
     .then(response=>{
-        loadUsers();
+        loadPurchases();
     });
 }
 </script>

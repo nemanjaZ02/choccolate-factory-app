@@ -318,14 +318,13 @@ public class PurchaseService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response deletePurchase(String id, @HeaderParam("Authorization") String authorizationHeader)  throws ParseException 
 	{
-		System.out.println("usao je");
 		PurchaseDAO dao = (PurchaseDAO) ctx.getAttribute("purchaseDAO");
 		String contextPath = ctx.getRealPath("");
 		
 		if (!JwtUtils.isManager(authorizationHeader)) {
             return Response.status(401).entity("Unauthorized: Only m  can delete purchase").build();
         }
-		System.out.println("admin je");
+		
 		Purchase purchase = dao.deletePurchase(dao.getById(id), contextPath);
 		
 		if(purchase==null)
@@ -333,8 +332,6 @@ public class PurchaseService {
 			return Response.status(405).entity("there is no chocolate with this id").build();
 		}
 		
-		
-		System.out.println("obrisan je");
 		return Response.status(200).entity(purchase).build();		
 	}
 	

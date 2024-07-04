@@ -116,7 +116,7 @@ public class PurchaseDAO {
 	{
 		for(Purchase p:purchases)
 		{
-			if(p.getId().equals(id))
+			if(p.getId().equals(id.replace("\"", "")))
 			{
 				return p;
 			}
