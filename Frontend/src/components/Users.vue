@@ -102,15 +102,19 @@
                         <div :style="{ backgroundColor: u.isSuspicious ? '#FFFACD' : 'white', width: '250px' }" class="card" style="width: 250px;">
                             <div class="card-header" style="font-weight: bold;">
                                 {{ u.role }}
+                                <button style="margin-left: 20px"  class="button-with-image" v-if="loggedInUser.role=='ADMIN' && u.role!='ADMIN'"  v-on:click="banUser(u)">
+                                    <img src="../../public/Images/banUser.png" style="width: 35px;"  alt="Image">
+                                </button>
                             </div>
                             <div style="padding: 10px">
                                 <p style="font-weight: bold;" class="card-text">Name:<label class="card-text" style="margin-left: 10px;">{{ u.name }}</label></p>
                                 <p style="font-weight: bold;" class="card-text">Surname:<label class="card-text" style="margin-left: 10px;">{{ u.surname }}</label></p>
                                 <p style="font-weight: bold;" class="card-text">Username:<label class="card-text" style="margin-left: 10px;">{{ u.username }}</label></p>
                                 <p style="font-weight: bold;" class="card-text">Birthday:<label class="card-text" style="margin-left: 10px;">{{ formatDate(u.birthday) }}</label></p>
-                                <p v-if="u.role=='CUSTOMER'" style="font-weight: bold;" class="card-text">Points:<label class="card-text" style="margin-left: 10px;">{{ u.points }}</label></p>
+                                <p v-if="u.role=='CUSTOMER'" style="font-weight: bold;" class="card-text">Points:<label class="card-text" style="margin-left: 10px;">{{ u.points.toFixed(2) }}</label></p>
                                 <p v-if="u.role=='CUSTOMER'" style="font-weight: bold;" class="card-text">Type:<label class="card-text" style="margin-left: 10px;">{{ u.type.typeName }}</label></p>
-                                <button type="button" v-if="loggedInUser.role=='ADMIN'" class="btn btn-danger" v-on:click="deleteUser(u)">Delete User</button>
+                                <button type="button" v-if="loggedInUser.role=='ADMIN' && u.role!='ADMIN'" class="btn btn-danger" v-on:click="deleteUser(u)">Delete User</button>
+                                
                             </div>
                         </div>
                     </div>
@@ -157,7 +161,7 @@ function loadUsers() {
         filteredUsers.value = users.value
       
         if (users.value.length > 0) {
-            users.value = users.value.filter(user => !user.isDeleted);
+            users.value = users.value.filter(user => !user.isDeleted && !user.isBanned);
             filteredUsers.value = users.value;
         }
         dataLoaded.value = true;
@@ -310,12 +314,44 @@ function deleteUser(user){
         loadUsers();
     });
 }
+function banUser(user){
+    axios.post('http://localhost:8080/ChoccolateAppREST/rest/banUser', user.id, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('jsonWebToken')}`,
+        'Content-Type': 'application/json'
+      }
+      
+    })
+    .then(response=>{
+        this.loadUsers();
+    });
+}
 
 </script>
 
 
 
 <style scoped>
+.button-with-image {
+    display: inline-block;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: 10px; 
+    margin-right: 20px;
+}
+
+
+  .button-with-image img {
+    width: 100%; 
+    height: auto; 
+}
+
+  .button-with-image:hover {
+    background-color: #ddd;
+}
 .container {
     font-family: Arial, sans-serif;
     background-color: #dfd1c2;

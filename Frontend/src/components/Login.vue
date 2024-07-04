@@ -71,7 +71,7 @@ const login = () => {
         })
         .catch(error => {
             success.value = '';
-            errorMessage.value = 'Pogresno korisnicko ime ili lozinka.';
+            errorMessage.value = error.response.data;
             console.error(error);
         });
 }
