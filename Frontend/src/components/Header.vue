@@ -89,10 +89,12 @@
 <style scoped>
 .logo-image {
     width: 75px; 
-    height: auto;  
+    height: auto; 
+    border-radius: 50px; 
 }
 .logo-link {
     margin-right: auto; 
+    border-radius: 50px; 
 } 
 .nav-bar {
     width: 100%;

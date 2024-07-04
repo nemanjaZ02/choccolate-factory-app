@@ -112,6 +112,9 @@
             
             <p v-if="loggedInUser.role == 'CUSTOMER'"><strong>Type:</strong>{{ loggedInUser.type.typeName }} 
             </p>      
+
+            <p v-if="loggedInUser.role == 'CUSTOMER'"><strong>Points:</strong>{{ loggedInUser.points.toFixed(2) }} 
+            </p> 
         </div>
     </div>
 </div>
