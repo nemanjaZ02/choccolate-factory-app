@@ -167,8 +167,6 @@ const router = useRouter();
 const factories = ref([]);
 const filteredFactories = ref([]);
 
-const filteredFactoriesBeforeLocationFilter = ref([]);
-
 const factoryNameFilter = ref("");
 const chocolateNameFilter = ref("");
 const averageRatingFilter = ref(0);
@@ -182,7 +180,6 @@ const chocolateKindFilters = ref([]);
 const showOnlyOpen = ref(false);
 
 const locationFilters = ref([]);
-const locationFiltersBefore = ref([]);
 
 const map = ref(null)
 const mapContainer = ref()
@@ -311,7 +308,7 @@ function createMap() {
 
         console.log("Location filters:", locationFilters.value);
 
-        filterByLocation();
+        search();
 
         currentCircle.on('mousedown', L.DomEvent.stopPropagation);
     });
@@ -338,8 +335,6 @@ function loadFactories() {
             factories.value = response.data   
             filteredFactories.value = factories.value.filter(factory => factory.isDeleted == false);
             filteredFactories.value.sort((a, b) => b.status.localeCompare(a.status));
-
-            filteredFactoriesBeforeLocationFilter.value = JSON.parse(JSON.stringify(filteredFactories.value));
             if(map.value == null)
                 createMap();
             checkFactoriesWorkingStatus();
@@ -417,6 +412,10 @@ function search() {
 
     if(chocolateKindFilters.value.length > 0) {
         filterByChocolateKind();
+    }
+
+    if(locationFilters.value.length > 0) {
+        filterByLocation();
     }
 }
 
@@ -497,12 +496,6 @@ function filterByChocolateKind() {
 }
 
 function filterByLocation() {
-    if(locationFilters.value != locationFiltersBefore.value)
-    {
-        filteredFactories.value = JSON.parse(JSON.stringify(filteredFactoriesBeforeLocationFilter.value));
-        locationFiltersBefore.value = JSON.parse(JSON.stringify(locationFilters.value));
-    }
-
     let uniqueFactories = new Set();
     locationFilters.value.forEach(name => {
     filteredFactories.value.forEach(factory => {
@@ -512,11 +505,6 @@ function filterByLocation() {
         });
     });
     filteredFactories.value = Array.from(uniqueFactories); 
-    
-    if(filteredFactories.value.length == 0)
-    {
-        filteredFactories.value = JSON.parse(JSON.stringify(filteredFactoriesBeforeLocationFilter.value));
-    }
 }
 
 function showDetails(factory) {
