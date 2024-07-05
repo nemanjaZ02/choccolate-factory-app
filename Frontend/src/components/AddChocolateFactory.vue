@@ -5,7 +5,7 @@
   </head>
   <h1 style="margin-top: 100px">Add Chocolate Factory</h1>
   <label  style=" font-weight: bold; margin-top: 30px;">Choose a location:</label>
-  <div :style="{ width: '1100px', height: '300px'}" ref="mapContainer"></div>
+  <div :style="{ width: '390px', height: '300px'}" ref="mapContainer"></div>
   <form @submit.prevent="addChocolateFactory()">
   <table>
     <tr>

@@ -220,13 +220,13 @@ function createMap() {
 
     const sliderContainer = document.createElement('div');
     sliderContainer.style.position = 'absolute';
-    sliderContainer.style.top = '10px'; // Adjust top position as needed
-    sliderContainer.style.right = '10px'; // Adjust right position as needed
-    sliderContainer.style.zIndex = '1000'; // Ensure it's above the map
-    sliderContainer.style.background = 'white'; // Adjust background color as needed
-    sliderContainer.style.padding = '10px'; // Adjust padding as needed
-    sliderContainer.style.borderRadius = '5px'; // Adjust border radius as needed
-    sliderContainer.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)'; // Add shadow for better visibility
+    sliderContainer.style.top = '10px'; 
+    sliderContainer.style.right = '10px'; 
+    sliderContainer.style.zIndex = '1000'; 
+    sliderContainer.style.background = 'white'; 
+    sliderContainer.style.padding = '10px'; 
+    sliderContainer.style.borderRadius = '5px'; 
+    sliderContainer.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)'; 
 
     const slider = document.createElement('input');
     slider.type = 'range';
@@ -255,6 +255,7 @@ function createMap() {
             currentCircle.setRadius(circleRadius);
         }
         radiusValue.textContent = radiusInKm + ' km';
+        search();
         return circleRadius;
     }
 
