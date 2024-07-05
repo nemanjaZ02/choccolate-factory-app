@@ -4,14 +4,15 @@ public class Adress {
 	private String street;
 	private String streetNum;
 	private String city;
-	private int postNum;
+	private String country;
+	private String postNum;
 	
 	public Adress() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Adress(String street, String streetNum, String city, int postNum) {
+	public Adress(String street, String streetNum, String city, String postNum) {
 		super();
 		this.street = street;
 		this.streetNum = streetNum;
@@ -37,12 +38,18 @@ public class Adress {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	public int getPostNum() {
+	public String getPostNum() {
 		return postNum;
 	}
-	public void setPostNum(int postNum) {
+	public void setPostNum(String postNum) {
 		this.postNum = postNum;
 	}
-	
-	
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}	
 }

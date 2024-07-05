@@ -13,6 +13,7 @@ import beans.Adress;
 import beans.Chocolate;
 import beans.ChocolateFactory;
 import beans.Location;
+import beans.Manager;
 import beans.WorkTime;
 import enums.ChocolateStatus;
 import enums.WorkingStatus;
@@ -43,7 +44,10 @@ public class ChocolateFactoryDAO {
             ChocolateFactory[] factoriesArray = gson.fromJson(jsonData, ChocolateFactory[].class);
             if (factoriesArray != null) {
                 for (ChocolateFactory cf : factoriesArray) {
-                    factories.add(cf);
+                	
+                		 factories.add(cf);
+                	
+                  
                 }
             }
         } catch (IOException e) {
@@ -62,7 +66,49 @@ public class ChocolateFactoryDAO {
 		
 		return null;
 	}
-	public Chocolate addChocolateToFactory(Chocolate newChocolate, String contextPath)
+	public ChocolateFactory saveChocolateFactory(ChocolateFactory newChocolateFactory, String contextPath)
+	{
+		
+		try {
+			Gson gson = new Gson();  
+			Path filePath;
+			String updatedJsonData;
+
+			int maxId = -1;
+			for(ChocolateFactory chocolateFactory : factories)
+			{
+				if(newChocolateFactory.getName().equals(chocolateFactory.getName()) && !chocolateFactory.getIsDeleted())
+				{
+					return null;
+				}
+				if(chocolateFactory.getId() > maxId)
+				{
+					maxId = chocolateFactory.getId();
+				}
+			}
+				
+			if(maxId == -1)
+			{
+				maxId = 0;
+			}
+				
+			newChocolateFactory.setId(maxId + 1);
+			newChocolateFactory.setChocolates(new ArrayList<Chocolate>());
+			factories.add(newChocolateFactory);
+			filePath = Paths.get(contextPath, "/chocolateFactories.json");
+			ChocolateFactory[] updateChocolateFactoryArray = factories.toArray(new ChocolateFactory[0]);
+			updatedJsonData = gson.toJson(updateChocolateFactoryArray);
+			
+            Files.write(filePath, updatedJsonData.getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		return newChocolateFactory;	
+	}
+	
+	public boolean factoryAlreadyHasChocolate(Chocolate newChocolate)
 	{
 		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
 		
@@ -78,10 +124,26 @@ public class ChocolateFactoryDAO {
 				{
 					if(c.getName().equals(newChocolate.getName()) && !c.getIsDeleted())
 					{
-						return null;
+						return true;
 					}
 				}
-				
+			}
+		}
+		return false;
+	}
+	
+	public Chocolate addChocolateToFactory(Chocolate newChocolate, String contextPath)
+	{
+		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
+		
+		int id = -1;
+		for(ChocolateFactory factory: factories)
+		{
+			id ++;
+			if(factory.getId()==newChocolate.getFactoryId())
+			{
+				chocolates = factory.getChocolates();
+					
 				chocolates.add(newChocolate);
 				factory.setChocolates(chocolates);
 			
@@ -111,9 +173,10 @@ public class ChocolateFactoryDAO {
 	public void updateChocolateInFactory(Chocolate updatedChocolate, String contextPath)
 	{
 		ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
-		
+		int j = -1;
 		for(ChocolateFactory factory: factories)
 		{
+			j++;
 			if(factory.getId()==updatedChocolate.getFactoryId())
 			{
 				chocolates = factory.getChocolates();
@@ -132,8 +195,8 @@ public class ChocolateFactoryDAO {
 				
 				factory.setChocolates(chocolates);
 			
-				factories.remove(factory.getId()-1);
-				factories.add(factory);
+				factories.remove(factory);
+				factories.add(j,factory);
 				
 				Gson gson = new Gson();  
 				String updatedJsonData;
@@ -196,5 +259,74 @@ public class ChocolateFactoryDAO {
 		}
         
         return factory;	
+	}
+	
+	public ChocolateFactory updateChocolateFactoryStatus(ChocolateFactory factory, String contextPath)
+	{
+		for(ChocolateFactory cf : factories)
+		{
+			if(cf.getId()==factory.getId())
+			{
+				cf.setStatus(factory.getStatus());
+				
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/chocolateFactories.json");
+				ChocolateFactory[] updateChocolateFactoriesArray = factories.toArray(new ChocolateFactory[0]);
+				updatedJsonData = gson.toJson(updateChocolateFactoriesArray);							
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	                        
+				return factory;
+			}
+		}
+		return null;
+	}
+	
+	public ChocolateFactory deleteChocolateFactory(ChocolateFactory factory, String contextPath)
+	{
+		for(ChocolateFactory cf : factories)
+		{
+			if(cf.getId()==factory.getId())
+			{
+				cf.setDeleted(true);
+				
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/chocolateFactories.json");
+				ChocolateFactory[] updateChocolateFactoriesArray = factories.toArray(new ChocolateFactory[0]);
+				updatedJsonData = gson.toJson(updateChocolateFactoriesArray);							
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	                        
+				return factory;
+			}
+		}
+		return null;
+	}
+	
+	public void recalculateRating(ChocolateFactory factory, int commentsNum, double rating, String contextPath)
+	{
+		if(commentsNum == 1)
+		{
+			factory.setRating(rating);
+			updateChocolateFactoryStatus(factory, contextPath);
+		}
+		else
+		{
+			double sum = factory.getRating() * (commentsNum - 1);
+			sum = sum + rating;
+			double newRating = sum / commentsNum;
+			factory.setRating(newRating);
+			updateChocolateFactoryStatus(factory, contextPath);
+		}
 	}
 }

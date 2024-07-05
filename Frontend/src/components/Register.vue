@@ -60,7 +60,7 @@
                     <label>Birthday: </label>
                 </td>
                 <td>
-                    <input type="date" v-model="newUser.birthday" required>
+                    <input type="date" v-model="newUser.birthday" :max="getMaxBirthday()" required>
                 </td> 
             </tr>
             <tr>
@@ -70,26 +70,40 @@
             </tr>
         </table>
     </form>
+    <p style="color: red;">{{ errorMessage }}</p>
 </template>
 
 <script setup>
 import axios from 'axios';
+import { type } from 'jquery';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 const confirmedPassword = ref("");
-const newUser = ref({ id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: "", role: "CUSTOMER"});
+const newUser = ref({ id: "", username: "", password: "", name: "", surname: "", gender: "", birthday: ""});
+const errorMessage = ref('');
 
 function registerNewUser(event) {
 	event.preventDefault();
     axios.post("http://localhost:8080/ChoccolateAppREST/rest/register", this.newUser).then(response => {
         router.push('/');
     }).catch(error => {
-        console.log(error);
+        errorMessage.value = error.response.data;
+        console.error(error);
     });
 }
 
+function getMaxBirthday() {
+    let today = new Date();
 
+    let dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0');
+    let yyyy = today.getFullYear();
+
+    let maxDate = yyyy + '-' + mm + '-' + dd;
+
+    return maxDate;
+}
 </script>

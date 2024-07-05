@@ -13,6 +13,8 @@ import java.util.Collection;
 import com.google.gson.Gson;
 
 import beans.Admin;
+import beans.Chocolate;
+import beans.ChocolateFactory;
 import beans.Customer;
 import beans.Employee;
 import beans.Manager;
@@ -41,6 +43,24 @@ public class UserDAO {
 		return customers;
 	}
 	
+	public ArrayList<Manager> findAllManagers() {
+		return managers;
+	}
+	
+	public ArrayList<Employee> findAllEmployees() {
+		return employees;
+	}
+	
+	public boolean usernameAlreadyExists(String username) {
+		for (User u : getAllUsers())
+		{
+			if (u.getUsername().equals(username)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public User find(String username, String password) {
 		for (User customer : customers) {
             if (customer.getUsername().equals(username) && customer.getPassword().equals(password)) {
@@ -51,6 +71,17 @@ public class UserDAO {
 		for (User manager : managers) {
             if (manager.getUsername().equals(username) && manager.getPassword().equals(password)) {
                 return manager;
+            }
+        }
+		for (User admin : admins) {
+            if (admin.getUsername().equals(username) && admin.getPassword().equals(password)) {
+                return admin;
+            }
+        }
+		
+		for (User employee : employees) {
+            if (employee.getUsername().equals(username) && employee.getPassword().equals(password)) {
+                return employee;
             }
         }
 		
@@ -129,18 +160,19 @@ public class UserDAO {
         }
 	}
 	
-	public User registerNewUser(User newUser, String contextPath) {
+	
+	public User registerNewUser(Customer newUser, String contextPath) {
 		try {
 			Gson gson = new Gson();  
 			Path filePath;
 			String updatedJsonData;
 
 			int maxId = -1;
-			for(Customer customer : customers)
+			for(User user : getAllUsers())
 			{
-				if(customer.getId() > maxId)
+				if(user.getId() > maxId)
 				{
-					maxId = customer.getId();
+					maxId = user.getId();
 				}
 			}
 				
@@ -150,8 +182,7 @@ public class UserDAO {
 			}
 				
 			newUser.setId(maxId + 1);
-			User customerUser = new Customer(newUser);
-			customers.add((Customer)customerUser);
+			customers.add(newUser);
 				
 			filePath = Paths.get(contextPath, "/customers.json");
 			Customer[] updatedUserArray = customers.toArray(new Customer[0]);
@@ -175,5 +206,322 @@ public class UserDAO {
 		}
 		return false;
 	}
+	public Manager registerNewManager(Manager newUser, String contextPath) {
+		try {
+			Gson gson = new Gson();  
+			Path filePath;
+			String updatedJsonData;
+
+			int maxId = -1;
+			for(User user : getAllUsers())
+			{
+				if(user.getId() > maxId)
+				{
+					maxId = user.getId();
+				}
+			}
+				
+			if(maxId == -1)
+			{
+				maxId = 0;
+			}
+				
+			newUser.setId(maxId + 1);
+			Manager managerUser = new Manager(newUser);
+			managers.add(managerUser);
+				
+			filePath = Paths.get(contextPath, "/managers.json");
+			Manager[] updatedUserArray = managers.toArray(new Manager[0]);
+			updatedJsonData = gson.toJson(updatedUserArray);
+			
+            Files.write(filePath, updatedJsonData.getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		return newUser;	
+	}
+	public Employee registerNewEmployee(Employee newEmployee, String contextPath) {
+		try {
+			Gson gson = new Gson();  
+			Path filePath;
+			String updatedJsonData;
+
+			int maxId = -1;
+			for(User user : getAllUsers())
+			{
+				if(user.getId() > maxId)
+				{
+					maxId = user.getId();
+				}
+			}
+				
+			if(maxId == -1)
+			{
+				maxId = 0;
+			}
+				
+			newEmployee.setId(maxId + 1);
+			Employee employeeUser = new Employee(newEmployee);
+			employeeUser.setFactoryId(newEmployee.getFactoryId());
+			employees.add(employeeUser);
+				
+			filePath = Paths.get(contextPath, "/employees.json");
+			Employee[] updatedUserArray = employees.toArray(new Employee[0]);
+			updatedJsonData = gson.toJson(updatedUserArray);
+			
+            Files.write(filePath, updatedJsonData.getBytes());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		
+		return newEmployee;	
+	}
+	public ArrayList<Manager> getAvailableManagers()
+	{
+		ArrayList<Manager> availableManagers = new ArrayList<Manager>();
+		for(Manager manager: managers)
+		{
+			if(manager.getFactoryId()==0)
+				availableManagers.add(manager);
+		}
+		return availableManagers;
+	}
 	
+	
+	
+	public Admin GetAdminById(int id) {
+		for(Admin a : admins)
+		{
+			if(a.getId() == id)
+			{
+				return a;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Employee GetEmployeeById(int id) {
+		for(Employee e : employees)
+		{
+			if(e.getId() == id)
+			{
+				return e;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Manager updateManager(Manager updatedManager,String contextPath )
+	{
+		int i = -1;
+		for(Manager manager:managers)
+		{
+			i++;
+			if(manager.getId()==updatedManager.getId())
+			{
+				manager.setFactoryId(updatedManager.getFactoryId());
+				
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/managers.json");
+				Manager[] updateManagerArray = managers.toArray(new Manager[0]);
+				updatedJsonData = gson.toJson(updateManagerArray);
+				
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            
+	            
+	            
+				return manager;
+			}
+		}
+		return null;
+	}
+	
+	public Customer GetCustomerById(int id) {
+		for(Customer c : customers)
+		{
+			if(c.getId() == id)
+			{
+				return c;
+			}
+		}
+		
+		return null;
+	}
+	public Manager GetManagerById(int id) {
+		for(Manager m : managers)
+		{
+			if(m.getId() == id)
+			{
+				return m;
+			}
+		}
+		
+		return null;
+	}
+	
+	public Customer updateCustomer(Customer newCustomer, String contextPath) {
+		
+		int i = -1;
+		for(Customer customer : customers)
+		{
+			i++;
+		    if(customer.getId() == newCustomer.getId())
+		    {
+		    	customer = newCustomer;
+		    	
+		    	customers.remove(i);
+		    	customers.add(i, newCustomer);
+						
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/customers.json");
+				Customer[] updateCustomerArray = customers.toArray(new Customer[0]);
+				updatedJsonData = gson.toJson(updateCustomerArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            return newCustomer;
+		    }
+
+		}
+		
+		return null;	
+	}
+	
+	public Customer setSuspicious(User user, String contextPath) {
+		
+		for(Customer c : customers)
+		{
+		    if(c.getId() == user.getId())
+		    {
+		    	c.setSuspicious(user.getIsSuspicious());
+						
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/customers.json");
+				Customer[] updateCustomerArray = customers.toArray(new Customer[0]);
+				updatedJsonData = gson.toJson(updateCustomerArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            return c;
+		    }
+
+		}
+		
+		return null;	
+	}
+	
+	public Admin updateAdmin(Admin newAdmin, String contextPath) {
+		
+		int i = -1;
+		for(Admin admin : admins)
+		{
+			i++;
+		    if(admin.getId() == newAdmin.getId())
+		    {
+		    	admin = newAdmin;
+		    	
+		    	admins.remove(i);
+		    	admins.add(i, newAdmin);
+						
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/admins.json");
+				Admin[] updateAdminArray = admins.toArray(new Admin[0]);
+				updatedJsonData = gson.toJson(updateAdminArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            return newAdmin;
+		    }
+
+		}
+		
+		return null;	
+	}
+	
+	public Employee updateEmployee(Employee newEmployee, String contextPath) {
+		
+		int i = -1;
+		for(Employee employee : employees)
+		{
+			i++;
+		    if(employee.getId() == newEmployee.getId())
+		    {
+		    	employee = newEmployee;
+		    	
+		    	employees.remove(i);
+		    	employees.add(i, newEmployee);
+						
+				Gson gson = new Gson();  
+				String updatedJsonData;
+				
+				Path filePath = Paths.get(contextPath, "/employees.json");
+				Employee[] updateEmployeeArray = employees.toArray(new Employee[0]);
+				updatedJsonData = gson.toJson(updateEmployeeArray);
+				
+	            try {
+					Files.write(filePath, updatedJsonData.getBytes());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+	            
+	            return newEmployee;
+		    }
+
+		}
+		
+		return null;	
+	}
+	public ArrayList<User> getAllUsers()
+	{
+		ArrayList<User> users = new ArrayList<User>();
+		
+		for(Customer c: customers)
+		{
+			users.add(c);
+		}
+		for(Employee e: employees)
+		{
+			users.add(e);
+		}
+		for(Manager m: managers)
+		{
+			users.add(m);
+		}
+		for(Admin a: admins)
+		{
+			users.add(a);
+		}
+		return users;
+	}
 }
