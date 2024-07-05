@@ -13,6 +13,7 @@ public class ChocolateFactory {
 	private Location location;
 	private String logo;
 	private double rating;
+	private boolean isDeleted;
 	
 	public ChocolateFactory() {
 		super();
@@ -20,7 +21,7 @@ public class ChocolateFactory {
 	}
 
 	public ChocolateFactory(int id, String name, ArrayList<Chocolate> chocolates, WorkTime workTime, WorkingStatus status,
-			Location location, String logo, double rating) {
+			Location location, String logo, double rating, boolean isDeleted) {
 		super();
 		this.id = id;
 		this.name = name;
@@ -30,6 +31,7 @@ public class ChocolateFactory {
 		this.location = location;
 		this.logo = logo;
 		this.rating = rating;
+		this.isDeleted = isDeleted;
 	}
 	
 
@@ -96,4 +98,11 @@ public class ChocolateFactory {
 	public void setRating(double rating) {
 		this.rating = rating;
 	}
+
+	public boolean getIsDeleted() {
+		return isDeleted;
+	}
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}	
 }

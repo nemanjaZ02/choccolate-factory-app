@@ -1,5 +1,6 @@
 package beans;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import enums.Gender;
@@ -14,6 +15,9 @@ public class User {
 	private Gender gender;
 	private Date birthday;
 	private Role role;
+	private boolean isDeleted;
+	private boolean isSuspicious;
+	private boolean isBanned;
 	
 	public User() {
 		super();
@@ -21,7 +25,7 @@ public class User {
 	}
 
 	public User(int id, String username, String password, String name, String surname, Gender gender, Date birthday,
-			Role role) {
+			Role role, boolean isDeleted, boolean isSuspicious, boolean isBanned) {
 		super();
 		this.id = id;
 		this.username = username;
@@ -31,16 +35,23 @@ public class User {
 		this.gender = gender;
 		this.birthday = birthday;
 		this.role = role;
+		this.isDeleted = isDeleted;
+		this.isSuspicious = isSuspicious;
+		this.isBanned = isBanned;
 	}
 
+	public boolean getIsDeleted() {
+		return isDeleted;
+	}
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
 	public int getId() {
 		return id;
 	}
-
 	public void setId(int id) {
 		this.id = id;
 	}
-
 	public String getUsername() {
 		return username;
 	}
@@ -82,5 +93,17 @@ public class User {
 	}
 	public void setRole(Role role) {
 		this.role = role;
+	}
+	public boolean getIsSuspicious() {
+		return isSuspicious;
+	}
+	public void setSuspicious(boolean isSuspicious) {
+		this.isSuspicious = isSuspicious;
+	}
+	public boolean getIsBanned() {
+		return isBanned;
+	}
+	public void setBanned(boolean isBanned) {
+		this.isBanned = isBanned;
 	}
 }

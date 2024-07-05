@@ -3,38 +3,54 @@ package beans;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+
+
 import enums.PurchaseState;
 
 public class Purchase {
-	private ArrayList<Chocolate> chocolate = new ArrayList<Chocolate>();
-	private ChocolateFactory factory;
+	private String id;
+	private ArrayList<Chocolate> chocolates = new ArrayList<Chocolate>();
+	private int factoryId;
 	private LocalDateTime dateAndTime;
 	private double price;
 	private Customer customer;
 	private PurchaseState state;
+	private String declineReason;
+	private boolean isDeleted;
 	
 	public Purchase() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Purchase(ArrayList<Chocolate> chocolate, ChocolateFactory factory, LocalDateTime dateAndTime,
-			double price, Customer customer, PurchaseState state) {
+	public Purchase(String id, ArrayList<Chocolate> chocolate, int factoryId, LocalDateTime dateAndTime,
+			double price, Customer customer, PurchaseState state, String declineReason, boolean isDeleted) {
 		super();
-		this.chocolate = chocolate;
-		this.factory = factory;
+		this.id = id;
+		this.chocolates = chocolate;
+		this.factoryId = factoryId;
 		this.dateAndTime = dateAndTime;
 		this.price = price;
 		this.customer = customer;
 		this.state = state;
+		this.declineReason = declineReason;
+		this.isDeleted = isDeleted;
 	}
 
-	public ArrayList<Chocolate> getChocolate() {
-		return chocolate;
+	public boolean getIsDeleted() {
+		return isDeleted;
 	}
 
-	public void setChocolate(ArrayList<Chocolate> chocolate) {
-		this.chocolate = chocolate;
+	public void setDeleted(boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	public ArrayList<Chocolate> getChocolates() {
+		return chocolates;
+	}
+
+	public void setChocolates(ArrayList<Chocolate> chocolate) {
+		this.chocolates = chocolate;
 	}
 
 	public LocalDateTime getDateAndTime() {
@@ -61,12 +77,20 @@ public class Purchase {
 		this.state = state;
 	}
 
-	public ChocolateFactory getFactory() {
-		return factory;
+	public int getFactoryId() {
+		return factoryId;
 	}
 
-	public void setFactory(ChocolateFactory factory) {
-		this.factory = factory;
+	public String getDeclineReason() {
+		return declineReason;
+	}
+
+	public void setDeclineReason(String declineReason) {
+		this.declineReason = declineReason;
+	}
+
+	public void setFactoryId(int factoryId) {
+		this.factoryId = factoryId;
 	}
 
 	public Customer getCustomer() {
@@ -75,5 +99,13 @@ public class Purchase {
 
 	public void setCustomer(Customer customer) {
 		this.customer = customer;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}	
 }

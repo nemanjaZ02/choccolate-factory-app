@@ -1,6 +1,9 @@
 <script setup>
 import Header from '../components/Header.vue'
 import Factories from '../components/Factories.vue'
+
+
+
 </script>
 
 <template>
