@@ -161,10 +161,13 @@ import { GeoSearchControl, OpenStreetMapProvider } from 'leaflet-geosearch';
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css'
 import "leaflet-defaulticon-compatibility";
+import { load } from 'ol/Image';
 
 const router = useRouter();
 const factories = ref([]);
 const filteredFactories = ref([]);
+
+const filteredFactoriesBeforeLocationFilter = ref([]);
 
 const factoryNameFilter = ref("");
 const chocolateNameFilter = ref("");
@@ -178,7 +181,10 @@ const chocolateTypeFilters = ref([]);
 const chocolateKindFilters = ref([]);
 const showOnlyOpen = ref(false);
 
-const map = ref()
+const locationFilters = ref([]);
+const locationFiltersBefore = ref([]);
+
+const map = ref(null)
 const mapContainer = ref()
 const loggedInUser = ref({role:""});
 
@@ -196,11 +202,10 @@ onMounted(() => {
     }
 })
 
-function createMap()
-{
+function createMap() {
     map.value = L.map(mapContainer.value).setView([51.505, -0.09], 13);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map.value);
 
     const provider = new OpenStreetMapProvider();
@@ -216,24 +221,127 @@ function createMap()
 
     map.value.addControl(searchControl);
 
-    for(let factory of factories.value)
-    {
-        L.marker([factory.location.longitude, factory.location.latitude]).addTo(map.value)
-        .bindPopup(factory.name)
-        .openPopup().on('click', () => {
-            showDetails(factory); 
-        }).on('mouseover', function () {
-            this.openPopup();
+    const sliderContainer = document.createElement('div');
+    sliderContainer.style.position = 'absolute';
+    sliderContainer.style.top = '10px'; // Adjust top position as needed
+    sliderContainer.style.right = '10px'; // Adjust right position as needed
+    sliderContainer.style.zIndex = '1000'; // Ensure it's above the map
+    sliderContainer.style.background = 'white'; // Adjust background color as needed
+    sliderContainer.style.padding = '10px'; // Adjust padding as needed
+    sliderContainer.style.borderRadius = '5px'; // Adjust border radius as needed
+    sliderContainer.style.boxShadow = '0 2px 4px rgba(0, 0, 0, 0.1)'; // Add shadow for better visibility
+
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = '1';
+    slider.max = '50';
+    slider.value = '10'; 
+    slider.step = '1';
+    slider.style.width = '180px'; 
+
+    const sliderLabel = document.createElement('label');
+    sliderLabel.innerHTML = 'Circle Radius (km): ';
+
+    const radiusValue = document.createElement('span');
+    radiusValue.style.marginLeft = '10px'; 
+    sliderContainer.appendChild(sliderLabel);
+    sliderContainer.appendChild(slider);
+    sliderContainer.appendChild(radiusValue);
+
+    mapContainer.value.appendChild(sliderContainer);
+
+    let currentCircle = null;
+
+    function updateCircleRadius(radiusInKm) {
+        const circleRadius = radiusInKm * 1000;
+        if (currentCircle) {
+            currentCircle.setRadius(circleRadius);
+        }
+        radiusValue.textContent = radiusInKm + ' km';
+        return circleRadius;
+    }
+
+    slider.addEventListener('input', function(e) {
+        e.stopPropagation(); 
+
+        const radiusInKm = parseInt(this.value);
+        const circleRadius = updateCircleRadius(radiusInKm);
+
+        const clickLocation = currentCircle ? currentCircle.getLatLng() : map.value.getCenter();
+        const nearbyFactories = factories.value.filter(factory => {
+            const factoryLocation = L.latLng(factory.location.longitude, factory.location.latitude);
+            return clickLocation.distanceTo(factoryLocation) <= circleRadius;
         });
-    }   
+
+        console.log("Nearby factories within " + (circleRadius / 1000) + " km:", nearbyFactories);
+
+        locationFilters.value = nearbyFactories.map(factory => factory.name);
+
+        console.log("Location filters:", locationFilters.value);
+
+        filterByLocation();
+    });
+
+    map.value.on('click', function (e) {
+        const clickLocation = e.latlng;
+
+        if (currentCircle) {
+            map.value.removeLayer(currentCircle);
+        }
+
+        const circleRadius = updateCircleRadius(parseInt(slider.value));
+
+        currentCircle = L.circle(clickLocation, { radius: circleRadius }).addTo(map.value);
+
+        currentCircle.on('click', function (e) {
+            map.value.removeLayer(currentCircle);
+            currentCircle = null;
+            document.getElementById('resultList').innerHTML = '';
+            L.DomEvent.stopPropagation(e); 
+        });
+
+        const nearbyFactories = factories.value.filter(factory => {
+            const factoryLocation = L.latLng(factory.location.longitude, factory.location.latitude);
+            return clickLocation.distanceTo(factoryLocation) <= circleRadius;
+        });
+
+        console.log("Nearby factories within " + (circleRadius / 1000) + " km:", nearbyFactories);
+
+        locationFilters.value = nearbyFactories.map(factory => factory.name);
+
+        console.log("Location filters:", locationFilters.value);
+
+        filterByLocation();
+
+        currentCircle.on('mousedown', L.DomEvent.stopPropagation);
+    });
+
+    for (let factory of factories.value) {
+        if (factory.isDeleted === false) {
+            L.marker([factory.location.longitude, factory.location.latitude]).addTo(map.value)
+                .bindPopup(factory.name)
+                .openPopup().on('click', () => {
+                    showDetails(factory); 
+                }).on('mouseover', function () {
+                    this.openPopup();
+                });
+        }  
+    }
+
+    L.DomEvent.disableClickPropagation(sliderContainer);
 }
+
+
 
 function loadFactories() {
     axios.get('http://localhost:8080/ChoccolateAppREST/rest/ChocolateFactoryService/getAll').then(response => {
             factories.value = response.data   
             filteredFactories.value = factories.value.filter(factory => factory.isDeleted == false);
             filteredFactories.value.sort((a, b) => b.status.localeCompare(a.status));
-            createMap();
+
+            filteredFactoriesBeforeLocationFilter.value = JSON.parse(JSON.stringify(filteredFactories.value));
+            if(map.value == null)
+                createMap();
             checkFactoriesWorkingStatus();
             setInterval(checkFactoriesWorkingStatus, 60000);
         });
@@ -295,8 +403,8 @@ function parseTimeString(timeString) {
 
 function search() {
     filteredFactories.value = factories.value.filter(factory => factory.name.toLowerCase().includes(factoryNameFilter.value.toLowerCase())
-     &&  (chocolateNameFilter.value === "" || factory.chocolates.some(chocolate => (((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.quantity > 0 && chocolate.name.toLowerCase().includes(chocolateNameFilter.value.toLowerCase()))
-      || (!(loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.name.toLowerCase().includes(chocolateNameFilter.value.toLowerCase())))))
+     &&  (chocolateNameFilter.value === "" || factory.chocolates.some(chocolate => !chocolate.isDeleted && ((((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.quantity > 0 && chocolate.name.toLowerCase().includes(chocolateNameFilter.value.toLowerCase()))
+      || (!(loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.name.toLowerCase().includes(chocolateNameFilter.value.toLowerCase()))))))
      &&  (averageRatingFilter.value == "" || averageRatingFilter.value == 0 || (factory.rating >= averageRatingFilter.value - 0.5 && factory.rating <= averageRatingFilter.value + 0.5)))
 
     if(showOnlyOpen.value === true) {
@@ -364,9 +472,9 @@ function filterByChocolateType() {
     let uniqueFactories = new Set();
     chocolateTypeFilters.value.forEach(type => {
     filteredFactories.value.forEach(factory => {
-            if (factory.chocolates.some(chocolate => ((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
+            if (factory.chocolates.some(chocolate => !chocolate.isDeleted && (((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
             || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.quantity > 0 && chocolate.type === type) || (!(loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
-            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.type == type))) {
+            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.type == type)))) {
                 uniqueFactories.add(factory);
             }
         });
@@ -378,14 +486,37 @@ function filterByChocolateKind() {
     let uniqueFactories = new Set();
     chocolateKindFilters.value.forEach(kind => {
     filteredFactories.value.forEach(factory => {
-            if (factory.chocolates.some(chocolate => ((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
+            if (factory.chocolates.some(chocolate => !chocolate.isDeleted && (((loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == "" 
             || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.quantity > 0 && chocolate.kind === kind) || (!(loggedInUser.value.role == "CUSTOMER" || loggedInUser.value.role == ""
-            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.kind == kind))) {
+            || (loggedInUser.value.role == "MANAGER" && loggedInUser.value.factoryId != factory.id) || (loggedInUser.value.role == "EMPLOYEE" && loggedInUser.value.factoryId != factory.id)) && chocolate.kind == kind)))) {
                 uniqueFactories.add(factory);
             }
         });
     });
     filteredFactories.value = Array.from(uniqueFactories);  
+}
+
+function filterByLocation() {
+    if(locationFilters.value != locationFiltersBefore.value)
+    {
+        filteredFactories.value = JSON.parse(JSON.stringify(filteredFactoriesBeforeLocationFilter.value));
+        locationFiltersBefore.value = JSON.parse(JSON.stringify(locationFilters.value));
+    }
+
+    let uniqueFactories = new Set();
+    locationFilters.value.forEach(name => {
+    filteredFactories.value.forEach(factory => {
+            if(factory.name == name) {
+                uniqueFactories.add(factory);
+            }
+        });
+    });
+    filteredFactories.value = Array.from(uniqueFactories); 
+    
+    if(filteredFactories.value.length == 0)
+    {
+        filteredFactories.value = JSON.parse(JSON.stringify(filteredFactoriesBeforeLocationFilter.value));
+    }
 }
 
 function showDetails(factory) {

@@ -63,6 +63,9 @@
                   </td>
                 </tr>
                 <tr>
+                  <td>{{ "Type: " + c.type + ", " + c.kind }}</td>
+                </tr>
+                <tr>
                   <td>{{ "Price: " + c.price + "RSD/" + c.weight + "g" }}</td>
                 </tr>
                 <tr>
